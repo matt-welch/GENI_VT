@@ -1,0 +1,3 @@
+[submodule "daffy-dotfiles"]
+	path = daffy-dotfiles
+	url = git@github.com:matt-welch/daffy-dotfiles.git

@@ -6,12 +6,16 @@ sudo taskset 0x2 qemu-system-x86_64 \
     -name $NAME \
     -cpu $CPUTYPE \
     -smp 4 \
+    -boot once=d \
     -m 4096 \
     -hda ubuntu.img \
     -cdrom ubuntu-14.04.2-server-amd64.iso \
-    -nographic
+    -net nic -net user \
+    -no-reboot \
+    -no-hpet \
+    -nographic \
+    -monitor stdio \
+    -vnc :1
 
 reset
-#    -no-reboot \
-#    -no-hpet \
 #    -serial stdio \

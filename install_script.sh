@@ -1,6 +1,7 @@
 #!/bin/bash
 # make results directories
 mkdir -p ~/results/logs/
+mkdir -p ~/images/
 
 # install useful tools
 sudo apt-get update 

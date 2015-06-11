@@ -1,5 +1,7 @@
 #!/bin/bash
-IF=eth0
+# NOTE: if this is run when the interface is the ONLY interface, 
+# you will lose your SSH connection when the interface goes down
+IF=eth1
 BR=br0
 
 echo "Creating ${BR} in $0"
@@ -18,3 +20,4 @@ ifconfig ${BR} ${IP_ADDR} netmask ${NETMASK} up
 
 # this line may not be necessary in most cases
 #route add default gw 192.168.83.168 $BR
+

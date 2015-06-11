@@ -18,9 +18,9 @@ DOCKER=$(which docker)
 
 if [[ -z $DOCKER ]];
 then
-#    wget -qO- https://get.docker.com/ | sh
-#    sudo usermod -aG docker mattwel
-#    sudo service docker start
+    wget -qO- https://get.docker.com/ | sh
+    sudo usermod -aG docker mattwel
+    sudo service docker start
 fi
 
 #sudo docker run hello-world

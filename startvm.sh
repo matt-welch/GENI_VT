@@ -10,7 +10,7 @@ KERN_OPTS="console=ttyS0 console=tty0 isolcpus=1-3 irqaffinity=0 rcu_nocbs=1-4 r
 
 # start the bridge if it's not running
 if [ "`/sbin/ifconfig | grep ^br0`" = "" ]; then
-    /usr/bin/startbr.sh
+    ./startbr.sh
 fi
 
 qemu-system-x86_64 \

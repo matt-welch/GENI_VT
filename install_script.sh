@@ -1,13 +1,9 @@
 #!/bin/bash
-# make results directories
-mkdir -p ~/results/logs/
-mkdir -p ~/images/
-
 
 # install useful tools
 sudo apt-get update 
 sudo apt-get install -y vim ethtool screen qemu-kvm exuberant-ctags apparmor bridge-utils unzip
-# apparmor is to enable docker 
+# NOTE: apparmor is to enable docker; 
 # http://stackoverflow.com/questions/29294286/fata0000-get-http-var-run-docker-sock-v1-17-version-dial-unix-var-run-doc
 
 # TODO make it an option to install docker
@@ -23,4 +19,7 @@ then
     sudo service docker start
 fi
 
-#sudo docker run hello-world
+sudo docker run hello-world
+
+# make links to start scripts
+ln -s ~/GENI_VT/startvm.sh ~/images/startvm.sh

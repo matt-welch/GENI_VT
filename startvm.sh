@@ -28,6 +28,8 @@ qemu-system-x86_64 \
     -netdev tap,id=mattap0 \
     -device virtio-net-pci,netdev=mattap0 \
 
+# TODO: Add -mem-path /mnt/huge and -mem-prealloc
+
 #reset # terminal gets weird after qemu exits so reset it
 
 #

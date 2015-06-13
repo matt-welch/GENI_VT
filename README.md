@@ -5,11 +5,13 @@
 
 3) Run bootstrap_node.sh on the test-node to make directories and clone the GENI_VT repo
 
-4) Verify that the interface names in the startbr.sh are correct
+4) Run GENI_VT/install_scrript.sh
 
-5) Verify settings in startvm.sh are correct
+5) Verify that the interface names in the startbr.sh are correct0:tabnew
 
-6) cd ~/images
+6) Verify settings in startvm.sh are correct
 
-7) Run startvm.sh
+7) cd ~/images
+
+8) Run startvm.sh
 

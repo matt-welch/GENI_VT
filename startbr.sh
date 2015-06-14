@@ -1,7 +1,7 @@
 #!/bin/bash
 # NOTE: if this is run when the interface is the ONLY interface, 
 # you will lose your SSH connection when the interface goes down
-IF=eth3
+IF=$(ifconfig | grep 192.168 -B 1 | head -n 1 | cut -d ' ' -f 1)
 BR=br0
 
 echo "Creating ${BR} in $0"

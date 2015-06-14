@@ -1,6 +1,6 @@
 #!/bin/bash
 
-FILE=bootstrap_pkg.tar.bz2 
+FILE=package.tar.bz2 
 KEY="/home/mwelch/.ssh/id_hp_ubuntu_rsa"
 USER="mattwel"
 

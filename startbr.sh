@@ -1,7 +1,7 @@
 #!/bin/bash
 # NOTE: if this is run when the interface is the ONLY interface, 
 # you will lose your SSH connection when the interface goes down
-IF=eth1
+IF=eth3
 BR=br0
 
 echo "Creating ${BR} in $0"

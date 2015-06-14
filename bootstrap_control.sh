@@ -7,8 +7,7 @@ USER="mattwel"
 # enter the names of the nodes in quesion: 
 # select which nodes to copy to
 NODE_IX=1
-if [[ -z $1 ]] 
-then
+if [[ -n $1 ]] ; then
     NODE_IX=$1
 fi
 HOST=$(cat nodes.lst | cut -d ' ' -f ${NODE_IX})

@@ -2,11 +2,15 @@
 LOGDIR="${HOME}/results/logs"
 echo "Collecting system logs to $LOGDIR"
 
+dmesg | grep kvm > $LOGDIR/kvm.log
+lsmod | grep kvm >> $LOGDIR/kvm.log
 hostname > $LOGDIR/hostname
 cat /proc/cpuinfo > $LOGDIR/cpuinfo.log
 /sbin/ifconfig > $LOGDIR/ifconfig.log
 /usr/bin/lspci > $LOGDIR/lspci.log
 service --status-all > $LOGDIR/services.log
+lsb_release -a > $LOGDIR/lsb_release.log
+uname -a > $LOGDIR/uname.log
 
 NPROC=$(grep processor ~/results/logs/cpuinfo.log | tail -n 1 | cut -d ":" -f 2)
 rm $LOGDIR/cpu_topo.log

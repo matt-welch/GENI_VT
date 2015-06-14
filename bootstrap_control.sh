@@ -22,4 +22,4 @@ echo "Transferring $FILE to ${USER}@${HOST}:${TARGETDIR}"
 scp -i $KEY -v $FILE ${USER}@${HOST}:${TARGETDIR}
 
 echo "Transfer complete. SSH to ${USER}@${HOST}:${TARGETDIR}"
-ssh -i $KEY -v ${USER}@${HOST} 
+ssh -i $KEY -v ${USER}@${HOST} 'tar xvf ${FILE}'

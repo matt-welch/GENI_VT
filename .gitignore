@@ -6,3 +6,4 @@ commitmsg
 images/
 *bz2
 *.bak
+dpdk*

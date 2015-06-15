@@ -4,7 +4,7 @@ echo "Collecting system logs to $LOGDIR"
 
 dmesg | grep kvm > $LOGDIR/kvm.log
 lsmod | grep kvm >> $LOGDIR/kvm.log
-hostname > $LOGDIR/hostname
+hostname > $LOGDIR/hostname.log
 cat /proc/cpuinfo > $LOGDIR/cpuinfo.log
 /sbin/ifconfig > $LOGDIR/ifconfig.log
 /usr/bin/lspci > $LOGDIR/lspci.log

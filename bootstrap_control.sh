@@ -20,11 +20,25 @@ if [[ -z $HOST ]] ; then
     echo HOST is empty
 fi
 
+KVM_MODS_FNAME=kvm_modules_node_${NODE_IX}
+echo "Checking for kvm modules..."
+ssh -i $KEY -v ${USER}@${HOST} 'lsmod' | grep kvm_intel > $KVM_MODS_FNAME 
+if [ -z "$(cat $KVM_MODS_FNAME)" ]; then
+    echo "No kvm modules available on the host...exiting"
+    exit
+fi
+echo "Module kvm_intel is present and available on host."
+
 echo "Transferring $FILE to ${USER}@${HOST}:${TARGETDIR}"
 scp -i $KEY -v $FILE ${USER}@${HOST}:${TARGETDIR}
 
 echo "Transfer complete. SSH to ${USER}@${HOST}:${TARGETDIR} & extract package..."
 ssh -i $KEY -v ${USER}@${HOST} 'tar xvf package.tar.bz2'
 
-echo "Package extracted. SSH to ${USER}@${HOST}:${TARGETDIR} & install..."
-ssh -i $KEY -v ${USER}@${HOST} 'sudo ./bootstrap_node.sh'
+## the following command often breaks because the git clone operation may ask for input
+#echo "Package extracted. SSH to ${USER}@${HOST}:${TARGETDIR} & install..."
+#ssh -i $KEY -v ${USER}@${HOST} 'sudo ./bootstrap_node.sh'
+
+# connect to the node via ssh
+echo "Connecting to ${USER}@${HOST}:${TARGETDIR} ..."
+ssh -i $KEY -v ${USER}@${HOST} 

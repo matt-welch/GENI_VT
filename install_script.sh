@@ -30,9 +30,11 @@ sudo docker run hello-world
 ### Download, build dpdk
 # git clone git://dpdk.org/apps/pktgen-dpdk
 echo "Downloading and installing dpdk..."
+cd ~/
 wget http://dpdk.org/browse/dpdk/snapshot/dpdk-2.0.0.tar.gz
 tar xvf dpdk-2.0.0.tar.gz
 cd dpdk-2.0.0/
 make config T=x86_64-native-linuxapp-gcc && make
 
 cd ~/GENI_VT/
+sudo ./collect_sys_info.sh

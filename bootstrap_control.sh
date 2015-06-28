@@ -18,6 +18,7 @@ TARGETDIR="/users/${USER}/"
 # scp {keys/, VM image tarball, bootstrap_node.sh}
 if [[ -z $HOST ]] ; then
     echo HOST is empty
+    exit
 fi
 
 KVM_MODS_FNAME=kvm_modules_node_${NODE_IX}

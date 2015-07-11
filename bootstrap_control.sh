@@ -1,7 +1,7 @@
 #!/bin/bash
 
 FILE=package.tar.bz2 
-KEY="/home/mwelch/.ssh/id_hp_ubuntu_rsa"
+KEY="~/.ssh/id_hp_ubuntu_rsa"
 USER="mattwel"
 
 # enter the names of the nodes in quesion: 
@@ -43,3 +43,5 @@ ssh -i $KEY -v ${USER}@${HOST} 'tar xvf package.tar.bz2'
 # connect to the node via ssh
 echo "Connecting to ${USER}@${HOST}:${TARGETDIR} ..."
 ssh -i $KEY -v ${USER}@${HOST} 
+
+echo "You should not run ./bootstrap_node.sh"

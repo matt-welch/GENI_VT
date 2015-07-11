@@ -1,6 +1,6 @@
 #!/bin/bash
 
-KEY="/home/mwelch/.ssh/id_hp_ubuntu_rsa"
+KEY="~/.ssh/id_hp_ubuntu_rsa"
 USER="mattwel"
 NODE_IX=1
 if [[ -n $1 ]] ; then
@@ -12,8 +12,9 @@ echo "Connecting to ${HOST} as $USER..."
 
 COMMAND="ssh -v -i $KEY ${USER}@${HOST}"
 echo $COMMAND
-echo -n "Do you want to connect to the above address? "
-read -n 1 input
+read -p "Do you want to connect to the above address? (y/n): " -n 1 input
+echo
+echo
 
 if [ "$input" == "y" -o "$input" == "Y" ]
 then

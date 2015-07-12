@@ -1,6 +1,6 @@
 #!/bin/bash
 
-KEY="~/.ssh/id_hp_ubuntu_rsa"
+KEY="/home/matt/.ssh/id_hp_ubuntu_rsa"
 USER="mattwel"
 NODE_IX=1
 if [[ -n $1 ]] ; then

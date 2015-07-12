@@ -32,7 +32,7 @@ function installKernel {
     sudo cd $WD
 }
 
-function installDocker {
+function installExptTools {
     ### Install experiment software
     # TODO make it an option to install docker
     ### make links to start scripts & qemu-ifup
@@ -41,7 +41,9 @@ function installDocker {
     sudo ln -s ~/GENI_VT/startvm.sh ~/images/startvm.sh
     sudo mv /etc/qemu-ifup ./qemu-ifup.orig
     sudo ln -s ~/GENI_VT/qemu-ifup /etc/qemu-ifup
+}
     
+function installDocker {
     ### install Docker
     printHeader  
     echo " Installing Docker..."
@@ -78,7 +80,7 @@ function collectSysInfo {
 }
 
 
-echo "Begginning installation script: $0..."
+echo "Beginning installation script: $0..."
 installPackages
 installKernel
 # TODO need a switch here to control Docker and DPDK installation

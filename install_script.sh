@@ -8,10 +8,17 @@ sudo apt-get install -y vim ethtool screen qemu-kvm exuberant-ctags apparmor bri
 # http://stackoverflow.com/questions/29294286/fata0000-get-http-var-run-docker-sock-v1-17-version-dial-unix-var-run-doc
 
 # install kernel build tools
-sudo apt-get build-dep linux-image-`uname -r` libncurses5 libncurses5-dev gcc 
-sudo apt-get source linux-image-`uname -r` 
+sudo apt-get install -y build-dep linux-source linux-image-`uname -r` libncurses5 libncurses5-dev gcc 
 # these might also be needed: 
 # lib64c-dev:i386 lib64ncurses5 lib64ncurses5-dev
+# NOTE: I think it would be easier to just compile a clean kernel from kernel.org: 
+cd /usr/src/
+VERSION="3.14.48"
+FILE="linux-${VERSION}.tar.xz"
+
+wget https://www.kernel.org/pub/linux/kernel/v3.x/${FILE}
+#tar xvf ${FILE}
+#cd
 
 ### Install experiment software
 # TODO make it an option to install docker
@@ -19,9 +26,9 @@ sudo apt-get source linux-image-`uname -r`
 
 ### make links to start scripts & qemu-ifup
 echo "Preparing vm files..."
-ln -s ~/GENI_VT/startvm.sh ~/images/startvm.sh
+sudo ln -s ~/GENI_VT/startvm.sh ~/images/startvm.sh
 sudo mv /etc/qemu-ifup ./qemu-ifup.orig
-sudo ln -s $(pwd)/qemu-ifup /etc/qemu-ifup
+sudo ln -s ~/GENI_VT/qemu-ifup /etc/qemu-ifup
 
 ### install Docker
 DOCKER=$(which docker)

@@ -11,16 +11,21 @@ git clone git@github.com:matt-welch/GENI_VT.git
 cd GENI_VT
 git submodule init
 git submodule update
-./install_script.sh
 
 # prepare dotfiles
 cd daffy-dotfiles/
 ./install.sh
 
+# install necessary packages and tools
+./install_script.sh
+
 # extract VM image 
 echo "Making images directory..."
 mkdir -p ~/images
 
-echo "Extracting VM image..."
-tar xvf ~/images/ubuntu.tar.bz2  -C ~/images
+TARBALL="~/images/ubuntu.tar.bz2"
+if [[ -f $TARBALL ]]; then
+    echo "Extracting VM image..."
+    tar xvf $TARBALL -C ~/images
+fi
 

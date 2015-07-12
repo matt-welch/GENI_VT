@@ -7,3 +7,4 @@ images/
 *bz2
 *.bak
 dpdk*
+kvm_modules_node_1

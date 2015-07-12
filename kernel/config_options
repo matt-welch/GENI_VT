@@ -1,0 +1,72 @@
+ONFIG_IKCONFIG=y
+
+Enable config stored in kernel
+
+CONFIG_IKCONFIG_PROC=y
+
+enable .config mounted as /proc/config.gz
+
+CONFIG_NO_HZ=y
+
+Old idle dynticks config
+
+CONFIG_NO_HZ_FULL=y
+
+Full dynticks system
+
+CONFIG_MCORE2=y
+
+Intel Core2 and newer Xeon CPUs (HW features)
+
+CONFIG_PREEMPT=y
+
+Fully preemptible kernel
+
+CONFIG_HZ_100=y
+
+100HZ kernel clock
+
+CONFIG_HZ_250=y
+
+250 HZ clock turned off
+
+CONFIG_ACPI_DOCK=n
+
+Disable ACPI dock management
+
+CONFIG_ACPI_PROCESSOR=n
+
+Disable CPU power management
+
+CONFIG_CPU_FREQ=n
+
+Disable CPU frequency scaling
+
+CONFIG_CPU_IDLE=n
+
+Prevent linux from controlling CPU idling
+
+CONFIG_BRIDGE=y
+
+Enable Linux Ethernet bridging
+
+CONFIG_INTEL_IOMMU=y
+
+Enable Intel IOMMU 
+
+CONFIG_IOMMU_DEFAULT_ON=y
+
+Enable DMA device at boot time (can alternately be selected with "intel_iommu=on" in kernel params
+
+CONFIG_IRQ_REMAP=y
+
+Support interrupt remapping
+
+CONFIG_KVM=y
+
+Supports hosting full virtualization guests
+
+CONFIG_KVM_INTEL=y
+
+Support for KVM on Intel processors with VT extensions
+

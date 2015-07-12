@@ -4,8 +4,7 @@ function install_iperf {
     git clone https://github.com/esnet/iperf.git
     cd iperf
     ./configure 
-    ./make
-    make
+    ./make -j $(nproc)
     sudo make install
 }
 

@@ -12,6 +12,8 @@ service --status-all > $LOGDIR/services.log
 lsb_release -a > $LOGDIR/lsb_release.log
 uname -a > $LOGDIR/uname.log
 cat /proc/cmdline > $LOGDIR/cmdline.log
+cat /proc/meminfo > $LOGDIR/meminfo.log
+free -lh >> $LOGDIR/meminfo.log
 
 NPROC=$(grep processor ~/results/logs/cpuinfo.log | tail -n 1 | cut -d ":" -f 2)
 rm $LOGDIR/cpu_topo.log

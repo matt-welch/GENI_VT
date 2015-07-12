@@ -1,0 +1,22 @@
+#!/bin/sh
+exec tail -n +3 $0
+# This file provides an easy way to add custom menu entries.  Simply type the
+# menu entries you want to add after this comment.  Be careful not to change
+# the 'exec tail' line above.
+menuentry 'Ubuntu RT-tuned' --class ubuntu --class gnu-linux --class gnu --class os $menuentry_id_option 'gnulinux-simple-843cb74d-2ec0-4353-a364-01cf70e95671' {
+	recordfail
+	load_video
+	gfxmode $linux_gfx_mode
+	insmod gzio
+	insmod part_msdos
+	insmod ext2
+	set root='hd0,1'
+	if [ x$feature_platform_search_hint = xy ]; then
+	  search --no-floppy --fs-uuid --set=root --hint-bios=hd0,msdos1 --hint-efi=hd0,msdos1 --hint-baremetal=ahci0,msdos1  843cb74d-2ec0-4353-a364-01cf70e95671
+	else
+	  search --no-floppy --fs-uuid --set=root 843cb74d-2ec0-4353-a364-01cf70e95671
+	fi
+	linux	/boot/vmlinuz-3.13.0-33-generic root=UUID=843cb74d-2ec0-4353-a364-01cf70e95671 ro console=tty0  crashkernel=384M-:128M rcu_nocbs=1-4,17-20 rcu_nocb_poll=1 isolcpus=1-4,17-20 irqaffinity=0,5-16,21-31 nohz_full=1-4,17-20 highres=off tsc=perfect intel_iommu=on iommu=pt default_hugepagesz=2M hugepagesz=2M hugepages=4096 nmi_watchdog=0
+	initrd	/boot/initrd.img-3.13.0-33-generic
+}
+

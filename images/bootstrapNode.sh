@@ -14,7 +14,7 @@ function printHeader {
 
 function logPrint {
     # logs info to logdir (1st arg is message, 2nd is filename
-    echo "$(date): $1" | tee -a  "$LOGDIR/$2"
+    sudo echo "$(date): $1" | tee -a  "$LOGDIR/$2"
 }
 
 function installPackages {
@@ -24,7 +24,8 @@ function installPackages {
     sudo apt-get update & EPID=$!
     wait $EPID
     # install utilities
-    sudo apt-get install -y vim ethtool screen qemu-kvm exuberant-ctags apparmor bridge-utils & EPID=!$
+    sudo apt-get install -y vim ethtool screen qemu-kvm exuberant-ctags apparmor bridge-utils & EPID=$!
+    wait $EPID
     # NOTE: apparmor is to enable docker; 
     # http://stackoverflow.com/questions/29294286/fata0000-get-http-var-run-docker-sock-v1-17-version-dial-unix-var-run-doc
 }
@@ -34,20 +35,20 @@ function installDPDK {
     # git clone git://dpdk.org/apps/pktgen-dpdk
     printHeader  
     logPrint "Downloading and installing dpdk..." dpdk.log
-    cd $HOMEDIR
+    cd $INSTALLDIR
     wget http://dpdk.org/browse/dpdk/snapshot/dpdk-2.0.0.tar.gz
-    tar xvf dpdk-2.0.0.tar.gz
-    cd dpdk-2.0.0/
+    tar xvf dpdk-2.0.0.tar.gz -C $HOMEDIR
+    cd $HOMEDIR/dpdk-2.0.0/
     printHeader  
     logPrint "Building DPDK..." dpdk.log
-    make -j $(nproc) config T=x86_64-native-linuxapp-gcc && make -j $(nproc)
+    make -j $(nproc) config T=x86_64-native-linuxapp-gcc && make -j $(nproc) & EPID=$!
+    wait $EPID
 }
 
 function installDocker {
     ### install Docker
     printHeader  
     logPrint " Installing Docker..." docker.log
-    cd $HOMEDIR
     DOCKER=$(which docker)
     
     if [[ -z $DOCKER ]];
@@ -64,32 +65,34 @@ cd $INSTALLDIR
 ##### Check if file is there #####
 if [ ! -f "./installed.txt" ]
 then
-       #### Create the file ####
-       sudo date > "$INSTALLDIR/installed.txt"
+    #### Create the file ####
+    sudo date > "$INSTALLDIR/installed.txt"
 
-       #### Run  one-time commands ####
-       echo "Making results directory..."
-       mkdir -p $LOGDIR
-       
-       #Install necessary packages
-       installPackages
-       installDPDK
-       installDocker
+    #### Run  one-time commands ####
+    echo "Making results directory..."
+    mkdir -p $LOGDIR
 
-       # extract VM image tarball
-       tar xvf ubuntu.tar.bz2 -C $HOMEDIR
+    #Install necessary packages
+    installPackages
+    installDPDK
+    installDocker
 
-       # Install custom software
-    
-       # For my experiment I need to <configure something custom>
+    # extract VM image tarball
+    cd $INSTALLDIR
+    tar xvf ubuntu.tar.bz2 -C $HOMEDIR
 
-       # echo cpmpletion time
-       sudo date >> "$INSTALLDIR/installed.txt"
-       ## Reboot the OS to ....
-       #sudo reboot
+    # Install custom software
+
+    # For my experiment I need to <configure something custom>
+
+    # echo cpmpletion time
+    sudo date >> "$INSTALLDIR/installed.txt"
+    ## Reboot the OS to ....
+    #sudo reboot
 fi
 ##### Run Boot-time commands
+printHeader
+logPrint "$(hostname) booting and running bootstrapNode.sh at $(date)"
 
-exit
-# end of control/bootstrapNode.sh
+# end of bootstrapNode.sh
 

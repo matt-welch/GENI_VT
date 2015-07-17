@@ -1,4 +1,3 @@
-#!/bin/bash
 # local variable definitions
 # Usual directory for downloading software in ProtoGENI hosts is `/local`
 INSTALLDIR="/local"
@@ -35,7 +34,7 @@ function installDPDK {
     # git clone git://dpdk.org/apps/pktgen-dpdk
     printHeader  
     logPrint "Downloading and installing dpdk..." dpdk.log
-    cd $INSTALLDIR
+    cd $HOMEDIR
     wget http://dpdk.org/browse/dpdk/snapshot/dpdk-2.0.0.tar.gz
     tar xvf dpdk-2.0.0.tar.gz -C $HOMEDIR
     cd $HOMEDIR/dpdk-2.0.0/
@@ -59,40 +58,4 @@ function installDocker {
     fi
     sudo docker run hello-world
 }
-
-# Begin control/bootstrapNode.sh
-cd $INSTALLDIR
-##### Check if file is there #####
-if [ ! -f "./installed.txt" ]
-then
-    #### Create the file ####
-    sudo date > "$INSTALLDIR/installed.txt"
-
-    #### Run  one-time commands ####
-    echo "Making results directory..."
-    mkdir -p $LOGDIR
-
-    #Install necessary packages
-    installPackages
-    installDPDK
-    installDocker
-
-    # extract VM image tarball
-    cd $INSTALLDIR
-    tar xvf ubuntu.tar.bz2 -C $HOMEDIR
-
-    # Install custom software
-
-    # For my experiment I need to <configure something custom>
-
-    # echo cpmpletion time
-    sudo date >> "$INSTALLDIR/installed.txt"
-    ## Reboot the OS to ....
-    #sudo reboot
-fi
-##### Run Boot-time commands
-printHeader
-logPrint "$(hostname) booting and running bootstrapNode.sh at $(date)"
-
-# end of bootstrapNode.sh
-
+mkdir -p $HOMEDIR/results/logs

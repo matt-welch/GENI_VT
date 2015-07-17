@@ -11,13 +11,11 @@ git clone git@github.com:matt-welch/GENI_VT.git
 cd GENI_VT
 git submodule init
 git submodule update
+./install_script.sh
 
 # prepare dotfiles
 cd daffy-dotfiles/
 ./install.sh
-
-# install necessary packages and tools
-./install_script.sh
 
 # extract VM image 
 echo "Making images directory..."

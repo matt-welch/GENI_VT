@@ -27,6 +27,7 @@ function installPackages {
     wait $EPID
     # NOTE: apparmor is to enable docker; 
     # http://stackoverflow.com/questions/29294286/fata0000-get-http-var-run-docker-sock-v1-17-version-dial-unix-var-run-doc
+    logPrint "Package installation is complete." install.log
 }
 
 function installDPDK {
@@ -42,6 +43,22 @@ function installDPDK {
     logPrint "Building DPDK..." dpdk.log
     make -j $(nproc) config T=x86_64-native-linuxapp-gcc && make -j $(nproc) & EPID=$!
     wait $EPID
+}
+function installBuildTools {
+    logPrint " Installing necessary kernel build packages and tools..." install.log
+    WD=$(pwd)
+    # install kernel build tools
+    sudo apt-get install -y  libncurses5 libncurses5-dev gcc
+    # these might also be needed:
+    # lib64c-dev:i386 lib64ncurses5 lib64ncurses5-dev
+    # NOTE: I think it would be easier to just compile a clean kernel from kernel.org:
+#    sudo cd /usr/src/
+#    VERSION="3.14.48"
+#    FILE="linux-${VERSION}.tar.xz"
+#
+#    sudo wget https://www.kernel.org/pub/linux/kernel/v3.x/${FILE}
+#    #tar xvf ${FILE}
+#    sudo cd $WD
 }
 
 function installDocker {
@@ -59,3 +76,4 @@ function installDocker {
     sudo docker run hello-world
 }
 mkdir -p $HOMEDIR/results/logs
+

@@ -1,4 +1,6 @@
 #!/bin/bash
+# scp_file_to_node.sh
+# ssh-copy first argument ($1) to node ($2)
 
 FILE=$1 
 KEY="/home/mwelch/.ssh/id_hp_ubuntu_rsa"

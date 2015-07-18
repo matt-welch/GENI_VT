@@ -1,5 +1,5 @@
 <rspec xmlns="http://www.geni.net/resources/rspec/3" xmlns:emulab="http://www.protogeni.net/resources/rspec/ext/emulab/1" xmlns:tour="http://www.protogeni.net/resources/rspec/ext/apt-tour/1" xmlns:jacks="http://www.protogeni.net/resources/rspec/ext/jacks/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.geni.net/resources/rspec/3    http://www.geni.net/resources/rspec/3/request.xsd" type="request">
-<node xmlns="http://www.geni.net/resources/rspec/3" client_id="node-0" component_manager_id="urn:publicid:IDN+utah.geniracks.net+authority+cm">
+<node xmlns="http://www.geni.net/resources/rspec/3" client_id="node-0" component_manager_id="urn:publicid:IDN+utahddc.geniracks.net+authority+cm">
 <icon xmlns="http://www.protogeni.net/resources/rspec/ext/jacks/1" url="https://www.emulab.net/protogeni/jacks-stable/images/default.svg"/>
 <sliver_type xmlns="http://www.geni.net/resources/rspec/3" name="raw-pc">
     <disk_image xmlns="http://www.geni.net/resources/rspec/3" 

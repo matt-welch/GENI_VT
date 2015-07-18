@@ -7,7 +7,7 @@ if [[ -n $1 ]] ; then
     NODE_IX=$1
 fi
 
-HOST=$(cat nodes.lst | cut -d ' ' -f ${NODE_IX})
+HOST=$( cut -d ' ' -f ${NODE_IX} nodes.lst )
 echo "Connecting to ${HOST} as $USER..."
 
 COMMAND="ssh -v -i $KEY ${USER}@${HOST}"
@@ -18,6 +18,7 @@ echo
 
 if [ "$input" == "y" -o "$input" == "Y" ]
 then
+    echo "Attempting connection at $(date)"
     ssh -v -i $KEY ${USER}@${HOST}
 else
     echo "User entered $input.  Enter 'Y/y' to connect."

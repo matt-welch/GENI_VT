@@ -1,0 +1,131 @@
+{
+    "kernelConfig": "realtime",
+    "configuration": [
+        {
+            "Symbol": "CONFIG_IKCONFIG",
+            "Value": "y",
+            "Location": "General Setup",
+            "Prompt": "Enable access to .config through /proc/config.gz"
+        }
+        {
+            "Symbol": "CONFIG_IKCONFIG_PROC",
+            "Value": "y",
+            "Location": "General Setup | Kernel .config support",
+            "Prompt": "Enable access to .config through /proc/config.gz"
+        }
+        {
+            "Symbol": "CONFIG_NO_HZ",
+            "Value": "y",
+            "Location": "General Setup | Timers subsystem",
+            "Prompt": "Old Idle dynticks config"
+        }
+        {
+            "Symbol": "CONFIG_NO_HZ_FULL",
+            "Value": "y",
+            "Location": "General Setup | Timers subsystem | Timer tick handling (choice)",
+            "Prompt": "Full dynticks system (tickless)"
+        }
+        {
+            "Symbol": "CONFIG_HIGH_RES_TIMERS",
+            "Value": "y",
+            "Location": "General Setup | Timers subsystem",
+            "Prompt": "High Resolution Timer Support"
+        }
+        {
+            "Symbol": "CONFIG_MCORE2",
+            "Value": "y",
+            "Location": "Processor type and features | Processor Family",
+            "Prompt": "Core 2/newer Xeon "
+        }
+        {
+            "Symbol": "CONFIG_PREEMPT",
+            "Value": "y",
+            "Location": "?",
+            "Prompt": "[Top-level configuration option"
+        }
+        {
+            "Symbol": "CONFIG_PREEMPT_RT_FULL",
+            "Value": "y",
+            "Location": "Processor type and features | Preemption Model (<choice> [=y])",
+            "Prompt": "Fully Preemptible Kernel (RT)"
+        }
+        {
+            "Symbol": "CONFIG_HZ_100",
+            "Value": "y",
+            "Location": "Processor type and features | Timer frequency (<choice> [=y])",
+            "Prompt": "100 HZ timer tick"
+        }
+        {
+            "Symbol": "CONFIG_HZ_250",
+            "Value": "n",
+            "Location": "Processor type and features | Timer frequency (<choice> [=n])",
+            "Prompt": "250 HZ timer tick"
+        }
+        {
+            "Symbol": "CONFIG_ACPI_DOCK",
+            "Value": "n",
+            "Location": "Power management and ACPI options | ACPI (Advanced Configuration and Power Interface) Support (ACPI [=y])",
+            "Prompt": "Dock"
+        }
+        {
+            "Symbol": "CONFIG_ACPI_PROCESSOR",
+            "Value": "n",
+            "Location": "Power management and ACPI options | ACPI (Advanced Configuration and Power Interface) Support (ACPI [=y])",
+            "Prompt": "Processor"
+        }
+        {
+            "Symbol": "CONFIG_CPU_FREQ",
+            "Value": "n",
+            "Location": "Power management and ACPI options | CPU Frequency scaling",
+            "Prompt": "CPU Frequency scaling"
+        }
+        {
+            "Symbol": "CONFIG_CPU_IDLE",
+            "Value": "n",
+            "Location": "Power management and ACPI options | CPU Idle",
+            "Prompt": "CPU idle PM support"
+        }
+        {
+            "Symbol": "CONFIG_BRIDGE",
+            "Value": "y",
+            "Location": "Networking support | Networking options",
+            "Prompt": "802.1d Ethernet Bridging"
+        }
+        {
+            "Symbol": "CONFIG_INTEL_IOMMU",
+            "Value": "y",
+            "Location": "Device Drivers | IOMMU HArdware Support (IOMMU_SUPPORT [=y])",
+            "Prompt": "Support for Intel IOMMU using DMA Remapping Devices"
+        }
+        {
+            "Symbol": "CONFIG_IOMMU_DEFAULT_ON",
+            "Value": "y",
+            "Location": "Device Drivers | IOMMU HArdware Support (IOMMU_SUPPORT [=y]) | Support for Intel IOMMU using DMA Remapping Devices (INTEL_IOMMU [=y])",
+            "Prompt": "Enable Intel DMA Remapping Devices by default"
+        }
+        {
+            "Symbol": "CONFIG_IRQ_REMAP",
+            "Value": "y",
+            "Location": "Device Drivers | IOMMU HArdware Support (IOMMU_SUPPORT [=y])",
+            "Prompt": "Support for Interrupt Remapping "
+        }
+        {
+            "Symbol": "CONFIG_KVM",
+            "Value": "y",
+            "Location": "Virtualization",
+            "Prompt": "Kernel-based Virtual Machine (KVM) support"
+        }
+        {
+            "Symbol": "CONFIG_KVM_INTEL",
+            "Value": "y",
+            "Location": "Virtualization",
+            "Prompt": "KVM for Intel processors support"
+        }
+        {
+            "Symbol": "CONFIG_RCU_NOCB_CPU",
+            "Value": "y",
+            "Location": "General Setup | RCU Subsystem",
+            "Prompt": "Offload RCU callback processing from boot-selected CPUs"
+        }
+}
+

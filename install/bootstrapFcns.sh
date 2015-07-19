@@ -23,7 +23,7 @@ function installPackages {
     sudo apt-get update & EPID=$!
     wait $EPID
     # install utilities
-    sudo apt-get install -y vim ethtool screen qemu-kvm exuberant-ctags apparmor bridge-utils libncurses5 libncurses5-dev gcc & EPID=$!
+    sudo apt-get install -y vim ethtool screen qemu-kvm exuberant-ctags apparmor bridge-utils libncurses5 libncurses5-dev gcc build-essential libnuma-dev & EPID=$!
     wait $EPID
     # NOTE: apparmor is to enable docker; 
     # http://stackoverflow.com/questions/29294286/fata0000-get-http-var-run-docker-sock-v1-17-version-dial-unix-var-run-doc

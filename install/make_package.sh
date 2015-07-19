@@ -1,7 +1,7 @@
 #!/bin/bash
 if [[ "$1" == "small" ]]; then
     TARBALL="keys_pkg.tar.bz2"
-    CONTENTS="keys/ bootstrap_node.sh "
+    CONTENTS="keys/ move_keys.sh clone_GENI_VT.sh "
 else
     TARBALL="package.tar.bz2"
     CONTENTS="keys/ bootstrap_node.sh images/ubuntu.tar.bz2 "

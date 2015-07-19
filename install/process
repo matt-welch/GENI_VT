@@ -1,0 +1,8 @@
+# 1) boot nodes on GENI
+#   a) boot tarball should be extracted during boot (containing VM image)
+# 2) copy node URL to nodes.lst
+# 3) copy package to nodes including: 
+#   { keys/, move_keys.sh, clone_GENI_VT.sh }
+#   everything else can come from GENI_VT
+
+

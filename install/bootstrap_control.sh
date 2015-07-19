@@ -1,7 +1,7 @@
 #!/bin/bash
 
 FILE=package.tar.bz2 
-KEY="~/.ssh/id_hp_ubuntu_rsa"
+KEY="/home/matt/.ssh/id_hp_ubuntu_rsa"
 USER="mattwel"
 
 # enter the names of the nodes in quesion: 
@@ -39,7 +39,7 @@ fi
 echo "Transferring $FILE to ${USER}@${HOST}:${TARGETDIR}"
 scp -i $KEY -v $FILE ${USER}@${HOST}:${TARGETDIR}
 echo "Transfer complete. SSH to ${USER}@${HOST}:${TARGETDIR} & extract package..."
-ssh -i $KEY -v ${USER}@${HOST} 'tar xvf ${FILE}'
+ssh -i $KEY -v ${USER}@${HOST} "tar xvf ${FILE}"
 ## the following command often breaks because the git clone operation may ask for input
 #echo "Package extracted. SSH to ${USER}@${HOST}:${TARGETDIR} & install..."
 #ssh -i $KEY -v ${USER}@${HOST} 'sudo ./bootstrap_node.sh'

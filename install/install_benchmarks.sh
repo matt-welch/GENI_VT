@@ -21,6 +21,7 @@ function install_iperf() {
         ./configure
         make -j $(nproc)
         sudo make install
+        ln -s /users/mattwel/GENI_VT/benchmarks/iperf/src/iperf3 $BENCH_DIR/iperf3
         date > install_complete
     fi
 }

@@ -33,7 +33,7 @@ echo
 
 if [ "$input" == "y" -o "$input" == "Y" ]
 then
-    echo "Attempting connection at $(fcn_print_red '$(date)') "
+    echo Attempting connection at $(fcn_print_red "$(date)") 
     ssh -v -i $KEY ${USER}@${HOST}
 else
     echo "User entered $(fcn_print_red "$input").  Enter 'Y/y' to connect."

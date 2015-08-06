@@ -22,5 +22,6 @@ CLR_WHT='\033[1;37m' # White
 CLR_NON='\033[0m'    # None
 
 function fcn_print_red() {
-    printf "${CLR_RED}${1}${CLR_NON}"
+    OUTPUT="$1"
+    printf "${CLR_RED}${OUTPUT}${CLR_NON}\n"
 }

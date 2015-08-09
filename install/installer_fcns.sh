@@ -61,6 +61,7 @@ function installDocker {
 }
 
 function installDPDK {
+    CWD=$(pwd)
     ### Download, build dpdk
     # git clone git://dpdk.org/apps/pktgen-dpdk
     printHeader  
@@ -85,9 +86,11 @@ EOF
     make config O=${RTE_TARGET} T=${RTE_TARGET}
     cd ${RTE_TARGET} 
     make -j $(nproc)
+    cd $CWD
 }
 
 function install_pktgen() {
+    CWD=$(pwd)
     source /users/mattwel/GENI_VT/util/ids.sh
     PACKAGE="pktgen"
     VERSION="2.9.1"
@@ -103,10 +106,15 @@ function install_pktgen() {
         exit
     fi
 
+    echo "Downloading $PACKAGE v$VERSION from $SOURCEURL ... "
     wget $SOURCEURL
-    tar xvf $($FILENAME)
+    echo "Extracting $FILENAME"
+    tar xvf $FILENAME
     cd ${DIRECTORY}
-    make 
+    echo "Building $PACKAGE at $(date) ..."
+    make && echo "Build of $PACKAGE v$VERSION is complete."
+
+    cd $CWD
 }
 
 function collectSysInfo {

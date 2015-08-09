@@ -1,25 +1,17 @@
 #!/bin/bash
+# bootstrap_node.sh 
+# this script makes directories and organizes data copied to newly-booted node
 
 echo "Installing git keys..."
 mv keys/* ~/.ssh/
 
 echo "Making results directory..."
 mkdir -p ~/results/logs/
-
-echo "Cloning into GENI_VT..."
-git clone git@github.com:matt-welch/GENI_VT.git
-cd GENI_VT
-git submodule init
-git submodule update
-./install_script.sh
-
-# prepare dotfiles
-cd daffy-dotfiles/
-./install.sh
-
-# extract VM image 
 echo "Making images directory..."
 mkdir -p ~/images
+
+source clone_GENI_VT.sh
+cloneGENI
 
 TARBALL="~/images/ubuntu.tar.bz2"
 if [[ -f $TARBALL ]]; then

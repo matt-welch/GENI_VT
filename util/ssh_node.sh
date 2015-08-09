@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source util/bash_colors.sh
+source bash_colors.sh
 
 KEY="/home/matt/.ssh/id_hp_ubuntu_rsa"
 USER="mattwel"

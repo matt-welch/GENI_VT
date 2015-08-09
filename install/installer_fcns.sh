@@ -1,5 +1,7 @@
 #!/bin/bash
 
+source ../util/ids.sh
+
 function printHeader {
     echo 
     echo -n ">>>>GENI_VT:: $0 :: "
@@ -64,12 +66,47 @@ function installDPDK {
     printHeader  
     echo "Downloading and installing dpdk..."
     cd ~/
+    mkdir dpdk
+    cd dpdk
     wget http://dpdk.org/browse/dpdk/snapshot/dpdk-2.0.0.tar.gz
     tar xvf dpdk-2.0.0.tar.gz
     cd dpdk-2.0.0/
+
+cat << EOF > ../RTE_vars.sh
+export RTE_SDK=$(pwd)
+export RTE_TARGET="x86_64-native-linuxapp-gcc"
+EOF
+
+    . ../RTE_vars.sh
+
     printHeader  
+    
     echo "Building DPDK..."
-    make -j $(nproc) config T=x86_64-native-linuxapp-gcc && make -j $(nproc)
+    make config O=${RTE_TARGET} T=${RTE_TARGET}
+    cd ${RTE_TARGET} 
+    make -j $(nproc)
+}
+
+function install_pktgen() {
+    source /users/mattwel/GENI_VT/util/ids.sh
+    PACKAGE="pktgen"
+    VERSION="2.9.1"
+    FORMAT="tar.gz"
+    DIRECTORY="${PACKAGE}-${VERSION}"
+    FILENAME="${PACKAGE}-${VERSION}.${FORMAT}"
+    SOURCEURL="http://dpdk.org/browse/apps/pktgen-dpdk/snapshot/${FILENAME}"
+    cd /users/${USER}/dpdk
+    if [[ -f "RTE_vars.sh" ]] ; then 
+        . ./RTE_vars.sh
+    else
+        echo "DPDK is not installed yet.  Exiting..."
+        exit
+    fi
+
+    wget $SOURCEURL
+    tar xvf $($FILENAME)
+    cd ${DIRECTORY}
+    make 
 }
 
 function collectSysInfo {

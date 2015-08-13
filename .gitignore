@@ -10,3 +10,5 @@ dpdk*
 kvm_modules_node_1
 kernel/patches/3*
 *sliverstatus*json
+kernel/patches/*.log
+kernel/patches/*.html

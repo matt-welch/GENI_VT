@@ -2,26 +2,26 @@
 
 source ../util/ids.sh
 
-function printHeader {
+function printHeader() {
     echo 
     echo -n ">>>>GENI_VT:: $0 :: "
 }
 
-function installPackages {
+function installPackages() {
     printHeader  
     echo " Installing necessary packages and tools..."
     ### install useful tools
     sudo apt-get update 
     # install utilities
-    sudo apt-get install -y vim ethtool screen qemu-kvm exuberant-ctags apparmor bridge-utils 
+    sudo apt-get install -y vim ethtool screen qemu-kvm exuberant-ctags apparmor bridge-utils libpcap-dev
     # NOTE: apparmor is to enable docker; 
     # http://stackoverflow.com/questions/29294286/fata0000-get-http-var-run-docker-sock-v1-17-version-dial-unix-var-run-doc
 }
 
-function installKernel {
+function installKernel() {
     WD=$(pwd)
     # install kernel build tools
-    sudo apt-get install -y build-dep linux-source linux-image-`uname -r` libncurses5 libncurses5-dev gcc 
+    sudo apt-get install -y linux-source linux-image-`uname -r` libncurses5 libncurses5-dev gcc 
     # these might also be needed: 
     # lib64c-dev:i386 lib64ncurses5 lib64ncurses5-dev
     # NOTE: I think it would be easier to just compile a clean kernel from kernel.org: 
@@ -34,7 +34,7 @@ function installKernel {
     sudo cd $WD
 }
 
-function installExptTools {
+function installExptTools() {
     ### Install experiment software
     # TODO make it an option to install docker
     ### make links to start scripts & qemu-ifup
@@ -45,7 +45,7 @@ function installExptTools {
     sudo ln -s ~/GENI_VT/qemu-ifup /etc/qemu-ifup
 }
     
-function installDocker {
+function installDocker() {
     ### install Docker
     printHeader  
     echo " Installing Docker..."
@@ -60,10 +60,9 @@ function installDocker {
     sudo docker run hello-world
 }
 
-function installDPDK {
+function installDPDK() {
     CWD=$(pwd)
     ### Download, build dpdk
-    # git clone git://dpdk.org/apps/pktgen-dpdk
     printHeader  
     echo "Downloading and installing dpdk..."
     cd ~/
@@ -117,9 +116,31 @@ function install_pktgen() {
     cd $CWD
 }
 
-function collectSysInfo {
+function collectSysInfo() {
     printHeader  
     echo " Collecting system info..."
     cd ~/GENI_VT/
     sudo ./collect_sys_info.sh
 }
+
+
+if [ "$0" != "/bin/bash" ] ; then 
+    echo this is weird
+    exit
+fi
+
+FUNCLIST=$(grep function $0 | sed -n -e 's/function \([a-zA-Z_]*\).*{/\1/p')
+if [ -n "$FUNCLIST" ] ; then 
+    echo $FUNCLIST
+    PS3="Select an installer function to run: "
+    select RUNFUNC in $FUNCLIST; 
+    do 
+        echo "Running ${RUNFUNC}()... " && break
+        echo "Invalid selection, aborting."
+    done
+    echo
+    
+    $RUNFUNC
+fi
+# probably running in bash after sourcing.  DO nothing
+

@@ -3,7 +3,15 @@ exec tail -n +3 $0
 # This file provides an easy way to add custom menu entries.  Simply type the
 # menu entries you want to add after this comment.  Be careful not to change
 # the 'exec tail' line above.
-menuentry 'Ubuntu, 3.14.46, preempt-rt' --class ubuntu --class gnu-linux --class gnu --class os $menuentry_id_option 'gnulinux-simple-843cb74d-2ec0-4353-a364-01cf70e95671' {
+#
+# This file represents grub entries that should be added to the /boot/grub/grub.cfg
+# $ grub-mkconfig -o /boot/grub/grub.cfg 
+#
+# Tuning paramaters (2*6 cores, cores 1-4 are for virtual environment): 
+#  rcu_nocbs=1-4 rcu_nocb_poll=1 isolcpus=1-4 irqaffinity=0,5-11 nohz_full=1-4 highres=off tsc=perfect intel_iommu=on iommu=pt default_hugepagesz=2M hugepagesz=2M hugepages=4096 nmi_watchdog=0
+#
+
+menuentry 'Ubuntu, PreemptRT 3.14.49-rt50' --class ubuntu --class gnu-linux --class gnu --class os $menuentry_id_option 'gnulinux-3.14.49-rt50-advanced-478699d8-fa92-4374-a189-a336c2524f65' {
 	recordfail
 	load_video
 	gfxmode $linux_gfx_mode
@@ -12,48 +20,16 @@ menuentry 'Ubuntu, 3.14.46, preempt-rt' --class ubuntu --class gnu-linux --class
 	insmod ext2
 	set root='hd0,msdos1'
 	if [ x$feature_platform_search_hint = xy ]; then
-	  search --no-floppy --fs-uuid --set=root --hint-bios=hd0,msdos1 --hint-efi=hd0,msdos1 --hint-baremetal=ahci0,msdos1  843cb74d-2ec0-4353-a364-01cf70e95671
+	  search --no-floppy --fs-uuid --set=root --hint-bios=hd0,msdos1 --hint-efi=hd0,msdos1 --hint-baremetal=ahci0,msdos1  73424704-5753-472b-8f28-1c831b9d3f67
 	else
-	  search --no-floppy --fs-uuid --set=root 843cb74d-2ec0-4353-a364-01cf70e95671
+	  search --no-floppy --fs-uuid --set=root 73424704-5753-472b-8f28-1c831b9d3f67
 	fi
-	linux	/boot/vmlinuz-3.14.46-rt46 root=UUID=843cb74d-2ec0-4353-a364-01cf70e95671 ro console=ttyS0,115200n8  crashkernel=384M-:128M 
-	initrd	/boot/initrd.img-3.14.46-rt46
-}
-menuentry 'Ubuntu, 3.14.46, preempt-rt, tuned' --class ubuntu --class gnu-linux --class gnu --class os $menuentry_id_option 'gnulinux-simple-843cb74d-2ec0-4353-a364-01cf70e95671' {
-	recordfail
-	load_video
-	gfxmode $linux_gfx_mode
-	insmod gzio
-	insmod part_msdos
-	insmod ext2
-	set root='hd0,msdos1'
-	if [ x$feature_platform_search_hint = xy ]; then
-	  search --no-floppy --fs-uuid --set=root --hint-bios=hd0,msdos1 --hint-efi=hd0,msdos1 --hint-baremetal=ahci0,msdos1  843cb74d-2ec0-4353-a364-01cf70e95671
-	else
-	  search --no-floppy --fs-uuid --set=root 843cb74d-2ec0-4353-a364-01cf70e95671
-	fi
-	linux	/boot/vmlinuz-3.14.46-rt46 root=UUID=843cb74d-2ec0-4353-a364-01cf70e95671 ro console=ttyS0,115200n8  crashkernel=384M-:128M rcu_nocbs=1-4,17-20 rcu_nocb_poll=1 isolcpus=1-4,17-20 irqaffinity=0,5-16,21-31 nohz_full=1-4,17-20 highres=off tsc=perfect intel_iommu=on iommu=pt default_hugepagesz=2M hugepagesz=2M hugepages=4096 nmi_watchdog=0
-	initrd	/boot/initrd.img-3.14.46-rt46
-}
-menuentry 'Ubuntu, with Linux 3.14.46' --class ubuntu --class gnu-linux --class gnu --class os $menuentry_id_option 'gnulinux-3.14.46-advanced-843cb74d-2ec0-4353-a364-01cf70e95671' {
-	recordfail
-	load_video
-	gfxmode $linux_gfx_mode
-	insmod gzio
-	insmod part_msdos
-	insmod ext2
-	set root='hd0,msdos1'
-	if [ x$feature_platform_search_hint = xy ]; then
-	  search --no-floppy --fs-uuid --set=root --hint-bios=hd0,msdos1 --hint-efi=hd0,msdos1 --hint-baremetal=ahci0,msdos1  843cb74d-2ec0-4353-a364-01cf70e95671
-	else
-	  search --no-floppy --fs-uuid --set=root 843cb74d-2ec0-4353-a364-01cf70e95671
-	fi
-	echo	'Loading Linux 3.14.46 ...'
-	linux	/boot/vmlinuz-3.14.46 root=UUID=843cb74d-2ec0-4353-a364-01cf70e95671 ro console=ttyS0,115200n8  crashkernel=384M-:128M
+	echo	'Loading Linux 3.14.49-rt50 ...'
+	linux	/vmlinuz-3.14.49-rt50 root=UUID=478699d8-fa92-4374-a189-a336c2524f65 ro  
 	echo	'Loading initial ramdisk ...'
-	initrd	/boot/initrd.img-3.14.46
+	initrd	/initrd.img-3.14.49-rt50
 }
-menuentry 'Ubuntu, with Linux 3.14.46, tuned' --class ubuntu --class gnu-linux --class gnu --class os $menuentry_id_option 'gnulinux-3.14.46-advanced-843cb74d-2ec0-4353-a364-01cf70e95671' {
+menuentry 'Ubuntu, PreemptRT 3.14.49-rt50, tuned' --class ubuntu --class gnu-linux --class gnu --class os $menuentry_id_option 'gnulinux-3.14.49-rt50-advanced-478699d8-fa92-4374-a189-a336c2524f65' {
 	recordfail
 	load_video
 	gfxmode $linux_gfx_mode
@@ -62,12 +38,49 @@ menuentry 'Ubuntu, with Linux 3.14.46, tuned' --class ubuntu --class gnu-linux -
 	insmod ext2
 	set root='hd0,msdos1'
 	if [ x$feature_platform_search_hint = xy ]; then
-	  search --no-floppy --fs-uuid --set=root --hint-bios=hd0,msdos1 --hint-efi=hd0,msdos1 --hint-baremetal=ahci0,msdos1  843cb74d-2ec0-4353-a364-01cf70e95671
+	  search --no-floppy --fs-uuid --set=root --hint-bios=hd0,msdos1 --hint-efi=hd0,msdos1 --hint-baremetal=ahci0,msdos1  73424704-5753-472b-8f28-1c831b9d3f67
 	else
-	  search --no-floppy --fs-uuid --set=root 843cb74d-2ec0-4353-a364-01cf70e95671
+	  search --no-floppy --fs-uuid --set=root 73424704-5753-472b-8f28-1c831b9d3f67
 	fi
-	echo	'Loading Linux 3.14.46 ...'
-	linux	/boot/vmlinuz-3.14.46 root=UUID=843cb74d-2ec0-4353-a364-01cf70e95671 ro console=ttyS0,115200n8  crashkernel=384M-:128M rcu_nocbs=1-4,17-20 rcu_nocb_poll=1 isolcpus=1-4,17-20 irqaffinity=0,5-16,21-31 nohz_full=1-4,17-20 highres=off tsc=perfect intel_iommu=on iommu=pt default_hugepagesz=2M hugepagesz=2M hugepages=4096 nmi_watchdog=0
+	echo	'Loading Linux 3.14.49-rt50 ...'
+	linux	/vmlinuz-3.14.49-rt50 root=UUID=478699d8-fa92-4374-a189-a336c2524f65 ro rcu_nocbs=1-4 rcu_nocb_poll=1 isolcpus=1-4 irqaffinity=0,5-11 nohz_full=1-4 highres=off tsc=perfect intel_iommu=on iommu=pt default_hugepagesz=2M hugepagesz=2M hugepages=4096 nmi_watchdog=0
 	echo	'Loading initial ramdisk ...'
-	initrd	/boot/initrd.img-3.14.46
+	initrd	/initrd.img-3.14.49-rt50
 }
+menuentry 'Ubuntu, with Linux 3.14.49' --class ubuntu --class gnu-linux --class gnu --class os $menuentry_id_option 'gnulinux-3.14.49-advanced-478699d8-fa92-4374-a189-a336c2524f65' {
+	recordfail
+	load_video
+	gfxmode $linux_gfx_mode
+	insmod gzio
+	insmod part_msdos
+	insmod ext2
+	set root='hd0,msdos1'
+	if [ x$feature_platform_search_hint = xy ]; then
+	  search --no-floppy --fs-uuid --set=root --hint-bios=hd0,msdos1 --hint-efi=hd0,msdos1 --hint-baremetal=ahci0,msdos1  73424704-5753-472b-8f28-1c831b9d3f67
+	else
+	  search --no-floppy --fs-uuid --set=root 73424704-5753-472b-8f28-1c831b9d3f67
+	fi
+	echo	'Loading Linux 3.14.49 ...'
+	linux	/vmlinuz-3.14.49 root=UUID=478699d8-fa92-4374-a189-a336c2524f65 ro  
+	echo	'Loading initial ramdisk ...'
+	initrd	/initrd.img-3.14.49
+}
+menuentry 'Ubuntu, with Linux 3.14.49, tuned' --class ubuntu --class gnu-linux --class gnu --class os $menuentry_id_option 'gnulinux-3.14.49-advanced-478699d8-fa92-4374-a189-a336c2524f65' {
+	recordfail
+	load_video
+	gfxmode $linux_gfx_mode
+	insmod gzio
+	insmod part_msdos
+	insmod ext2
+	set root='hd0,msdos1'
+	if [ x$feature_platform_search_hint = xy ]; then
+	  search --no-floppy --fs-uuid --set=root --hint-bios=hd0,msdos1 --hint-efi=hd0,msdos1 --hint-baremetal=ahci0,msdos1  73424704-5753-472b-8f28-1c831b9d3f67
+	else
+	  search --no-floppy --fs-uuid --set=root 73424704-5753-472b-8f28-1c831b9d3f67
+	fi
+	echo	'Loading Linux 3.14.49 ...'
+	linux	/vmlinuz-3.14.49 root=UUID=478699d8-fa92-4374-a189-a336c2524f65 ro rcu_nocbs=1-4 rcu_nocb_poll=1 isolcpus=1-4 irqaffinity=0,5-11 nohz_full=1-4 highres=off tsc=perfect intel_iommu=on iommu=pt default_hugepagesz=2M hugepagesz=2M hugepages=4096 nmi_watchdog=0
+	echo	'Loading initial ramdisk ...'
+	initrd	/initrd.img-3.14.49
+}
+

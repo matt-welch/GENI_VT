@@ -1,6 +1,7 @@
 #!/bin/bash
 
 source ../util/ids.sh
+source ../util/bash_colors.sh
 
 function printHeader() {
     echo 
@@ -54,7 +55,7 @@ function installDocker() {
     if [[ -z $DOCKER ]];
     then
         wget -qO- https://get.docker.com/ | sh
-        sudo usermod -aG docker mattwel
+        sudo usermod -aG docker $USER
         sudo service docker start
     fi
     sudo docker run hello-world
@@ -62,19 +63,26 @@ function installDocker() {
 
 function installDPDK() {
     CWD=$(pwd)
+    PACKAGE="dpdk"
+    VERSION="2.0.0"
+    FORMAT="tar.gz"
+    DIRECTORY="${PACKAGE}-${VERSION}"
+    FILENAME="${DIRECTORY}.${FORMAT}"
+    SOURCEURL=
     ### Download, build dpdk
     printHeader  
     echo "Downloading and installing dpdk..."
-    cd ~/
+    cd $HOMEDIR
     mkdir dpdk
     cd dpdk
-    wget http://dpdk.org/browse/dpdk/snapshot/dpdk-2.0.0.tar.gz
-    tar xvf dpdk-2.0.0.tar.gz
-    cd dpdk-2.0.0/
+    wget $SOURCEURL
+    tar xvf $FILENAME
+    cd $DIRECTORY/
 
 cat << EOF > ../RTE_vars.sh
 export RTE_SDK=$(pwd)
 export RTE_TARGET="x86_64-native-linuxapp-gcc"
+export DPDK_VER="${VERSION}"
 EOF
 
     . ../RTE_vars.sh
@@ -90,23 +98,34 @@ EOF
 
 function install_pktgen() {
     CWD=$(pwd)
-    source /users/mattwel/GENI_VT/util/ids.sh
     PACKAGE="pktgen"
     VERSION="2.9.1"
     FORMAT="tar.gz"
     DIRECTORY="${PACKAGE}-${VERSION}"
-    FILENAME="${PACKAGE}-${VERSION}.${FORMAT}"
+    FILENAME="${DIRECTORY}.${FORMAT}"
     SOURCEURL="http://dpdk.org/browse/apps/pktgen-dpdk/snapshot/${FILENAME}"
-    cd /users/${USER}/dpdk
+    cd ${HOMEDIR}/dpdk
     if [[ -f "RTE_vars.sh" ]] ; then 
         . ./RTE_vars.sh
     else
         echo "DPDK is not installed yet.  Exiting..."
         exit
     fi
-
-    echo "Downloading $PACKAGE v$VERSION from $SOURCEURL ... "
-    wget $SOURCEURL
+    SHA256SUM="19fd30f6cc8768045e566b5c0bec9d0b744284728d55eeee1ba70d322d206486  pktgen-2.9.1.tar.gz"
+    DL_FILE=1
+    if [ -f "$FILENAME" ] ; then 
+        echo "File <${FILENAME}> found, checking sha256sum..."
+        if [[ "$(sha256sum $FILENAME)" != "$SHA256SUM" ]] ; then 
+            echo "$(fcn_print_red "$FILENAME does not match sha256sum.")  Downloading..."
+            DL_FILE=1
+        else
+            fcn_print_red "$FILENAME matches sha256sum. Skipping download."
+        fi
+    fi
+    if [[ "DL_FILE" == 1 ]] ; then 
+        echo "Downloading $PACKAGE v$VERSION from $SOURCEURL ... "
+        wget $SOURCEURL
+    fi
     echo "Extracting $FILENAME"
     tar xvf $FILENAME
     cd ${DIRECTORY}
@@ -124,15 +143,15 @@ function collectSysInfo() {
 }
 
 
-if [ "$0" != "/bin/bash" ] ; then 
-    echo this is weird
+if [ "$0" == "/bin/bash" ] ; then 
+    echo "Running function from bash..."
     exit
 fi
 
-FUNCLIST=$(grep function $0 | sed -n -e 's/function \([a-zA-Z_]*\).*{/\1/p')
+FUNCLIST=$(grep function $0 | grep -v FUNC | sed -n -e 's/function \([a-zA-Z_]*\).*{/\1/p')
 if [ -n "$FUNCLIST" ] ; then 
     echo $FUNCLIST
-    PS3="Select an installer function to run: "
+    PS3="Select an installer fcn to run: "
     select RUNFUNC in $FUNCLIST; 
     do 
         echo "Running ${RUNFUNC}()... " && break

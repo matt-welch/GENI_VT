@@ -1,6 +1,7 @@
 #!/bin/bash
 
-PKTGEN="/users/mattwel/dpdk/pktgen-2.9.1/app/app/x86_64-native-linuxapp-gcc/pktgen"
+source ../util/ids.sh
+PKTGEN="${HOMEDIR}/dpdk/pktgen-2.9.1/app/app/x86_64-native-linuxapp-gcc/pktgen"
 
 function mount_hugetlbfs () {
     MOUNTPOINT="/mnt/huge"
@@ -14,10 +15,10 @@ function mount_hugetlbfs () {
 }
 
 function setup_dpdk() {
-    cd ~/dpdk
+    cd ${HOMEDIR}/dpdk
     source RTE_vars.sh
 
-    # assumes DPDK 2.0.0 is already isntalled
+    # assumes DPDK 2.0.0 is already installed
     cd dpdk-2.0.0/${RTE_TARGET}
 
     # insert drivers
@@ -27,9 +28,11 @@ function setup_dpdk() {
     lsmod | grep -e uio -e igb
 
     mount_hugetlbfs 
-    # these interfaces will likely not be correct
-    sudo ifconfig eth1 down
-    sudo ifconfig eth3 down
+    # these interfaces will likely not be correct & should be adjusted for local system
+    IF1=eth10p1
+    IF2=eth10p2
+    sudo ifconfig $IF1 down
+    sudo ifconfig $IF2 down
     cd ${RTE_SDK}/tools/
     ./dpdk_nic_bind.py --status
 

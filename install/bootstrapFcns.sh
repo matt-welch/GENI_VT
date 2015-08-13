@@ -1,7 +1,7 @@
 # local variable definitions
 # Usual directory for downloading software in ProtoGENI hosts is `/local`
 INSTALLDIR="/local"
-HOMEDIR="/users/mattwel"
+source util/ids.sh # contains USER, HOMEDIR, KEY
 LOGDIR=$HOMEDIR/results/logs/
 
 
@@ -70,7 +70,7 @@ function installDocker {
     if [[ -z $DOCKER ]];
     then
         wget -qO- https://get.docker.com/ | sh
-        sudo usermod -aG docker mattwel
+        sudo usermod -aG docker $USER
         sudo service docker start
     fi
     sudo docker run hello-world

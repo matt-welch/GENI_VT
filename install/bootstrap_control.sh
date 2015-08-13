@@ -1,8 +1,7 @@
 #!/bin/bash
 
 FILE=package.tar.bz2 
-KEY="/home/matt/.ssh/id_hp_ubuntu_rsa"
-USER="mattwel"
+source util/ids.sh # contains USER and KEY
 
 # enter the names of the nodes in quesion: 
 # select which nodes to copy to
@@ -13,7 +12,7 @@ else
     echo "Usage:  ./$0 <NODE>"
 fi
 HOST=$(cat nodes.lst | cut -d ' ' -f ${NODE_IX})
-TARGETDIR="/users/${USER}/"
+TARGETDIR=${HOMEDIR}
 
 # scp {keys/, VM image tarball, bootstrap_node.sh}
 if [[ -z $HOST ]] ; then

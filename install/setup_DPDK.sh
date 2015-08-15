@@ -62,7 +62,7 @@ function setup_pktgen () {
 
     fcn_print_red "Setting up pktgen"
 
-    cd pktgen-2.9.1/
+    cd $PKTGEN_HOME
 
 #    BOUND=$($RTE_SDK/tools/dpdk_nic_bind.py --status | grep drv=igb_uio )
 #
@@ -70,6 +70,6 @@ function setup_pktgen () {
 #        echo "ERROR: No interfaces bound to igb_uio"
 #        echo "  use $RTE_SDK/tools/dpdk_nic_bind.py -b igb_uio bb:dd.f "
 #    fi
-    run_pktgen 
+    $GENI_HOME/benchmarks/run_pktgen.sh
 }
 

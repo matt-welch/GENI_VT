@@ -2,9 +2,10 @@
 
 source ${GENI_HOME}/util/ids.sh
 source ${GENI_HOME}/util/bash_colors.sh
+source ${GENI_HOME}/util/sys_vars.sh
 
 BENCHDIR=${GENI_HOME}/benchmarks/
-SERVERIP="192.168.2.3"
+SERVERIP="$IF1_D_IP"
 SERVPORT="65432"
 TCP_NODELAY="-D "
 

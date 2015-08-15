@@ -13,8 +13,8 @@
 IF1_PCI="06:00.0"
 IF1_MAC="00:1b:21:a2:72:48"
 IF1_NAME="eth9"
-IF1_IP="192.168.1.2"
-IF1_D_IP="192.168.1.3"
+IF1_IP="192.168.1.3"
+IF1_D_IP="192.168.1.2"
 IF1_D_MAC="90:e2:ba:0e:4a:34"
 
 #0000:06:00.1 '82599ES 10-Gigabit SFI/SFP+ Network Connection' if=eth10p2 drv=ixgbe unused=igb_uio *Active*
@@ -29,8 +29,8 @@ IF1_D_MAC="90:e2:ba:0e:4a:34"
 IF2_PCI="06:00.1"
 IF2_MAC="00:1b:21:a2:72:49"
 IF2_NAME="eth10"
-IF2_IP="192.168.2.2"
-IF2_D_IP="192.168.2.3"
+IF2_IP="192.168.2.3"
+IF2_D_IP="192.168.2.2"
 IF2_D_MAC="90:e2:ba:0e:4a:35"
 
 

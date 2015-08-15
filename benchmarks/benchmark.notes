@@ -1,0 +1,12 @@
+## pktgen: 
+============
+
+# Setting pktgen addresses for port 0:
+Pktgen> set ip src 0 192.168.1.2/24
+Pktgen> set ip dst 0 192.168.2.2
+
+# set pktgen mac (dst) address (for next hop): 
+Pktgen> set mac 0 00:1b:21:a2:72:48
+Pktgen> set mac 1 00:1b:21:a2:72:48
+
+

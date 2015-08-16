@@ -23,6 +23,7 @@ function mount_hugetlbfs () {
 }
 
 function setup_dpdk() {
+    echo
     fcn_print_red "Setting up DPDK ..."
     cd ${HOMEDIR}/dpdk
     source RTE_vars.sh
@@ -42,17 +43,37 @@ function setup_dpdk() {
 
     mount_hugetlbfs 
 
-    fcn_print_red "Binding $IF1 & $IF2 to igb_uio driver..."
-    sudo ifconfig $IF1 down
-    sudo ifconfig $IF2 down
+    fcn_print_red "Binding $IF1_NAME ($IF1_PCI) & $IF2_NAME ($IF2_PCI) to igb_uio driver..."
+    if [ -n $(ifconfig -a | grep $IF1_NAME) ] ; then 
+        sudo ifconfig $IF1_NAME down
+    fi
+    if [ -n $(ifconfig -a | grep $IF2_NAME) ] ; then 
+        sudo ifconfig $IF2_NAME down
+    fi
     cd ${RTE_SDK}/tools/
+    echo -e "\nInterface status $(fcn_print_red BEFORE) binding"
     ./dpdk_nic_bind.py --status
 
     # after checking the status, bind the igb_uio driver to the data (not eth0) interfaces
     ./dpdk_nic_bind.py -b igb_uio $IF1_PCI $IF2_PCI 
+    echo -e "\nInterface status $(fcn_print_red AFTER) binding"
     ./dpdk_nic_bind.py --status
     fcn_print_red "DPDK setup complete."
 }
+
+function teardown_dpdk () {
+    echo 
+    fcn_print_red "Unbinding interfaces from DPDK drivers and rebinding to ixgbe... "
+    cd $HOMEDIR/dpdk
+    source RTE_vars.sh 
+    cd $RTE_SDK/tools
+
+    ./dpdk_nic_bind.py -u $IF1_PCI $IF2_PCI
+    ./dpdk_nic_bind.py -b ixgbe $IF1_PCI $IF2_PCI
+    ./dpdk_nic_bind.py --status 
+
+}
+
 
 
 function setup_pktgen () {
@@ -60,6 +81,7 @@ function setup_pktgen () {
     cd ~/dpdk
     source RTE_vars.sh
 
+    echo
     fcn_print_red "Setting up pktgen"
 
     cd pktgen-2.9.1/
@@ -70,6 +92,5 @@ function setup_pktgen () {
 #        echo "ERROR: No interfaces bound to igb_uio"
 #        echo "  use $RTE_SDK/tools/dpdk_nic_bind.py -b igb_uio bb:dd.f "
 #    fi
-    run_pktgen 
 }
 

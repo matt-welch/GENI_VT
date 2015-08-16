@@ -1,0 +1,188 @@
+[1;r-----------------------
+  
+     BSD LICENSE
+  
+     Copyright(c) 2010-2015 Intel Corporation. All rights reserved.
+     All rights reserved.
+  
+     Redistribution and use in source and binary forms, with or without
+     modification, are permitted provided that the following conditions
+     are met:
+  
+       * Redistributions of source code must retain the above copyright
+         notice, this list of conditions and the following disclaimer.
+       * Redistributions in binary form must reproduce the above copyright
+         notice, this list of conditions and the following disclaimer in
+         the documentation and/or other materials provided with the
+         distribution.
+       * Neither the name of Intel Corporation nor the names of its
+         contributors may be used to endorse or promote products derived
+         from this software without specific prior written permission.
+  
+     THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+     "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+     LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+     A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+     OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+     LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+     DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+     THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+     (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+     OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  
+-----------------------
+    Copyright (c) <2010-2015>, Wind River Systems, Inc. All rights reserved.
+
+     Redistribution and use in source and binary forms, with or without modification, are
+     permitted provided that the following conditions are met:
+  
+       1) Redistributions of source code must retain the above copyright notice,
+          this list of conditions and the following disclaimer.
+  
+       2) Redistributions in binary form must reproduce the above copyright notice,
+          this list of conditions and the following disclaimer in the documentation and/or
+          other materials provided with the distribution.
+  
+       3) Neither the name of Wind River Systems nor the names of its contributors may be
+          used to endorse or promote products derived from this software without specific
+          prior written permission.
+  
+       4) The screens displayed by the application must contain the copyright notice as defined
+          above and can not be removed without specific prior written permission.
+  
+     THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+     AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+     IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+     ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+     LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+     DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+     CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+     OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
+     USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  
+[0;33m  Pktgen created by: Keith Wiles -- >>> Powered by Intel® DPDK <<<
+[0;34m-----------------------
+EAL: Detected lcore 0 as core 0 on socket 0
+EAL: Detected lcore 1 as core 1 on socket 0
+EAL: Detected lcore 2 as core 2 on socket 0
+EAL: Detected lcore 3 as core 3 on socket 0
+EAL: Detected lcore 4 as core 4 on socket 0
+EAL: Detected lcore 5 as core 5 on socket 0
+EAL: Detected lcore 6 as core 0 on socket 0
+EAL: Detected lcore 7 as core 1 on socket 0
+EAL: Detected lcore 8 as core 2 on socket 0
+EAL: Detected lcore 9 as core 3 on socket 0
+EAL: Detected lcore 10 as core 4 on socket 0
+EAL: Detected lcore 11 as core 5 on socket 0
+EAL: Support maximum 128 logical core(s) by configuration.
+EAL: Detected 12 lcore(s)
+
+Usage: ./app/app/x86_64-native-linuxapp-gcc/pktgen -c COREMASK|-l CORELIST -n CHANNELS [options]
+
+EAL common options:
+  -c COREMASK         Hexadecimal bitmask of cores to run on
+  -l CORELIST         List of cores to run on
+                      The argument format is <c1>[-c2][,c3[-c4],...]
+                      where c1, c2, etc are core indexes between 0 and 128
+  --lcores COREMAP    Map lcore set to physical cpu set
+                      The argument format is
+                            '<lcores[@cpus]>[<,lcores[@cpus]>...]'
+                      lcores and cpus list are grouped by '(' and ')'
+                      Within the group, '-' is used for range separator,
+                      ',' is used for single number separator.
+                      '( )' can be omitted for single element group,
+                      '@' can be omitted if cpus and lcores have the same value
+  --master-lcore ID   Core ID that is used as master
+  -n CHANNELS         Number of memory channels
+  -m MB               Memory to allocate (see also --socket-mem)
+  -r RANKS            Force number of memory ranks (don't detect)
+  -b, --pci-blacklist Add a PCI device in black list.
+                      Prevent EAL from using this PCI device. The argument
+                      format is <domain:bus:devid.func>.
+  -w, --pci-whitelist Add a PCI device in white list.
+                      Only use the specified PCI devices. The argument format
+                      is <[domain:]bus:devid.func>. This option can be present
+                      several times (once per device).
+                      [NOTE: PCI whitelist cannot be used with -b option]
+  --vdev              Add a virtual device.
+                      The argument format is <driver><id>[,key=val,...]
+                      (ex: --vdev=eth_pcap0,iface=eth2).
+  --vmware-tsc-map    Use VMware TSC map instead of native RDTSC
+  --proc-type         Type of this process (primary|secondary|auto)
+  --syslog            Set syslog facility
+  --log-level         Set default log level
+  -v                  Display version information on startup
+  -h, --help          This help
+
+EAL options for DEBUG use only:
+  --no-huge           Use malloc instead of hugetlbfs
+  --no-pci            Disable PCI
+  --no-hpet           Disable HPET
+  --no-shconf         No shared config (mmap'd files)
+
+EAL Linux options:
+  -d LIB.so           Add driver (can be used multiple times)
+  --socket-mem        Memory to allocate on sockets (comma separated values)
+  --huge-dir          Directory where hugetlbfs is mounted
+  --file-prefix       Prefix for hugepage filenames
+  --base-virtaddr     Base virtual address
+  --create-uio-dev    Create /dev/uioX (usually done by hotplug)
+  --vfio-intr         Interrupt mode for VFIO (legacy|msi|msix)
+  --xen-dom0          Support running on Xen dom0 without hugetlbfs
+
+===== Application Usage =====
+
+Usage: ./app/app/x86_64-native-linuxapp-gcc/pktgen [EAL options] -- [-h] [-P] [-G] [-T] [-f cmd_file] [-l log_file] [-s P:PCAP_file] [-m <string>]
+  -s P:file    PCAP packet stream file, 'P' is the port number
+  -f filename  Command file (.pkt) to execute or a Lua script (.lua) file
+  -l filename  Write log to filename
+  -P           Enable PROMISCUOUS mode on all ports
+  -g address   Optional IP address and port number default is (localhost:0x5606)
+               If -g is used that enable socket support as a server application
+  -G           Enable socket support using default server values localhost:0x5606 
+  -N           Enable NUMA support
+  -T           Enable the color output
+  -m <string>  matrix for mapping ports to logical cores
+      BNF: (or kind of BNF)
+      <matrix-string>   := """ <lcore-port> { "," <lcore-port>} """
+      <lcore-port>      := <lcore-list> "." <port-list>
+      <lcore-list>      := "[" <rx-list> ":" <tx-list> "]"
+      <port-list>       := "[" <rx-list> ":" <tx-list>"]"
+      <rx-list>         := <num> { "/" (<num> | <list>) }
+      <tx-list>         := <num> { "/" (<num> | <list>) }
+      <list>            := <num> { "/" (<range> | <list>) }
+      <range>           := <num> "-" <num> { "/" <range> }
+      <num>             := <digit>+
+      <digit>           := 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
+      1.0, 2.1, 3.2                 - core 1 handles port 0 rx/tx,
+                                      core 2 handles port 1 rx/tx
+                                      core 3 handles port 2 rx/tx
+      1.[0-2], 2.3, ...             - core 1 handle ports 0,1,2 rx/tx,
+                                      core 2 handle port 3 rx/tx
+      [0-1].0, [2/4-5].1, ...       - cores 0-1 handle port 0 rx/tx,
+                                      cores 2,4,5 handle port 1 rx/tx
+      [1:2].0, [4:6].1, ...         - core 1 handles port 0 rx,
+                                      core 2 handles port 0 tx,
+      [1:2].[0-1], [4:6].[2/3], ... - core 1 handles port 0 & 1 rx,
+                                      core 2 handles port  0 & 1 tx
+      [1:2-3].0, [4:5-6].1, ...     - core 1 handles port 0 rx, cores 2,3 handle port 0 tx
+                                      core 4 handles port 1 rx & core 5,6 handles port 1 tx
+      [1-2:3].0, [4-5:6].1, ...     - core 1,2 handles port 0 rx, core 3 handles port 0 tx
+                                      core 4,5 handles port 1 rx & core 6 handles port 1 tx
+      [1-2:3-5].0, [4-5:6/8].1, ... - core 1,2 handles port 0 rx, core 3,4,5 handles port 0 tx
+                                      core 4,5 handles port 1 rx & core 6,8 handles port 1 tx
+      [1:2].[0:0-7], [3:4].[1:0-7], - core 1 handles port 0 rx, core 2 handles ports 0-7 tx
+                                      core 3 handles port 1 rx & core 4 handles port 0-7 tx
+      BTW: you can use "{}" instead of "[]" as it does not matter to the syntax.
+  -h           Display the help information
+
+[JMW] BTW, don't use [] or {} at all when making the mapping string - they don't work!!!
+For example: 
+this does not produce the 5-core to T,port0-rx,port0-tx,port1-rx,port1-tx mapping
+    -m "{2:3}.0, {4:5}.1"
+
+but this does
+    -m "2:3.0, 4:5.1"
+

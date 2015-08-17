@@ -4,10 +4,10 @@ if [ -z "$GENI_HOME" ] ; then
     echo "The GENI_HOME variable has not been defined."
 fi
 
-source ${GENI_HOME}/util/ids.sh
-source ${GENI_HOME}/util/bash_colors.sh
-source ${GENI_HOME}/util/sys_vars.sh
-PKTGEN="${HOMEDIR}/dpdk/pktgen-2.9.1/app/app/x86_64-native-linuxapp-gcc/pktgen"
+source $GENI_HOME/util/ids.sh
+source $GENI_HOME/util/bash_colors.sh
+source $GENI_HOME/util/sys_vars.sh
+PKTGEN="$HOMEDIR/dpdk/pktgen-2.9.1/app/app/x86_64-native-linuxapp-gcc/pktgen"
 
 function mount_hugetlbfs () {
     MOUNTPOINT="/mnt/huge"
@@ -25,11 +25,11 @@ function mount_hugetlbfs () {
 function setup_dpdk() {
     echo
     fcn_print_red "Setting up DPDK ..."
-    cd ${HOMEDIR}/dpdk
+    cd $HOMEDIR/dpdk
     source RTE_vars.sh
 
     # assumes DPDK 2.0.0 is already installed & built 
-    cd ${RTE_SDK}/${RTE_TARGET}
+    cd $RTE_SDK/$RTE_TARGET
 
     fcn_print_red "Setting up drivers..."
     # insert drivers
@@ -44,13 +44,13 @@ function setup_dpdk() {
     mount_hugetlbfs 
 
     fcn_print_red "Binding $IF1_NAME ($IF1_PCI) & $IF2_NAME ($IF2_PCI) to igb_uio driver..."
-    if [ -n $(ifconfig -a | grep $IF1_NAME) ] ; then 
+    if [ -n "$(ifconfig -a | grep $IF1_NAME)" ] ; then 
         sudo ifconfig $IF1_NAME down
     fi
-    if [ -n $(ifconfig -a | grep $IF2_NAME) ] ; then 
+    if [ -n "$(ifconfig -a | grep $IF2_NAME)" ] ; then 
         sudo ifconfig $IF2_NAME down
     fi
-    cd ${RTE_SDK}/tools/
+    cd $RTE_SDK/tools/
     echo -e "\nInterface status $(fcn_print_red BEFORE) binding"
     ./dpdk_nic_bind.py --status
 

@@ -25,11 +25,11 @@ function mount_hugetlbfs () {
 function setup_dpdk() {
     echo
     fcn_print_red "Setting up DPDK ..."
-    cd ${HOMEDIR}/dpdk
+    cd $HOMEDIR/dpdk
     source RTE_vars.sh
 
     # assumes DPDK 2.0.0 is already installed & built 
-    cd ${RTE_SDK}/${RTE_TARGET}
+    cd $RTE_SDK/$RTE_TARGET
 
     fcn_print_red "Setting up drivers..."
     # insert drivers
@@ -50,7 +50,7 @@ function setup_dpdk() {
     if [ -n "$(ifconfig -a | grep $IF2_NAME)" ] ; then 
         sudo ifconfig $IF2_NAME down
     fi
-    cd ${RTE_SDK}/tools/
+    cd $RTE_SDK/tools/
     echo -e "\nInterface status $(fcn_print_red BEFORE) binding"
     sudo ./dpdk_nic_bind.py --status
 

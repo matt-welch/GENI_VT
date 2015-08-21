@@ -1,12 +1,12 @@
 #!/bin/bash
 
-IF=eth0
+IF=em0
 BR=br0
 
 ifconfig ${BR} down
 brctl delif ${BR} ${IF}
 brctl delbr ${BR}
-dhclient ${IF}
+ifup $IF
 
 echo "Current interface/bridge status"
 ifconfig $IF

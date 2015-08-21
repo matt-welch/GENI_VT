@@ -1,2 +1,7 @@
 *.tar.bz2
 *.log
+cyclictest
+netperf*
+iperf*
+netserver
+rt-tests

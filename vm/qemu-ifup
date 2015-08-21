@@ -1,0 +1,15 @@
+#!/bin/sh
+SWITCH=br0
+if [ -n "$1" ];then
+    /sbin/ifconfig $1 promisc up
+    sleep 1
+    echo "Adding interface $1 to bridge $SWITCH"
+    /sbin/brctl addif $SWITCH $1
+# only a single bridge so loops are not possible, turn off spanning tree protocol
+    /sbin/brctl stp $SWITCH off
+    exit 0
+else
+    echo "Error: no interface specified"
+    exit 1
+fi
+

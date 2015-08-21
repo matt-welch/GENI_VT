@@ -1,7 +1,7 @@
 #!/bin/bash
 # NOTE: if this is run when the interface is the ONLY interface, 
 # you will lose your SSH connection when the interface goes down
-IF=$(ifconfig | grep 192.168 -B 1 | head -n 1 | cut -d ' ' -f 1)
+IF=em0 # $(ifconfig | grep 192.168 -B 1 | head -n 1 | cut -d ' ' -f 1)
 BR=br0
 
 echo "Creating ${BR} in $0"
@@ -19,5 +19,5 @@ ifconfig ${IF} 0.0.0.0 promisc
 ifconfig ${BR} ${IP_ADDR} netmask ${NETMASK} up
 
 # this line may not be necessary in most cases
-#route add default gw 192.168.83.168 $BR
+route add default gw 192.168.42.1 $BR
 

@@ -1,7 +1,7 @@
 #!/bin/bash
 
-source ../util/ids.sh
-source ../util/bash_colors.sh
+source $GENI_HOME/util/ids.sh
+source $GENI_HOME/util/bash_colors.sh
 
 function printHeader() {
     echo 
@@ -14,7 +14,7 @@ function installPackages() {
     ### install useful tools
     sudo apt-get update 
     # install utilities
-    sudo apt-get install -y vim ethtool screen qemu-kvm exuberant-ctags apparmor bridge-utils libpcap-dev
+    sudo apt-get install -y vim ethtool screen qemu-kvm exuberant-ctags apparmor bridge-utils libpcap-dev nfs-kernel-server
     # NOTE: apparmor is to enable docker; 
     # http://stackoverflow.com/questions/29294286/fata0000-get-http-var-run-docker-sock-v1-17-version-dial-unix-var-run-doc
 }
@@ -41,9 +41,9 @@ function installExptTools() {
     ### make links to start scripts & qemu-ifup
     printHeader  
     echo "Preparing vm files..."
-    sudo ln -s ~/GENI_VT/startvm.sh ~/images/startvm.sh
+    sudo ln -s $GENI_HOME/GENI_VT/vm/startvm.sh ~/images/vm/startvm.sh
     sudo mv /etc/qemu-ifup ./qemu-ifup.orig
-    sudo ln -s ~/GENI_VT/qemu-ifup /etc/qemu-ifup
+    sudo ln -s $GENI_HOME/GENI_VT/vm/qemu-ifup /etc/qemu-ifup
 }
     
 function installDocker() {

@@ -21,7 +21,12 @@ CLR_LCY='\033[1;36m' # Light Cyan
 CLR_WHT='\033[1;37m' # White
 CLR_NON='\033[0m'    # None
 
-function fcn_print_red() {
+function fcn_print_red(){
     OUTPUT="$1"
-    printf "${CLR_RED}${OUTPUT}${CLR_NON}\n"
+    CR_TYPE="\n"
+    if [ -n "$2" ] ; then 
+        # suppress carriage return if any 2nd argument
+        CR_TYPE=""
+    fi
+    printf "${CLR_RED}${OUTPUT}${CLR_NON}${CR_TYPE}"
 }

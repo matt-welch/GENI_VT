@@ -1,6 +1,6 @@
 #!/bin/bash
 # file : startvm_standard.sh
-# desc : 
+# desc : standard VM, not performance tuned
 # 
 
 source $GENI_HOME/vm/startvm_common_vars.sh

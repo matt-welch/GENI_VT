@@ -7,20 +7,9 @@ fi
 source $GENI_HOME/util/ids.sh
 source $GENI_HOME/util/bash_colors.sh
 source $GENI_HOME/util/sys_vars.sh
+source $GENI_HOME/util/memory_fcns.sh
+
 PKTGEN="$HOMEDIR/dpdk/pktgen-2.9.1/app/app/x86_64-native-linuxapp-gcc/pktgen"
-
-function mount_hugetlbfs () {
-    MOUNTPOINT="/mnt/huge"
-    sudo mkdir -p $MOUNTPOINT
-    ISMOUNTED=$(mount | grep hugetlbfs)
-
-    if [[ -z "$ISMOUNTED" ]] ; then 
-        fcn_print_red "Mounting hugetlbfs ... "
-        sudo mount -t hugetlbfs none $MOUNTPOINT
-    fi
-    fcn_print_red "HugeTLB FS mount: "
-    mount | grep hugetlbfs
-}
 
 function setup_dpdk() {
     echo

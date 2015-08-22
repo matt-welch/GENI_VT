@@ -10,37 +10,39 @@ source $GENI_HOME/vm/startvm_common_vars.sh
 CPUTYPE="host,level=9"
 NAME="node1_vm_perf"
 DEBUG="debug"
-KERNEL="$GENI_HOME/images/vmlinuz-3.16.0-30-generic"
-KERN_OPTS="console=ttyS0 console=tty0 isolcpus=1-3 irqaffinity=0 rcu_nocbs=1-4 rcu_nocb_poll=1 clocksource=tsc tsc=perfect nohz_full=1-3 highres=off ${HUGE} selinux=0 enforcing=0 $DEBUG raid=noautodetect" 
-
-CUSTOM_KERNEL=""
-if [[ true ]] ; then 
-CUSTOM_KERNEL="-kernel $KERNEL \
-    -append \"root=/dev/sda1 $KERN_OPTS $NET_CONFIG \" \
-"
-fi
+KERNEL_STD="$GENI_HOME/vm/vmlinuz-3.14.49"
+KERNEL_RT="$GENI_HOME/vm/vmlinuz-3.14.49-rt50"
+# NOTE: in append line, sda1 is boot partition, root partition is sda2
+HUGE="" # remove hugepages from kernel params for debugging
+ROOTDIR="root=/dev/sda2 "
+PARAMS="acpi=off console=ttyS0 console=tty0 isolcpus=1-3 irqaffinity=0 rcu_nocbs=1-4 rcu_nocb_poll=1 clocksource=tsc tsc=reliable nohz_full=1-3 $HUGE selinux=0 enforcing=0 $DEBUG raid=noautodetect"
+KERNEL=$KERNEL_STD 
+KERN_OPTS="${ROOTDIR} ${PARAMS}"
 
 # start the bridge if it's not running
 if [ "$(/sbin/ifconfig | grep ^br0)" = "" ]; then
-    ./startbr.sh
+    $GENI_HOME/vm/startbr.sh
 fi
 
-check_hugepage_status 
+check_hugepages
 EXITCODE="$?"
 if [ "$EXITCODE" == 1 ] ; then 
-    echo "Hugepage failure ... Exiting $0 "
-    return $EXITCODE
+    echo "Hugepage failure ... Aborting $0 "
+    exit $EXITCODE
 fi
 
-qemu-system-x86_64 \
+echo "Kernel: $KERNEL"
+echo "Parameters: \" $KERN_OPTS \"" 
+
+COMMAND="qemu-system-x86_64 \
     -enable-kvm \
     -name $NAME \
     -cpu $CPUTYPE \
     -smp 4 \
     -m 4096 \
-    -hda $GENI_HOME/ubuntu.img \
+    -hda $GENI_HOME/vm/ubuntu.img \
     -kernel $KERNEL \
-    -append "root=/dev/sda1 $KERN_OPTS $NET_CONFIG " \
+    -append \"$KERN_OPTS\" \
     -mem-path /mnt/huge \
     -realtime mlock=on \
     -mem-prealloc \
@@ -49,11 +51,15 @@ qemu-system-x86_64 \
     -vnc :1 \
     -monitor telnet::${TELNET_PORT},server,nowait \
     $QEMU_NET_TAP \
+    $QEMU_NET_VF \
     $QEMU_SSH_REDIR \
     -nographic \
-    -serial stdio
+    -serial stdio"
 
-reset # when using "-serial stdio", terminal gets weird after qemu exits so reset it
+echo $COMMAND
+eval "$COMMAND"
+
+#reset # when using "-serial stdio", terminal gets weird after qemu exits so reset it
 
 #
 #  I don't think these work - they may disable the vnc server

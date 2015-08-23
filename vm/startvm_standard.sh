@@ -1,13 +1,13 @@
 #!/bin/bash
 # file : startvm_standard.sh
 # desc : standard VM, not performance tuned
-# 
 
 source $GENI_HOME/vm/startvm_common_vars.sh
 
 # variables specific to this particular VM configuration
 CPUTYPE="host,level=9"
 NAME="node1_vm_std"
+SYSIMG="-hda $GENI_HOME/vm/ubuntu.img "
 
 # start the bridge if it's not running
 if [ "$(/sbin/ifconfig | grep ^br0)" = "" ]; then
@@ -16,18 +16,19 @@ fi
 
 COMMAND="qemu-system-x86_64 \
     -enable-kvm \
-    -name $NAME \
     -cpu $CPUTYPE \
     -smp 4 \
     -m 4096 \
-    -hda $GENI_HOME/vm/ubuntu.img \
     -no-hpet \
+    -name $NAME \
+    $SYSIMG \
     -no-reboot \
     -vnc :1 \
     -monitor telnet::${TELNET_PORT},server,nowait \
     $QEMU_NET_TAP \
-    $QEMU_SSH_REDIR \
+    $QEMU_NET_VF \
     -daemonize"
+
 echo $COMMAND
 eval "$COMMAND"
 

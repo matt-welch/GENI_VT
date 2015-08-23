@@ -1,7 +1,7 @@
 #!/bin/bash
 # file : startvm_performance.sh
-# desc : 
-#
+# desc : VM with performance tuning incl. kernel tuning + NFS root
+#        TODO: input arguments can select NFS or local HDD
 
 # below contains variables that should not change between VMs (Telnet port, etc)
 source $GENI_HOME/vm/startvm_common_vars.sh
@@ -18,6 +18,7 @@ ROOTDIR="root=/dev/sda2 "
 PARAMS="acpi=off console=ttyS0 console=tty0 isolcpus=1-3 irqaffinity=0 rcu_nocbs=1-4 rcu_nocb_poll=1 clocksource=tsc tsc=reliable nohz_full=1-3 $HUGE selinux=0 enforcing=0 $DEBUG raid=noautodetect"
 KERNEL=$KERNEL_STD 
 KERN_OPTS="${ROOTDIR} ${PARAMS}"
+SYSIMG="-hda $GENI_HOME/vm/ubuntu.img -kernel $KERNEL -append \"$KERN_OPTS\" "
 
 # start the bridge if it's not running
 if [ "$(/sbin/ifconfig | grep ^br0)" = "" ]; then
@@ -36,25 +37,18 @@ echo "Parameters: \" $KERN_OPTS \""
 
 COMMAND="qemu-system-x86_64 \
     -enable-kvm \
-    -name $NAME \
     -cpu $CPUTYPE \
     -smp 4 \
-    -m 4096 \
-    -hda $GENI_HOME/vm/ubuntu.img \
-    -kernel $KERNEL \
-    -append \"$KERN_OPTS\" \
-    -mem-path /mnt/huge \
-    -realtime mlock=on \
-    -mem-prealloc \
+    -m 4096 -mem-path /mnt/huge -realtime mlock=on -mem-prealloc \
     -no-hpet \
+    -name $NAME \
+    $SYSIMG \
     -no-reboot \
     -vnc :1 \
     -monitor telnet::${TELNET_PORT},server,nowait \
     $QEMU_NET_TAP \
     $QEMU_NET_VF \
-    $QEMU_SSH_REDIR \
-    -nographic \
-    -serial stdio"
+    -nographic -serial stdio"
 
 echo $COMMAND
 eval "$COMMAND"

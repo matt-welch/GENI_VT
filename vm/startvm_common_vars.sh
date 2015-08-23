@@ -26,6 +26,6 @@ GOS_NAME="ubuntu-vm"
 NET_CONFIG="ip=${GOS_IP}:${NFS_IP}:${GATEWAY}:${NETMASK}:${GOS_NAME}:eth0:off"
 
 CPU="-enable-kvm -cpu $CPUTYPE -smp 4 "
-MEM="-mem 4096 "
-MEM_PERF="-realtime mlock=on -mem-path /path/to/mem -mem-prealloc "
+MEMSIZE="-mem 4096 "
+MEM_PERF="-realtime mlock=on -mem-path /mnt/huge -mem-prealloc "
 

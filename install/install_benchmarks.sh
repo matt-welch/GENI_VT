@@ -1,8 +1,8 @@
 #!/bin/bash
 
 cd $GENI_HOME
-source ${GENI_HOME}/util/ids.sh # contains USER, HOMEDIR, KEY
-source ${GENI_HOME}/util/bash_colors.sh
+source $GENI_HOME/util/ids.sh # contains USER, HOMEDIR, KEY
+source $GENI_HOME/util/bash_colors.sh
 KERNELGIT=git://git.kernel.org/pub/scm/linux/kernel/git
 BENCH_LIST="iperf cyclictest netperf"
 ALL_BENCHMARKS=$(sed -n -e 's/THIS_BENCH=\([a-z\-]*\)/\1/p' \
@@ -32,6 +32,13 @@ function install_iperf() {
     fi
 }
 
+function install_dependencies_cyclictest() {
+    if [[ -z $(which apt-get) ]] ; then 
+        sudo yum install -y numactl-devel.x86_64
+    else
+        sudo apt-get install -y build-essential libnuma-dev
+    fi
+}
 function install_cyclictest() {
     THIS_BENCH=rt-tests
     if [[ -d $THIS_BENCH ]] ; then
@@ -42,7 +49,7 @@ function install_cyclictest() {
             echo "An error has occurred - $THIS_BENCH installation has failed"
         fi
     else
-        sudo apt-get install -y build-essential libnuma-dev
+        install_dependencies_cyclictest
         git clone https://git.kernel.org/pub/scm/linux/kernel/git/clrkwllms/rt-tests.git
         cd rt-tests
         make -j $(nproc)

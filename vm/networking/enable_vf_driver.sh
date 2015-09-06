@@ -4,7 +4,7 @@ source $GENI_HOME/util/bash_colors.sh
 DEVICE_HOME="/sys/bus/pci/devices"
 
 function usage () {
-    echo "Usage: $0 <device BB:DD.F> [num_vfs] "
+    echo -e "\n\tUsage: $0 <device BB:DD.F> [num_vfs] \n"
 }
 
 if [[ -z "$1" ]] ; then 
@@ -29,7 +29,7 @@ function errorMsg(){
 }
 
 function selectNumVFs(){
-    VF_LIST=$(seq  $SRIOV_TOTALVFS)
+    VF_LIST=$(seq  0 $SRIOV_TOTALVFS)
     showVFs
     echo "Select how many virtual functions (VFs) you want enabled: "
     PS3="Desired number of VFs for $DEVICE_BDF = "
@@ -46,23 +46,21 @@ function selectNumVFs(){
 }
 
 function setNumVFs(){
-    if (( "$SRIOV_NUMVFS" < "$DESIRED_NUMVFS" )) ; then 
+    echo SRIOV_NUMVFS = $SRIOV_NUMVFS
+    echo DESIRED_NUMVFS = $DESIRED_NUMVFS
         fcn_print_red "Before change:"
         showVFs
         read -p "Are you sure you want to change the sriov_numvfs for this device to $DESIRED_NUMVFS? (y/N): " -n 1 input
         echo
         if [[ "$input" == "y" ]] ; then 
             echo "Setting the number of SRIOV Virtual Functions for device $DEVICE_BDF to $DESIRED_NUMVFS ..."
-            #echo $DESIRED_NUMVFS > $TARGET
+            sleep 2 
+            echo $DESIRED_NUMVFS > $TARGET
             fcn_print_red "After change:"
             showVFs
         else
             echo "Aborted."
         fi
-    else
-        errorMsg
-        exit 1
-    fi
 }
 
 if [[ -z "$2" ]] ; then 
@@ -71,7 +69,7 @@ if [[ -z "$2" ]] ; then
 else
     # use bash built-in character classes to verify numeric argument
     if [[ "$2" = *[[:digit:]]* ]]; then
-        if (( "$2" < "1" )) ; then 
+        if (( "$2" < "0" )) ; then 
             fcn_print_red "The numvfs may not be negative. Aborting."
             exit 1 
         fi
@@ -83,10 +81,13 @@ else
 fi
 
 # check if asking for too many vf's for this device
-if (( "$DESIRED_NUMVFS" > "$SRIOV_TOTALVFS" )) ; then 
-    errorMsg
-else
+echo Available=$SRIOV_TOTALVFS Requested=$DESIRED_NUMVFS
+if (( "$DESIRED_NUMVFS" <= "$SRIOV_TOTALVFS" )) ; then 
+    echo "Setting $DESIRED_NUMVFS vfs for $DEVICE_BDF" 
     setNumVFs
+else
+    echo "Error" 
+    errorMsg
 fi
 
 

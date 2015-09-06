@@ -7,11 +7,39 @@ source $GENI_HOME/vm/startvm_common_vars.sh
 # variables specific to this particular VM configuration
 CPUTYPE="host,level=9"
 NAME="node1_vm_std"
-SYSIMG="-hda $GENI_HOME/vm/ubuntu.img "
+SYSIMG="-hda $GENI_HOME/vm/ubuntuLg.img "
+
+# one virtual function from eth1 for internet/control (enable_vfs)
+CONTROL_DEVICE="09:10.1"
+if [ -z "$(lspci | grep $CONTROL_DEVICE)" ] ; then 
+    echo "$0: ERROR: Control network interface device <$CONTROL_DEVICE> not available."
+    exit
+fi
+NET_CONTROL="-net none -device pci-assign,host=${CONTROL_DEVICE} " 
+
+# one physical function from p258p1 for data (disable virtual functions)
+P258P1_PF="04:00.0"
+# one virtual function from p258p1 for VF-data (enable_vfs)
+P258P1_VF="04:10.0"
+
+DATA_DEVICE="$P258P1_PF"
+if [ -z "$(lspci | grep $DATA_DEVICE)" ] ; then 
+    echo "$0: ERROR: Data network interface device <$DATA_DEVICE> not available."
+    exit
+fi
+NET_DATA="-device pci-assign,host=${DATA_DEVICE} "   
+
+# bridged tap interface for alternate data traffic path
+NET_DATA_TAP="-netdev tap,id=mattap0 -device virtio-net-pci,netdev=mattap0 "
+
 
 # start the bridge if it's not running
 if [ "$(/sbin/ifconfig | grep ^br0)" = "" ]; then
-    $GENI_HOME/vm/startbr.sh
+    $GENI_HOME/vm/networking/startbr.sh
+else
+    echo "Bridge br0 already up: "
+    ifconfig br0
+    route -vn | grep br0
 fi
 
 COMMAND="qemu-system-x86_64 \
@@ -22,11 +50,11 @@ COMMAND="qemu-system-x86_64 \
     -no-hpet \
     -name $NAME \
     $SYSIMG \
-    -no-reboot \
     -vnc :1 \
     -monitor telnet::${TELNET_PORT},server,nowait \
-    $QEMU_NET_TAP \
-    $QEMU_NET_VF \
+    $NET_CONTROL \
+    $NET_DATA \
+    $NET_DATA_TAP \
     -daemonize"
 
 echo $COMMAND

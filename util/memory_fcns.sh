@@ -6,9 +6,10 @@ function check_hugepages() {
     NUM_HUGEPG=$(cat /proc/sys/vm/nr_hugepages)
     if [[ "$NUM_HUGEPG" == "0" ]] ; then 
         echo "Error: no hugepages available" 
-        exit 1 
+        return 1 
     else
         echo "Hugepages=${NUM_HUGEPG}"
+        return 0
     fi
 }
 

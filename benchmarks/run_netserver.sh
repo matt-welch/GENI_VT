@@ -1,12 +1,9 @@
 #!/bin/bash
 
-source ${GENI_HOME}/util/ids.sh
-source ${GENI_HOME}/util/bash_colors.sh
-
-BENCHDIR=${GENI_HOME}/benchmarks/
+BENCHDIR=/root/benchmarks/
 
 cd $BENCHDIR
 
-./netserver -D -p 65432
-
+# taskset the server to a core for more reliable results
+taskset 0x2 ./netserver -p 65432
 

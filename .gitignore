@@ -13,3 +13,4 @@ kernel/patches/3*
 kernel/patches/*.log
 kernel/patches/*.html
 tags
+index.html

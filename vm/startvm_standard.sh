@@ -42,7 +42,7 @@ else
     route -vn | grep br0
 fi
 
-COMMAND="qemu-system-x86_64 \
+COMMAND="taskset 0x2 qemu-system-x86_64 \
     -enable-kvm \
     -cpu $CPUTYPE \
     -smp 4 \
@@ -60,6 +60,7 @@ COMMAND="qemu-system-x86_64 \
 echo $COMMAND
 eval "$COMMAND"
 
+ps -ef | grep qemu 
 #reset # when using "-serial stdio", terminal gets weird after qemu exits so reset it
 
 #

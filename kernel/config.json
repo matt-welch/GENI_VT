@@ -87,6 +87,7 @@
         }
         {
             "Symbol": "CONFIG_BRIDGE",
+            "Target": "host",
             "Value": "y",
             "Location": "Networking support | Networking options",
             "Prompt": "802.1d Ethernet Bridging"
@@ -127,5 +128,87 @@
             "Location": "General Setup | RCU Subsystem",
             "Prompt": "Offload RCU callback processing from boot-selected CPUs"
         }
-}
+        {
+            "Symbol": "CONFIG_RCU_NOCB_CPU_ALL",
+            "Value": "y",
+            "Location": "General Setup | RCU Subsystem",
+            "Prompt": "Offload RCU callback processing from boot-selected CPUs"
+        }
+This option forces all CPUs to be no-CBs CPUs.  The rcu_nocbs= boot parameter will be ignored.  All CPUs' RCU callbacks will be executed in the context of per-CPU rcuo kthreads created for this purpose.  Assuming that the kthreads whose names start with "rcuo" are bound to "housekeeping" CPUs, this reduces OS jitter on the remaining CPUs, but might decrease memory locality during RCU-callback invocation, thus potentially degrading throughput. Select this if all CPUs need to be no-CBs CPUs for real-time or energy-efficiency reasons. }
 
+Host options: 
+netfilter/IPTables for Docker NAT
+{
+    "kernelConfig": "realtime-guest",
+    "configuration": [
+        {
+            "Symbol": "CONFIG_IP_PNP",
+            "Target": "guest",
+            "Value": "y",
+            "Location": "Networking support | Networking options",
+            "Prompt": "802.1d Ethernet Bridging"
+        }
+File Systems | Network File Systems | NFS Client Support = y
+File Systems | Network File Systems | NFS Client Support for NFS version 4 = y
+NFS client support for NFS version 2 = y
+NFS client support for NFS version 3 = y
+ NFS client support for the NFSv3 ACL protocol extension = y
+CONFIG_ROOT_NFS, Root file system on NFS = y
+Networking Support | Networking Options | TCP/IP Networking | CONFIG_IP_PNP, IP: kernel level autoconfiguration, y
+CONFIG_IP_PNP_DHCP, y
+
+
+
+
+    {From menuconfig: 
+        "To configure a system which mounts its root file system via NFS at boot time, say Y here (CONFIG_NFS_FS), select "Kernel level IP autoconfiguration" (CONFIG_IP_PNP) in the NETWORK menu, and select "Root file system on NFS" (CONFIG_ROOT_FS) below.  You cannot compile this file system as a module in this case."
+
+            Following are the kernel configuration parameters that are required for NFS root in the guest: 
+            root@ubu-g2:/usr/src/kernels/linux-3.7.10# cat .config | grep -i -e nfs -e ip_pnp
+            CONFIG_LOCALVERSION="-NFSMOUNT"
+            CONFIG_IP_PNP=y
+            CONFIG_IP_PNP_DHCP=y
+# CONFIG_IP_PNP_BOOTP is not set
+# CONFIG_IP_PNP_RARP is not set
+            CONFIG_NFS_FS=y
+            CONFIG_NFS_V2=y
+            CONFIG_NFS_V3=y
+            CONFIG_NFS_V3_ACL=y
+            CONFIG_NFS_V4=y
+# CONFIG_NFS_SWAP is not set
+# CONFIG_NFS_V4_1 is not set
+            CONFIG_ROOT_NFS=y
+# CONFIG_NFS_USE_LEGACY_DNS is not set
+            CONFIG_NFS_USE_KERNEL_DNS=y
+            CONFIG_NFSD=m
+            CONFIG_NFSD_V2_ACL=y
+            CONFIG_NFSD_V3=y
+            CONFIG_NFSD_V3_ACL=y
+            CONFIG_NFSD_V4=y
+# CONFIG_NFSD_FAULT_INJECTION is not set
+            CONFIG_NFS_ACL_SUPPORT=y
+            CONFIG_NFS_COMMON=y
+            CONFIG_NCPFS_NFS_NS=y
+
+            Following are the kernel configuration parameters that are required for NFS in the host: 
+            root@ubu2-host:/usr/src/linux# cat .config | grep -i -e nfs -e ip_pnp
+# CONFIG_IP_PNP is not set
+            CONFIG_NFS_FS=m
+            CONFIG_NFS_V2=y
+            CONFIG_NFS_V3=y
+            CONFIG_NFS_V3_ACL=y
+            CONFIG_NFS_V4=y
+# CONFIG_NFS_V4_1 is not set
+            CONFIG_NFS_FSCACHE=y
+# CONFIG_NFS_USE_LEGACY_DNS is not set
+            CONFIG_NFS_USE_KERNEL_DNS=y
+            CONFIG_NFSD=m
+            CONFIG_NFSD_V2_ACL=y
+            CONFIG_NFSD_V3=y
+            CONFIG_NFSD_V3_ACL=y
+            CONFIG_NFSD_V4=y
+# CONFIG_NFSD_FAULT_INJECTION is not set
+            CONFIG_NFS_ACL_SUPPORT=m
+            CONFIG_NFS_COMMON=y
+            CONFIG_NCPFS_NFS_NS=y
+    }

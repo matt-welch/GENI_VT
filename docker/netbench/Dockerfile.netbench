@@ -1,0 +1,26 @@
+FROM bench/base:ubuntu
+LABEL benchmark="netperf-2.7.0"
+LABEL runme="docker run --rm=true --name=netserver bench/network:netperf"
+LABEL CMD_notes="launch netserver, on port 65432, un-daemonized"
+ENV SERVER_PORT="65432"
+WORKDIR /root/
+
+# install benchmark packages
+RUN wget ftp://ftp.netperf.org/netperf/netperf-2.7.0.tar.bz2 && \
+    tar xvf netperf-2.7.0.tar.bz2 && \
+    cd netperf-2.7.0 && \
+    ./configure && \
+    make && \
+    cd /root && \
+    ln -s /root/netperf-2.7.0/src/netserver /root/netserver && \
+    ln -s /root/netperf-2.7.0/src/netperf /root/netperf 
+
+CMD ["/root/netserver","-p","65432","-D"]
+
+# this Dockerfile has been verified to operate correctly up to here
+# TODO
+# cyclictest will also require libnuma-dev
+# it may be easier to download the needed files into the host then copy them into the container, maybe with an ADD instruction like; 
+# 
+# VOLUME ["/root/banchmarks"] 
+# the ADD instruction will untar automatically 

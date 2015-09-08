@@ -1,0 +1,21 @@
+# start with ubuntu:latest as base image 
+FROM ubuntu:latest
+MAINTAINER "Matt Welch <matt.welch@intel.com>"
+WORKDIR /root/
+LABEL Description="This image is used to perform benchmarking in containers" 
+
+# set environment variables
+ENV http_proxy="http://proxy.ch.intel.com:911" \
+    https_proxy="http://proxy.ch.intel.com:911" \
+    ftp_proxy="http://proxy.ch.intel.com:911" \
+    HTTP_PROXY="http://proxy.ch.intel.com:911" \
+    NO_PROXY="localhost,127.0.0.0/8"
+
+# update software packages in container
+RUN echo "Acquire::http::Proxy \"$http_proxy\";" >> /etc/apt/apt.conf && \
+    apt-get update && \
+    apt-get -y install git wget build-essential && \
+    rm -rf /var/lib/apt/lists/* 
+
+CMD ["/bin/bash"]
+

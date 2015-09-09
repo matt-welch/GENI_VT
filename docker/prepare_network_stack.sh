@@ -7,7 +7,7 @@ function usage () {
     echo "e.g. $0 silly_stallman eth7 192.168.2.2/24      "
     echo
     echo "Ethernet interfaces:"
-    ifconfig | grep "inet addr" -B1 | grep -e "^\([a-z0-9]\)*" -e "\([0-9.]\)*" --color
+    ifconfig -a | grep -e "Link" -e "inet addr" | grep -e "^\([a-z0-9]\)*" -e "\([0-9.]\)*" --color
     echo
     echo "docker images (running containers):"
     docker ps

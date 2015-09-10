@@ -4,7 +4,7 @@ source $GENI_HOME/util/ids.sh
 source $GENI_HOME/util/bash_colors.sh
 source $GENI_HOME/util/sys_vars.sh
 
-BENCHDIR=${GENI_HOME}/benchmarks/
+BENCHDIR=$GENI_HOME/benchmarks/
 SERVERIP="-H $IF2_D_IP "
 SERVPORT="-p 65432 "
 VERBOSITY="-v 4 "

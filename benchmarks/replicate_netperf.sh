@@ -8,7 +8,11 @@ REQ_RESP_SIZE="-r 1,1 "
 TCP_NODELAY="-D "
 # show remote CPU usage, keep additional timing stats
 GLOBAL_OPTS=" -C -j "
-REPS=20
+if [ -z "$3" ] ; then 
+    REPS=1
+else
+    REPS=$3
+fi
 CORE=0x2
 function usage (){
     echo "Usage: $0 <SERVER_IP> <PORT>"

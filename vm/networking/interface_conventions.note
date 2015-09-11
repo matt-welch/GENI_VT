@@ -1,0 +1,13 @@
+Control interface               = 192.168.42.240/28
+Data interface (bridge)         = 192.168.2.0/24
+Data interface (direct phys)    = 192.168.3.0/24
+
+DUT-Host = 192.168.X.1
+DUT-VM   = 192.168.X.21
+DUT-Cont = 192.168.X.31
+GEN-Host = 192.168.X.3
+
+DUT                     GEN
+p258p1, 192.168.2.1     eth9, 192.168.2.3
+p258p1, 192.168.3.1     eth9, 192.168.3.3
+

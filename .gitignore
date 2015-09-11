@@ -15,3 +15,4 @@ kernel/patches/*.html
 tags
 index.html
 *.tar.gz
+TODO*

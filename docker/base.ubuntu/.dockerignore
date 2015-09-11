@@ -1,0 +1,7 @@
+*.iso
+*.img
+*Dockerfile*
+*TODO*
+build*.sh
+
+

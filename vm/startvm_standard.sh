@@ -47,7 +47,6 @@ COMMAND="taskset 0x2 qemu-system-x86_64 \
     -cpu $CPUTYPE \
     -smp 4 \
     -m 4096 \
-    -no-hpet \
     -name $NAME \
     $SYSIMG \
     -vnc :1 \
@@ -60,7 +59,7 @@ COMMAND="taskset 0x2 qemu-system-x86_64 \
 echo $COMMAND
 eval "$COMMAND"
 
-ps -ef | grep qemu 
+ps -ef | grep qemu --color
 #reset # when using "-serial stdio", terminal gets weird after qemu exits so reset it
 
 #

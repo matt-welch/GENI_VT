@@ -39,7 +39,7 @@ DRIVER=$(lspci -ks $DEVICE_BDF | grep "Kernel driver" | cut -d ":" -f 2 | tr -d 
 DEVICE_ID="$DEVICE_VENDOR $DEVICE_NUM"
 
 
-read -p "Are you sure you want to unbind device \"$DEVICE_BDF\" ($DEVICE_ID) from its driver \"$DRIVER\"?" -n 1 input
+read -p "Are you sure you want to unbind device \"$DEVICE_BDF\" ($DEVICE_ID) from its driver \"$DRIVER\"? " -n 1 input
 echo
 if [[ "$input" == "y" ]] ; then 
     unbindDevice

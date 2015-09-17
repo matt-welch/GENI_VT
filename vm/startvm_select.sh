@@ -1,9 +1,8 @@
 #!/bin/bash
-# file : startvm_performance.sh
-# desc : VM with performance tuning incl. kernel tuning + NFS root
+# file : startvm_select.sh
+# desc : VM with command line args to select options
 #        TODO: input arguments can select NFS or local HDD
 
-# below contains variables that should not change between VMs (Telnet port, etc)
 source $GENI_HOME/vm/startvm_common_vars.sh
 KERNTYPE="$1" # kernel type can be [norm] or rt
 TUNETYPE="$2" # tuning tupe can be full or [none]
@@ -14,14 +13,13 @@ CPUTYPE="host,level=9"
 DEBUG="debug"
 KERNEL_STD="$GENI_HOME/vm/vmlinuz-3.14.49"
 KERNEL_RT="$GENI_HOME/vm/vmlinuz-3.14.49-rt50"
+
+# selection possibilities for system image and kernel (go in -append arg of qemu)
 # NOTE: in append line, sda1 is boot partition, root partition is sda2
-HUGE="" # remove hugepages from kernel params for debugging
-
-# selection possibilities for system image and kernel 
 LOCALROOT="root=/dev/sda2 "
-LOCALHDD="-hda $GENI_HOME/vm/ubuntu.img "
-NO_PARAMS="console=ttys0 console=tty0 raid=noautodetect $HUGE"
-
+LOCALHDD="-hda /home/matt/GENI_VT/vm/ubuntuLg.img "
+NO_PARAMS="console=ttys0 console=tty0 raid=noautodetect "
+#-----
 NFSROOT="root=/dev/nfs rw nfsroot=${NFS_IP}:${NFS_ROOTDIR} -rootfs $NET_CONFIG "
 RT_PARAMS="acpi=off console=ttyS0 console=tty0 isolcpus=1-3 irqaffinity=0 rcu_nocbs=1-4 rcu_nocb_poll=1 clocksource=tsc tsc=reliable nohz_full=1-3 $HUGE selinux=0 enforcing=0 $DEBUG raid=noautodetect"
 
@@ -54,6 +52,7 @@ case "$TUNETYPE" in
 none)  echo "Using no kernel parameter tuning."
     PARAMS="$NO_PARAMS"
     MEM_CONFIG="$MEMSIZE"
+    HUGE=""
     ;;
 full)  echo  "Using maximal isolation tuning ($PARAMS)."
     PARAMS="$RT_PARAMS"
@@ -87,7 +86,11 @@ if [ "$(/sbin/ifconfig | grep ^br0)" = "" ]; then
     $GENI_HOME/vm/startbr.sh
 fi
 
-check_hugepages
+if [[ -n "$HUGE" ]] ; then 
+    check_hugepages
+    mount_hugetlbfs
+fi
+
 EXITCODE="$?"
 if [ "$EXITCODE" == 1 ] ; then 
     echo "Hugepage failure ... Aborting $0 "

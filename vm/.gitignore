@@ -1,3 +1,6 @@
 *.img
 *.iso
 vmlinu*
+*.pid
+work
+output*

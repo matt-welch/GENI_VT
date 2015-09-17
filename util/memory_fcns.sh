@@ -14,22 +14,27 @@ function check_hugepages() {
 }
 
 function check_hugepage_status () {
-    # this functino is here for nackward compatiibility
+    # this function is here for backward compatiibility
     check_hugepages 
 }
 
 function mount_hugetlbfs () {
-    check_hugepages 
-
-    MOUNTPOINT="/mnt/huge"
-    sudo mkdir -p $MOUNTPOINT
-    ISMOUNTED=$(mount | grep hugetlbfs)
-
-    if [[ -z "$ISMOUNTED" ]] ; then 
-        fcn_print_red "Mounting hugetlbfs ... "
-        sudo mount -t hugetlbfs none $MOUNTPOINT
+    MOUNTPOINT=$(mount | grep hugetlbfs)
+    if [ -z "$MOUNTPOINT" ] ; then 
+        check_hugepages 
+    
+        MOUNTPOINT="/mnt/huge"
+        sudo mkdir -p $MOUNTPOINT
+        ISMOUNTED=$(mount | grep hugetlbfs)
+    
+        if [[ -z "$ISMOUNTED" ]] ; then 
+            fcn_print_red "Mounting hugetlbfs ... "
+            sudo mount -t hugetlbfs none $MOUNTPOINT
+        fi
+        fcn_print_red "HugeTLB FS mount: "
+        mount | grep hugetlbfs
+    else
+        echo "Hugetlbfs already mounted at: $MOUNTPOINT"
     fi
-    fcn_print_red "HugeTLB FS mount: "
-    mount | grep hugetlbfs
 }
 

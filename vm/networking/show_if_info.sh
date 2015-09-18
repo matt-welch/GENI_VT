@@ -6,8 +6,8 @@ for IF in $IFS_LIST
 do
     if [ $IF != "lo" ] ; then 
         echo Interface $IF: 
-        ethtool -i $IF | grep -e bus-info 
-        ethtool -i $IF | grep -e driver
+        ethtool -i $IF | grep -e bus-info --color
+        ethtool -i $IF | grep -e driver --color
         ifconfig $IF
     fi
 done

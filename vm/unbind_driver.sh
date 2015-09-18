@@ -38,6 +38,7 @@ DEVICE_NUM=$(echo $DEVICE_INFO | cut -d ":" -f 4 | cut -d ' ' -f 1 )
 DRIVER=$(lspci -ks $DEVICE_BDF | grep "Kernel driver" | cut -d ":" -f 2 | tr -d '[:space:]') 
 DEVICE_ID="$DEVICE_VENDOR $DEVICE_NUM"
 
+echo "$DEVICE_VENDOR $DEVICE_NUM $DRIVER pci-stub $DEVICE_BDF " >> ${DRIVER}.unbound
 
 read -p "Are you sure you want to unbind device \"$DEVICE_BDF\" ($DEVICE_ID) from its driver \"$DRIVER\"? " -n 1 input
 echo

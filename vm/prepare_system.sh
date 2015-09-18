@@ -1,4 +1,11 @@
 #!/bin/bash
+
+# remove *.unbound files 
+rm ./*.unbound
+
+# rename interfaces to standard names
+networking/set_ifnames.sh 
+
 # disable docker and it's bridge
 service docker stop 
 ifconfig docker0 down 

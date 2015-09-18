@@ -23,15 +23,26 @@ DEBUGMODE=False
 DRYRUN=False
 VERBOSITY=2
 WRITE_OUTPUT=True
-FASTMODE=False
+nargin = len(sys.argv)
+varargin = sys.argv
+if nargin > 1: 
+    FASTMODE=True
+    print("Executing in FAST mode...")
+else: 
+    FASTMODE=False
 
 # netperf variables: 
-vtType = "vm_rt_br-pf"
+vtType = "vm_std_br-pf"
 numReps = 20
 serverPort = 65432
 localhost="127.0.0.1"
-bridgedIP = "192.168.2.21"
-directPyhsIP = "192.168.3.21"
+if "vm" in vtType: # virtual machine
+    bridgedIP="192.168.3.21"
+    directPyhsIP="192.168.2.21"
+else: # docker container
+    bridgedIP = "192.168.42.242"
+    directPyhsIP = "192.168.3.1"
+
 directVFIP = "192.168.4.21"
 interfaceList = [bridgedIP, directPyhsIP] # [bridgedIP, directPyhsIP]
 testList = ["UDP_RR", "UDP_STREAM", "TCP_RR", "TCP_STREAM"] # 

@@ -1,8 +1,8 @@
 #!/bin/bash 
 set -e  # set to error out if a variable is unset
-SERVER="192.168.2.1"
+SERVER="192.168.42.242"
 PORT="5201" # standard port 
-TARGET_BANDWIDTH="-b 10G"
+TARGET_BANDWIDTH="" # "-b 20G"
 SERVERSTATS="--get-server-output" 
 REPS=20
 

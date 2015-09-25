@@ -1,1 +1,1 @@
-grep "TCP STREAM" -A 6 /root/results/host-container-rt.dat | grep "^ 8"
+grep "TCP STREAM" -A 6 $FILE | grep "^ 8" > ${FILE}.summary

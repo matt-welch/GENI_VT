@@ -1,16 +1,18 @@
 \documentclass[12pt,letterpaper]{report}
 %% package includes
 \usepackage{url}
+%\usepackage[hidelinks]{hyperref}
 \usepackage[backend=biber,style=ieee]{biblatex}
 \addbibresource{thesis.bib}
 %\usepackage[urw-garamond]{mathdesign}   %!pdfTeX error: pdflatex.EXE (file ugmr8a.pfb): cannot open Type 1 font file for reading
-\usepackage[T1]{fontenc}
+%\usepackage[T1]{fontenc}
 \usepackage{geometry}
 \usepackage{fancyhdr}
 \usepackage{afterpage}
 \usepackage{graphicx,color}
-%\usepackage{tikz}
+\usepackage{tikz}
 \usepackage{pgfplots}
+%\usepackage{amssymb,amsbsy,amsthm}
 \usepackage{titlecaps}
 \usepackage[activate={true,nocompatibility},final,tracking=true,kerning=true,spacing=true,factor=1100,stretch=10,shrink=10]{microtype}
 % activate={true,nocompatibility} - activate protrusion and expansion
@@ -29,7 +31,12 @@
 
 \usepackage{asudis}
 
+\newtheorem{mydef}{Definition}[chapter]
+%\makeglossaries
 
+\begin{document}
+%-----------------------front matter
+\pagenumbering{roman}
 \title{Performance Optimization for Latency-Sensitive Workloads in Virtual Systems}
 \author{Matthew Welch}
 \degreeName{Master of Science}
@@ -41,8 +48,37 @@
 \chair{Violet Syrotiuk}
 \memberOne{Gil Speyer}
 \memberTwo{Carole-Jean Wu}
-\begin{document}
+\clearpage
 \maketitle
+\doublespace
+\abstract{
+	\input{Abstract.tex}
+}
+\clearpage
+\dedicationpage{
+To my mother who could never answer my questions of ``What if...?''\\
+To my wife who's unwavering support, \\ boundless love, \\and endless patience \\
+have buoyed my spirits and kept me going. \\
+To my children Alyssa, Sarah, Connor, and Sean who give me purpose.}
+\acknowledgements{
+\input{Acknowledge.tex}
+}
+
+\microtypesetup{protrusion=false} % disables protrusion locally in the document
+\tableofcontents
+
+\newpage
+
+\addcontentsline{toc}{chapter}{\uppercase\expandafter{\listtablename}}
+\listoftables
+\addcontentsline{toc}{chapter}{\uppercase\expandafter{\listfigurename}}
+\listoffigures
+\addtocontents{toc}{%
+{\hspace{1.2em} CHAPTER}\par}
+\microtypesetup{protrusion=true}
+
+\pagenumbering{arabic}
+\doublespace
 
 \input{Introduction.tex}
 \input{Related_Work.tex}
@@ -51,5 +87,7 @@
 \input{Conclusions.tex}
 
 \clearpage
-\printbibliography
+\singlespace
+\printbibliography[heading=references]
+%\printglossary
 \end{document}

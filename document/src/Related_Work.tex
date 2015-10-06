@@ -1,4 +1,52 @@
+\glsresetall
 \chapter{Related Work}
 \label{sec:related_work}
- There's a lot of related work.  Describe some here.
+Virtualization has been an important part of computing as soon as more than one user wanted to share the 
+expensive mainframe computer.  This section will describe some of the work in the field of 
+virtualization that has brought us to the current state of the art.  We will also discuss some of the
+subsystems in Linux and processor hardware that enable virtualization. 
+
+\section{History of Virtualization}
+\label{sec:history_vt}
+Virtualization has been an important component in computing since the invention of virtual memory to support multiprogramming on mainframes in the 60's.  
+Without going into too much detail:  
+\begin{enumerate}
+  \item Virtualization in early mainframes (IBM 360)
+  \item Early commercial virtualization
+  \item Entrance of Virtualization in x86
+  \item Virtualization as growth driver for datacenters and enterprise networks
+  \item Containers
+  \item Desktop virtualization
+  \item NFV
+\end{enumerate}
+
+"The Linux Foundation Announces Project to Advance Real-Time Linux"  [linux\_foundation\_2015]
+	the Linux Foundation is the body that guides and sponsors the direction of Linux.  
+	Realtime Linux has been struggling to find funding until recently [lwn.net reference here] 
+	This project is important because realtime Linux will also improve virtualization determinism.
+	this will ensure that the realtime branch of Linux is supported going forward.  
+
+
+\section{Architecture}
+\label{sec:sys_arch}
+Virtualization has been around in many forms.  Virtual machines and containers, specifically Docker, are currently 
+very popular so we will discuss the architecture of these types of virtualization here.
+\subsection{Virtual Machines}
+\label{sec:sys_arch_vm}
+The architectures available in virtual environments are as widely varied as the types 
+of hardware they seek to emulate.  Many of the concepts we use regarding virtual machines,
+however, originated in a seminal 1974 paper by Popek and Goldberg \autocite{popek_1}.  Although 
+virtual machines had already been implemented on "third-generation computer systems" 
+such as the IBM 360/67, Popek and Goldberg sought to establish formal requirements 
+for and prove whether other systems of that era were capable of supporting a 
+"virtual machine monitor" \autocite{popek_1}.  At the time of that writing, their analysis 
+was on the possibility of a Virtual Machine Monitor (VMM), but the term hypervisor
+has largely come to replace VMM as the name of a software system that allocates,
+monitors, and controls virtual machine resources as an intermediary between the hardware
+and the virtual machine's operating system.  What follows in this section is an 
+illustration of some important concepts in hypervisor and virtual machine architecture
+and the work that led to them.
+
+\subsection{Type 1 vs. Type 2 Hypervisors}
+\label{sec:sys_arch_vm_type}
 

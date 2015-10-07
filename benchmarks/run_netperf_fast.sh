@@ -1,14 +1,21 @@
 #!/bin/bash
-SERVER="192.168.42.242"
+set -e  # set to error out if a variable is unset
+if [ -z "$1" ] ; then 
+    SERVER="192.168.42.242"
+else
+    SERVER="$1"
+fi
 PORT=65432
 REPS=20
 
-echo "TCP_STREAM"
+TEST="TCP_STREAM"
+echo "Running netperf::${TEST} @ $(date): ${SERVER}:${PORT}"
 for (( i=0; i<"$REPS"; i++ )) ; do
-    ./netperf -H $SERVER -p $PORT -t TCP_STREAM
+    ./netperf -H $SERVER -p $PORT -t $TEST
 done
 
-echo "TCP_RR"
+TEST="TCP_RR"
+echo "Running netperf::${TEST} @ $(date): ${SERVER}:${PORT}"
 for (( i=0; i<"$REPS"; i++ )) ; do
-    ./netperf -H $SERVER -p $PORT -t TCP_RR -v 4 -- -r 1,1
+    ./netperf -H $SERVER -p $PORT -t $TEST -v 4 -- -r 1,1
 done

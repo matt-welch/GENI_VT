@@ -1,7 +1,7 @@
 \documentclass[12pt,letterpaper]{report}
 %% package includes
 \usepackage{url}
-%\usepackage[hidelinks]{hyperref}
+%\usepackage[pdfauthor={Matthew Welch},pdftitle={Performance Optimization for Latency-Sensitive Workloads in Virtual Systems},pagebackref=true,pdftex]{hyperref}
 \usepackage[backend=biber,style=ieee]{biblatex}
 \addbibresource{thesis.bib}
 %\usepackage[urw-garamond]{mathdesign}   %!pdfTeX error: pdflatex.EXE (file ugmr8a.pfb): cannot open Type 1 font file for reading
@@ -37,7 +37,7 @@
 \begin{document}
 %-----------------------front matter
 \pagenumbering{roman}
-\title{Performance Optimization for Latency-Sensitive Workloads in Virtual Systems}
+\title{\input{title.tex}}
 \author{Matthew Welch}
 \degreeName{Master of Science}
 \paperType{Thesis}
@@ -56,10 +56,8 @@
 }
 \clearpage
 \dedicationpage{
-To my mother who could never answer my questions of ``What if...?''\\
-To my wife who's unwavering support, \\ boundless love, \\and endless patience \\
-have buoyed my spirits and kept me going. \\
-To my children Alyssa, Sarah, Connor, and Sean who give me purpose.}
+    dedication goes here
+}
 \acknowledgements{
 \input{Acknowledge.tex}
 }

@@ -16,7 +16,10 @@ Potential section headings include: Design, Architecture, Preempt-RT, Kernel Tun
     \subsection{Hardware} % (fold)
     \label{sec:hardware}
     
-    SuperMicro board, DualCPU, memory, network card 
+    The motherboard 
+    Each of the two CPU sockets on the motherboard were populated with an Intel Xeon E5-2608L v3 6-core processor running at 2.00 GHz.  Hyperthreading was disabled in the BIOS as a performance optimization.  
+    The platform was configured with 64 GB of DDR4 memory running at 1866 MHz in Dual-channel mode with 2 16GB memory sticks per socket.  
+    The network card used was the Intel Corporation 82599ES 10-Gigabit PCIe card with two optical interfaces.  
 
     Expand on hardware details and BIOS settings including hyperthreading (+reasoning)
 
@@ -137,7 +140,7 @@ Potential section headings include: Design, Architecture, Preempt-RT, Kernel Tun
 
         The image building process of Docker is controlled by the \lstinline{docker build} command line tool.  
         This tool takes recipe files known as Dockerfiles \autocite{_dockerfile_1} and constructs the image based on instructions therein.
-        A Dockerfile usually specifies the base image that should be used for the build along with setting environment variables and installing necessary packages and binaries to the container's filesystem. It is consumed by the \lstinline{docker build} tool and the image is constructed as the composite overlay of each step in the build process \autocite{_docker_build_ref}.
+        A Dockerfile usually specifies the base image that should be used for the build along with setting environment variables and installing necessary packages and binaries to the container's filesystem. It is consumed by the \lstinline{docker build} tool and the image is constructed as the composite overlay of each step in the build process \autocite{_docker_build_1}.
         All of the containers used herein were based on the official Debian image, \lstinline{debian:wheezy}, which is based on the latest release of Debian 7: Wheezy.  
         The image was pulled from the Docker.io repository on September 1, 2015 with image ID bbe78c1a5a53.  The debian image was chosen since it has a very small starting size of only 85 MB and no additional tools provided by larger base images were necessary.  In retrospect, this decision creates a small discrepancy in the comparison of these containers to the virtual machines used herein since the VMs were all using Ubuntu 14.04.3.  Since the userpace tools of the distro are not the subject of this investigation, it was decided that the base container image of Debian would not cause any issues since the kernel function inside the containers was of interest and that version is common among all of the environments used.  
         The image created for benchmarking was called netbench and created with the Dockerfile.netbench [ reference here??].  It only pulled the debian base image, applied some labels and installed netperf.  Later that same image was used with iperf by mounting a host volume containing the iperf directory which was then copied into the container's filesystem.

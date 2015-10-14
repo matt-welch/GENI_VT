@@ -1,3 +1,63 @@
 \chapter{Results}
 \label{sec:results}
 
+\section{TCP Performance} % (fold)
+\label{sec:tcp_performance}
+The netperf tool uses TCP connections by default for its benchmarking.  
+
+\begin{figure}
+    \centering
+    \input{TCP_RR_bridge.pdf_tex}
+    \caption{TCP Request/Response Latency: Bridged Network}
+    \label{fig:tcp_rr_bridge}
+\end{figure}
+\begin{figure}
+    \centering
+    \def\svgwidth{\columnwidth}
+    \input{TCP_RR_phys.pdf_tex}
+    \caption{TCP Request/Response Latency: Physical Network}
+    \label{fig:tcp_rr_phys}
+\end{figure}
+\begin{figure}
+    \centering
+    \def\svgwidth{\columnwidth}
+    \input{UDP_RR_bridge.pdf_tex}
+    \caption{UDP Request/Response Latency: Bridged Network}
+    \label{fig:udp_rr_bridge}
+\end{figure}
+\begin{figure}
+    \centering
+    \def\svgwidth{\columnwidth}
+    \input{UDP_RR_phys.pdf_tex}
+    \caption{UDP Request/Response Latency: Physical Network}
+    \label{fig:udp_rr_phys}
+\end{figure}
+\begin{figure}
+    \centering
+    \def\svgwidth{\columnwidth}
+    \input{TCP_STREAM_bridge.pdf_tex}
+    \caption{TCP Streaming Bandwidth: Bridged Network}
+    \label{fig:tcp_stream_bridge}
+\end{figure}
+\begin{figure}
+    \centering
+    \def\svgwidth{\columnwidth}
+    \input{TCP_STREAM_phys.pdf_tex}
+    \caption{TCP Streaming Bandwidth: Physical Network}
+    \label{fig:tcp_stream_phys}
+\end{figure}
+\begin{figure}
+    \centering
+    \def\svgwidth{\columnwidth}
+    \input{UDP_STREAM_bridge.pdf_tex}
+    \caption{UDP Streaming Bandwidth: Bridged Network}
+    \label{fig:udp_stream_bridge}
+\end{figure}
+\begin{figure}
+    \centering
+    \def\svgwidth{\columnwidth}
+    \input{UDP_STREAM_phys.pdf_tex}
+    \caption{UDP Streaming Bandwidth: Physical Network}
+    \label{fig:udp_stream_phys}
+\end{figure}
+% section tcp_performance (end)

@@ -1,0 +1,32 @@
+\begin{table}
+    \centering
+    \caption{Kernel Configuration parameters and their description}
+    \label{tab:kernel_configuration}
+\begin{tabular}{l|c|p{8cm}|}
+\hline
+Parameter & Setting & Description \\
+\hline \hline
+IKCONFIG & y          &   Enable config stored in kernel \\
+IKCONFIG\_PROC & y    &   Mount .config as /proc/config.gz \\
+NO\_HZ & y            &   Old idle dynticks config \\
+NO\_HZ\_FULL & y      &   Full dynticks system \\
+HIGH\_RES\_TIMERS & y &   Enable high resolution timers\\
+MCORE2 & y            &   Intel Core2 and newer Xeon CPUs features\\
+PREEMPT & y           &   Fully preemptible kernel \\
+PREEMPT\_RT\_FULL & y &   preempt-rt patch, fully preemptible kernel \\
+HZ\_100 & y           &   100HZ kernel clock \\
+HZ\_250 & n           &   250 HZ clock turned off \\
+ACPI\_DOCK & n        &   Disable ACPI dock management \\
+ACPI\_PROCESSOR & n   &   Disable CPU power management \\
+CPU\_FREQ & n         &   Disable CPU frequency scaling \\
+CPU\_IDLE & n         &   Prevent linux from controlling CPU idling \\
+BRIDGE & y            &   Enable Linux Ethernet bridging \\
+INTEL\_IOMMU & y      &   Enable Intel IOMMU  \\
+IOMMU\_DEFAULT\_ON & y&   Enable DMA device at boot time \\
+IRQ\_REMAP & y        &   Support interrupt remapping \\
+KVM & y               &   Supports hosting full virtualization guests \\
+KVM\_INTEL & y        &   Support for KVM on Intel processors with VT extensions \\
+RCU\_NOCB\_CPU & y    &   Offload RCU callback processing from boot-selected CPUs\\
+\hline
+\end{tabular}
+\end{table}

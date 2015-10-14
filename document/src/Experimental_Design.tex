@@ -1,7 +1,6 @@
 \lstset{basicstyle=\ttfamily\color{black}}
 \chapter{Experimental Design}
 \label{sec:experimental_design}
-
 As we've seen in the previous sections, the performance comparisons that have been made between containers and virtual machines have, for the most part, not tuned their systems for the comparison.
 Indeed, due to the numerous potential parameters and the resulting massive number of configuration combinations, the sheer number of comparisons to be made among the effects of various tuning parameters are myriad.
 To avoid this potential explosion in the scope of the comparison, we will compare performance between only two system configurations for each type of virtual environment.
@@ -9,10 +8,10 @@ The two configurations include the standard Linux kernel, version 3.18.20, and t
 
 \section{Experimental Setup} % (fold)
 \label{sec:experimental_setup}
+In this section, we will describe the experimental environment used herein including system hardware, operating system versions, kernel versions, kernel parameters, and kernel configurations.  
 
 \subsection{Hardware} % (fold)
 \label{sec:hardware}
-
 The motherboard used for the test (server) system was a SuperMicro server board with dual CPU sockets, model TODO: XXYY.
 Each of the two CPU sockets on the motherboard were populated with an Intel Xeon E5-2608L v3 6-core processor running at 2.00 GHz.  
 Hyperthreading was disabled in the BIOS as a performance optimization.  
@@ -34,16 +33,24 @@ Software bridges are also commonly used by virtual machines and often combined w
 Bridges are the \emph{de facto} layer 2 networking used by Docker.  
 The Docker daemon also uses the common Linux firewall IPTables for layer 3 connectivity, routing, and NAT.
 This implies that bridging or any networking paradigm that requires host kernel involvement cannot scale to a large number of guests because the work required by the host to monitor and handle bridge traffic and layer 3 decisions for multiple guests can be significant.    
+
 \subsubsection{Software Networking} % (fold)
 \label{ssub:software_networking}
-Docker’s default networking paradigm is to create a bridge and pair of virtual Ethernet interfaces.
+The default networking paradigm of Docker is to create a bridge and pair of virtual Ethernet interfaces.
 Both interfaces are bound to the bridge, one remains in the host’s namespace and the other is placed in the container namespace as its primary network interface.
+Figure~\ref{fig:topology_bridged_vm} shows the topology of a bridged network connection to a virtual machine or container.  
 Docker also uses IPTables and Network Address Translation to allow the container to communicate with the outside world.
 IPTables will also have an impact on the bridge performance, but we chose to use it since it represents the \emph{de facto} networking configuration of Docker.
 Another reason to study the bridged networking paradigm is that bridges are very important in networking in general and useful in systems where containers may be linked together or their functions pipelined.
 Additionally, the popular software switch package, Open vSwitch (OVS) may be configured to use virtual bridging as its default network topology.
 
-[ insert bridged topology diagram here] 
+\begin{figure}
+    \centering
+    \def\svgwidth{\columnwidth}
+    \input{topology_bridged_VM.pdf_tex}
+    \caption{Topology of bridged network}
+    \label{fig:topology_bridged_vm}
+\end{figure}
 
 No effort was made to optimize the performance of the bridge.
 Parameters including whether the bridge participates in the STP algorithm are optional and can affect performance.
@@ -94,15 +101,14 @@ The "performance" kernel used was the 3.18.20-rt18 kernel which is the 3.18.20 k
 The initial kernel configuration used was that of the 3.18.20 kernel. 
 Only a few important parameters of the kernel were modified to tune the systems for performance with the preempt-rt patch.
 Kernel CONFIG modifications are described in Table XXYY.  : [Insert CONFIG\_ table here?]\\
-Table: \\
-CONFIG\_PARAM1 | effect1 \\ 
-CONFIG\_PARAM2 | effect2 \\ 
+
+\input{kernel_configuration_table.tex}
 % subsubsection kernel_configuration (end)
 
 \subsubsection{Kernel Boot Parameters} % (fold)
 \label{ssub:kernel_params}
 Another important mechanism for tuning a kernel is to modify the parameters passed to the kernel at boot time.  
-[ Insert table here?  Describe some of the important parameters] \\ 
+\input{kernel_parameters_table.tex}
 One of the most important tuning parameters in a virtual machine host relates to the level of oversubscription for each physical CPU.
 Systems with low performance requirements may stack multiple guest vCPUs (virtual CPUs) on each physical CPU.  This stacking can lead to multiple vCPUs from unrelated virtual machines sharing the pCPU or just host processes running on the pCPU assigned to the guest.
 Either of these scenarios can have a large impact on guest latency.
@@ -174,7 +180,7 @@ Containers are all launched with a specified MAC address for their bridge interf
 
 \section{Experimental Procedure} % (fold)
 \label{sec:experimental_procedure}
-Given the experimental setup described in \S \ref{experimental_setup}, the performance of virtual machines and containers could be compared.  
+Given the experimental setup described in \S \ref{sec:experimental_setup}, the performance of virtual machines and containers could be compared.  
 We wanted to compare the performance of the systems with RT tuning to those without.
 The performance of latency-sensitive network workloads are often not bound by memory or CPU, but by their ability to process I/O traffic.
 We concentrated our testing on network-related benchmarks including netperf and iperf.  
@@ -186,6 +192,15 @@ Using netperf version 2.7.0 \autocite{_netperf_2}, network bandwidth and latency
 For each of the netperf and iperf tests, 20 samples were collected (TODO: include command lines, reference in appendix?).  For the ping test, 100 samples were collected with a 1 second interval.  
 
 (TODO: insert table here to describe the subtests and maybe a topology diagram too. ) \\
+%\begin{table}
+%    \centering
+%    \caption{Benchmark Tests Performed}
+%    \label{tab:benchmarks_tests_performed}
+%    \begin{tabular}{c|c|c}
+%    TCP\_STREAM
+%        
+%    \end{tabular}
+%\end{table}
 
 Variation in the measured latency is partly due to the non-determinism of complex systems, but there is also a component of the latency due only to the network topology.
 The 10G optical cables strung between the two systems are approximately 2 meters long so the propagation delay along these connections should be about 6.7 ns.

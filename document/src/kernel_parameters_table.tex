@@ -1,14 +1,16 @@
 \begin{table}
     \centering
     \caption{Kernel Boot parameters and their description}
-    \label{tab:kernel_parameters}
-\begin{tabular}{l|p{8cm}|}
-\hline
-Parameter & Setting & Description \\
-\hline \hline
-rcu_nocbs=1-4 & Set the specified list of CPUs to be no-callback CPUs.  This reduces OS jitter on the   offloaded CPUs, which can be useful for HPC and real-time workloads.  It can also improve energy efficiency for asymmetric multiprocessors. \\
-rcu_nocb_poll=1 &   Rather than requiring that offloaded CPUs (specified by rcu_nocbs= above) explicitly awaken the corresponding "rcuoN" kthreads, make these kthreads poll for callbacks. This improves the real-time response for the offloaded CPUs by relieving them of the need to wake up the corresponding kthread, but degrades energy efficiency by requiring that the kthreads periodically wake up to do the polling.
-isolcpus=1-4 & 
-\hline
+    \label{tab:kernel_params_table}
+\begin{tabular}{|l|p{10cm}|}
+    \hline
+    Parameter & Description \\
+    \hline \hline
+    rcu\_nocbs=1-4 & Set the specified list of CPUs to be no-callback CPUs.  This reduces OS jitter on the   offloaded CPUs, which can be useful for HPC and real-time workloads.  It can also improve energy efficiency for asymmetric multiprocessors. \\ 
+    \hline
+    rcu\_nocb\_poll=1 & Rather than requiring that offloaded CPUs (specified by rcu\_nocbs= above) explicitly awaken the corresponding "rcuoN" kthreads, make these kthreads poll for callbacks. This improves the real-time response for the offloaded CPUs by relieving them of the need to wake up the corresponding kthread, but degrades energy efficiency by requiring that the kthreads periodically wake up to do the polling. \\
+    \hline
+    isolcpus=1-4 & isolate CPUs 1-4, removing them from the scheduler pool of available CPUs. \\ 
+    \hline
 \end{tabular}
 \end{table}

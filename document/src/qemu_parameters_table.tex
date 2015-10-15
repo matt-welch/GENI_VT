@@ -1,0 +1,16 @@
+\begin{table}
+    \centering
+    \caption{QEMU Virtual Machine launch arguments}
+    \label{tab:qemu_params_table}
+\begin{tabular}{|l|p{10cm}|}
+\hline
+Parameter & Description \\
+\hline \hline
+--realtime mlock=on & Lock guest memory pages to prevent them from swapping out.\\ 
+\hline
+-mem-path /mnt/huge & Use the specified path for guest memory.  Allows utilizing hugepages for guest.\\
+\hline
+-mem-prealloc & Preallocates guest memory, decreasing latency for most memory accesses.\\
+\hline
+\end{tabular}
+\end{table}

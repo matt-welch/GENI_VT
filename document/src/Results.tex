@@ -1,37 +1,37 @@
 \chapter{Results}
 \label{sec:results}
+We analyzed the network performance of docker containers and virtual machines using standard benchmarking tools.  
+Twenty measurements were taken for each type of virtual environment using the standard 3.18.20 kernel and the preempt-rt tuned kernel.
+For each kernel, virtual environment, and network conenction type, the latency and bandwidth of both TCP and UDP streams were measured 20 times.
+The data is shown in all STREAM and RR figures as a box plot with the median in the center, 25th and 75th percentiles at the ends of the box and min and max at the ends of the error bars.
+This plot helps to show the one-sided variance that is often observed in performance anaylsis.  
+The measurements can only approach the theoretical maxima for each test, but are free to perform poorly or not at all below the median.  
+
+\begin{table}[ht!]
+    \centering
+    \begin{tabular}{|l|c|c|}
+    \hline
+    Parameter & variants & \\
+    \hline \hline
+    kernel & 3.18.20 & 3.18.20-rt18 \\ 
+    environment & docker & KVM \\ 
+    network interface & bridge & physical \\ 
+    \hline
+    \end{tabular}
+\end{table}
 
 \section{TCP Performance} % (fold)
 \label{sec:tcp_performance}
-The netperf tool uses TCP connections by default for its benchmarking.  
+The netperf tool uses TCP connections by default for its control channel as well as measuring network performance. 
+    The goal of the study was to improve network performance in both virtual machines and containers 
+We measured TCP bandwidth of the various network interfaces and kernels using the TCP\_STREAM test in netperf.
+The results of the bridged measurements are shown in Figure~\ref{fig:tcp_stream_bridge}.
+We see in Figure~\ref{fig:tcp_stream_bridge} that, while both environments show significant variation with standard kernels, the rt-variant kernels showed only minimal variance and the docker-rt test even reached line rate.  
+The performance of both the container and virtual machine, with minima close to the median and maxima only slightly above that point, are consistent with a realtime kernel in that the performance is essentially deterministic with little variance (TODO: cite variance here).
 
-\begin{figure}
-    \centering
-    \input{TCP_RR_bridge.pdf_tex}
-    \caption{TCP Request/Response Latency: Bridged Network}
-    \label{fig:tcp_rr_bridge}
-\end{figure}
-\begin{figure}
-    \centering
-    \def\svgwidth{\columnwidth}
-    \input{TCP_RR_phys.pdf_tex}
-    \caption{TCP Request/Response Latency: Physical Network}
-    \label{fig:tcp_rr_phys}
-\end{figure}
-\begin{figure}
-    \centering
-    \def\svgwidth{\columnwidth}
-    \input{UDP_RR_bridge.pdf_tex}
-    \caption{UDP Request/Response Latency: Bridged Network}
-    \label{fig:udp_rr_bridge}
-\end{figure}
-\begin{figure}
-    \centering
-    \def\svgwidth{\columnwidth}
-    \input{UDP_RR_phys.pdf_tex}
-    \caption{UDP Request/Response Latency: Physical Network}
-    \label{fig:udp_rr_phys}
-\end{figure}
+The results of the physical connection measurements are shown in Figure~\ref{fig:tcp_stream_phys}.
+
+
 \begin{figure}
     \centering
     \def\svgwidth{\columnwidth}
@@ -46,6 +46,24 @@ The netperf tool uses TCP connections by default for its benchmarking.
     \caption{TCP Streaming Bandwidth: Physical Network}
     \label{fig:tcp_stream_phys}
 \end{figure}
+
+\begin{figure}
+    \centering
+    \input{TCP_RR_bridge.pdf_tex}
+    \caption{TCP Request/Response Latency: Bridged Network}
+    \label{fig:tcp_rr_bridge}
+\end{figure}
+\begin{figure}
+    \centering
+    \def\svgwidth{\columnwidth}
+    \input{TCP_RR_phys.pdf_tex}
+    \caption{TCP Request/Response Latency: Physical Network}
+    \label{fig:tcp_rr_phys}
+\end{figure}
+
+% section tcp_performance (end)
+
+\section{UDP Performance} % (fold)
 \begin{figure}
     \centering
     \def\svgwidth{\columnwidth}
@@ -60,4 +78,20 @@ The netperf tool uses TCP connections by default for its benchmarking.
     \caption{UDP Streaming Bandwidth: Physical Network}
     \label{fig:udp_stream_phys}
 \end{figure}
-% section tcp_performance (end)
+
+\label{sec:udp_performance}
+\begin{figure}
+    \centering
+    \def\svgwidth{\columnwidth}
+    \input{UDP_RR_bridge.pdf_tex}
+    \caption{UDP Request/Response Latency: Bridged Network}
+    \label{fig:udp_rr_bridge}
+\end{figure}
+\begin{figure}
+    \centering
+    \def\svgwidth{\columnwidth}
+    \input{UDP_RR_phys.pdf_tex}
+    \caption{UDP Request/Response Latency: Physical Network}
+    \label{fig:udp_rr_phys}
+\end{figure}
+% section udp_performance (end)

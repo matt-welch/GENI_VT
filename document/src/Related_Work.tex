@@ -26,6 +26,18 @@ Realtime Linux has been struggling to find funding until recently \autocite{_lwn
 This project is important because realtime Linux will also improve virtualization determinism.
 This will ensure that the realtime branch of Linux is supported going forward.
 The Linux Foundation is the governing body that not only helps to set direction, but also to fund some important projects so their interest in RT Linux will be a critical boost to its development and adoption.  
+
+The popular new paradigm of NFV is driving growth and innovation throughout the sector.
+A number of trade organizations have sprouted up recently to promote its adoption and accelerate development.
+Both the ETSI (European Telecommunications Standards Institute) and OPNVF (Open Platform for Network Functions Virtualization) \autocite{opnfv1} are driving NFV adoption \autocite{cohnopnfv}.
+
+To support high definition video of 340,000 packets per second into 4 Gbps streams, the BBC is offloading packet processing into a userspace application to avoid the Linux Kernel TCP/IP stack \autocite{bbcbypass}.   
+The same source mentions CloudFlare using a similar userspace processing approach to offload packet inspection during packet flood attacks.
+This allows their servers to drop a large number of packets belonging to the flood and inject valid packets back into the kernel to be processed normally.  
+The article did not mention which library BBC was using, but describes CloudFlare's solution as a modification of NetMap's functionality \autocite{netmapbertin}.
+Either use case, however, would be an ideal fit for the DPDK libraries.
+In order to meet their processing target window of only 3 µs, virtual machines with standard networking might not be an option, but transitioning to a DPDK-enabled processing schema could be a viable option. 
+
 % section history_vt (end)
 
 \section{Virtual Machine Architecture}
@@ -162,7 +174,7 @@ In x86 architecture, this feature is known as AMD-Vi or Intel VT-d, but both uti
 This allows the hypervisor to unbind a hardware device from its kernel and "pass through" or "direct assign" the device to the guest OS \autocite{_jones_1}.
 Direct assignment of hardware to guests also comes with the high cost of dedicating network interfaces or other important devices to a guest, but these devices provide significant performance improvements over paravirtualized or emulated guest devices, thereby enabling applications that could not previously be virtualized due to low-latency constraints \autocite{_jones_1}.
 If a host system has a large number of virtual machines that need high-performing I/O, it can be difficult to fit enough peripheral cards into the host chassis to passthrough devices to the virtual machines, thus providing each VM with dedicated hardware.
-A solution to this apparent conflict of interests can be found in "PCI-SIG Single Root I/O Virtualization" (SR-IOV) \autocite{_pcisig_1}.
+A solution to this apparent conflict of interests can be found in PCI-SIG Single Root I/O Virtualization (SR-IOV) \autocite{_pcisig_1, intelvtd}.
 SR-IOV is a general method by which the host system can configure a single hardware device to create and control multiple additional \emph{virtual functions} of the device.
 These virtual functions can be directly assigned to and accessed by the guest, similar to passthrough, without removing the main physical function from the host.
 The host's physical function represents the original hardware and is responsible for the management functions of the peripheral.  
@@ -224,7 +236,7 @@ The \emph{de facto} standard, however seems to be Docker, based on the amount of
 Docker is popular for good reason: in addition to providing a robust tool set for isolating processes, the Docker team has been extremely open about their development and responsive to issues submitted by users on their github account \autocite{_github_docker}.  
 It is for the reasons of its ubiquity and ease of use that Docker is the container format selected for comparison herein.
 
-\autocite{_docker_arch_1} https://docs.docker.com/introduction/understanding-docker/ (architecture, good pictures too, maybe use them?)
+\autocite{dockerarch1} https://docs.docker.com/introduction/understanding-docker/ (architecture, good pictures too, maybe use them?)
 
 Although, Docker may not be representative of container systems as a whole, we have just seen that the majority of the subsystems used by Docker to instantiate containers is part of the Linux kernel so we believe that containers utilizing these technologies should perform similarly.  
 Docker is largely responsible for the current wave of "hype/excitement/momentum" around containers so seems to be the de facto container in the mind of most people.  
@@ -272,13 +284,11 @@ Implications \& differences between VMs and containers
 
 since containers need not emulate a second kernel or set of virtual hardware
 
-Network 
+Docker networking can be fairly complex with multiple options available to both the daemon and the run commands \autocite{dockernetworking1}.
 
 Maximum theoretical speed of Ethernet (copper or fiber) is only about 95\% of the line rate.
 This is due only to the overhead of Ethernet frames (1518 bytes + 8 byte preamble and 12 byte (96 ns) interframe gap (IFG)), Ethernet header (14 bytes), 4 byte Frame Check Sequence (FCS), 20 byte IP header, 20 byte TCP header, 1460 MSS for TCP.
 Overall, this amounts to 78 bytes of overhead at various layers to transmit only 1460 bytes of data representing 94.9\% efficiency in the best case.  
-
-"https://docs.docker.com/articles/networking/\#How-Docker-networks-a-container"
 
 \section{Comparisons and Performance Analysis} % (fold)
 \label{sec:comparisons_performance_analysis}

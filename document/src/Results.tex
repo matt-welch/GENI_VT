@@ -21,8 +21,16 @@ The measurements can only approach the theoretical maxima for each test, but are
     \end{tabular}
 \end{table}
 
-\section{TCP Performance} % (fold)
-\label{sec:tcp_performance}
+\section{HRT Latency} % (fold)
+\label{sec:hrtlatency}
+IN order to verify that the virtual environments have been tuned appropriately, we collected measurements of the systems high resolution timer (HRT) latency using the OSADL tool cyclictest [TODO: reference here].
+
+% section hrtlatency (end)
+
+\section{Network Bandwidth} % (fold)
+\label{sec:networkbandwidth}
+\subsection{TCP Bandwidth} % (fold)
+\label{sub:tcpbandwidth}
 The netperf tool uses TCP connections by default for its control channel as well as measuring network performance. 
     The goal of the study was to improve network performance in both virtual machines and containers 
 We measured TCP bandwidth of the various network interfaces and kernels using the TCP\_STREAM test in netperf.
@@ -31,8 +39,6 @@ We see in Figure~\ref{fig:tcp_stream_bridge} that, while both environments show 
 The performance of both the container and virtual machine, with minima close to the median and maxima only slightly above that point, are consistent with a realtime kernel in that the performance is essentially deterministic with little variance (TODO: cite variance here).
 
 The results of the physical connection measurements are shown in Figure~\ref{fig:tcp_stream_phys}.
-
-
 \begin{figure}
     \centering
     \def\svgwidth{\columnwidth}
@@ -47,24 +53,10 @@ The results of the physical connection measurements are shown in Figure~\ref{fig
     \caption{TCP Streaming Bandwidth: Physical Network}
     \label{fig:tcp_stream_phys}
 \end{figure}
+% subsection tcpbandwidth (end)
 
-\begin{figure}
-    \centering
-    \input{TCP_RR_bridge.pdf_tex}
-    \caption{TCP Request/Response Latency: Bridged Network}
-    \label{fig:tcp_rr_bridge}
-\end{figure}
-\begin{figure}
-    \centering
-    \def\svgwidth{\columnwidth}
-    \input{TCP_RR_phys.pdf_tex}
-    \caption{TCP Request/Response Latency: Physical Network}
-    \label{fig:tcp_rr_phys}
-\end{figure}
-
-% section tcp_performance (end)
-
-\section{UDP Performance} % (fold)
+\subsection{UDP Bandwidth} % (fold)
+\label{sub:udpbandwidth}
 \begin{figure}
     \centering
     \def\svgwidth{\columnwidth}
@@ -79,8 +71,34 @@ The results of the physical connection measurements are shown in Figure~\ref{fig
     \caption{UDP Streaming Bandwidth: Physical Network}
     \label{fig:udp_stream_phys}
 \end{figure}
+% subsection udpbandwidth (end)
 
-\label{sec:udp_performance}
+
+% section networkbandwidth (end)
+
+\section{Network Latency} % (fold)
+\label{sec:networklatency}
+
+\subsection{TCP Latency} % (fold)
+\label{sub:tcplatency}
+\begin{figure}
+    \centering
+    \input{TCP_RR_bridge.pdf_tex}
+    \caption{TCP Request/Response Latency: Bridged Network}
+    \label{fig:tcp_rr_bridge}
+\end{figure}
+\begin{figure}
+    \centering
+    \def\svgwidth{\columnwidth}
+    \input{TCP_RR_phys.pdf_tex}
+    \caption{TCP Request/Response Latency: Physical Network}
+    \label{fig:tcp_rr_phys}
+\end{figure}
+
+% subsection tcplatency (end)
+
+\subsection{UDP Latency} % (fold)
+\label{sub:udplatency}
 \begin{figure}
     \centering
     \def\svgwidth{\columnwidth}
@@ -95,4 +113,27 @@ The results of the physical connection measurements are shown in Figure~\ref{fig
     \caption{UDP Request/Response Latency: Physical Network}
     \label{fig:udp_rr_phys}
 \end{figure}
-% section udp_performance (end)
+% subsection udplatency (end)
+
+\subsection{ICMP latency} % (fold)
+\label{sub:icmplatency}
+The standard network tool ping, which measures ICMP response latency \autocite{pingexplained}, was used to get an idea of the layer 3 latency of our virtual hosts.  
+\begin{figure}
+    \centering
+    \includegraphics[width=150mm]{ICMP_raw_dat.png}
+%    \input{ICMP_Latency.pdf_tex}
+    \caption{ICMP latency: Phony bridge}
+    \label{fig:icmplatencybridge}
+\end{figure}
+The box-plot results of the ping testing of the bridged connections are shown in Figure~\ref{fig:icmplatencybridge}.  
+The box-plot results of the ping testing of the physical connections are shown in Figure~\ref{fig:icmplatencyphys}.  
+\begin{figure}
+    \centering
+    \def\svgwidth{\columnwidth}
+    \input{ ICMP_Latency.pdf_tex}
+    \caption{ICMP latency: Phony physical}
+    \label{fig:icmplatencyphys}
+\end{figure}
+% subsection icmplatency (end)
+
+% section networklatency (end)

@@ -5,17 +5,11 @@ Virtualization has been an important part of computing since early mainframes ne
 This section will describe some of the work in the field of virtualization that has brought us to the current state of the art.
 We will also discuss some of the subsystems in Linux and processor hardware that enable virtualization.
 
-\section{History of Virtualization} % (fold)
-\label{sec:history_vt}
-Early efforts in virtualization were fairly simple by todays standards, but were critical in the development of multi-processing and ulti-user operating systems.  
-How much detail should there be to describe the following topics?
+\section{Use-Cases for Virtualization} % (fold)
+\label{sec:usecasesvt}
 \begin{enumerate}
-  \item Virtualization in early mainframes (IBM 360)
-  \item Early commercial virtualization
-  \item Entrance of Virtualization in x86
   \item Virtualization as growth driver for datacenters and enterprise networks
   \item Containers
-  \item Desktop virtualization
   \item NFV
 \end{enumerate}
 
@@ -34,10 +28,9 @@ To support high definition video of 340,000 packets per second into 4 Gbps strea
 The same source mentions CloudFlare using a similar userspace processing approach to offload packet inspection during packet flood attacks.
 This allows their servers to drop a large number of packets belonging to the flood and inject valid packets back into the kernel to be processed normally.  
 The article did not mention which library BBC was using, but describes CloudFlare's solution as a modification of NetMap's functionality \autocite{netmapbertin}.
-Either use case, however, would be an ideal fit for the DPDK libraries.
-In order to meet their processing target window of only 3 µs, virtual machines with standard networking might not be an option, but transitioning to a DPDK-enabled processing schema could be a viable option. 
+In order to meet their processing target window of only 3 µs, any latency due to network processing must be minimized.
 
-% section history_vt (end)
+% section usecasesvt (end)
 
 \section{Virtual Machine Architecture}
 \label{sec:vm_arch}
@@ -109,15 +102,16 @@ The guest kernels and modules must also be modified to facilitate this communica
 Although the Xen hypervisor was originally developed with the intent of being hardware agnostic \autocite{_barham_1}, the modifications required to the guest operating system mean that only vendors wishing to participate in the open-source community will provide paravirtualized drivers.
 The community itself is free to develop these drivers, but this adds a barrier to adoption for most new hardware products.
 Despite the additional effort required, Xen maintained their lead as a very popular open-source hypervisor for many years.
-Paravirtualizaion has its fans, however, and much work has been done previously comparing Xen to containers and other hypervisors such as KVM \autocite{_felter_1, _younge_1, _wang_1, _che_1, _scheepers_1, _wang_2}.
+Paravirtualizaion has its fans, however, and much work has been done previously comparing Xen to containers and other hypervisors such as KVM \autocite{_felter_1, _younge_1, _wang_1, _che_1, _scheepers_1, _wang_2, rathore2013kvm}.
 
-The third popular virtualization method we will discuss is what appears to be the de-facto standard as virtualization matures.
+The third popular virtualization method we will discuss is what appears to be the \emph{de facto} standard as virtualization matures.
 Hardware Assisted virtualization, which is heavily promoted by CPU vendors such as Intel and AMD, started out as an effort to accelerate instruction translation, but early generations of hardware had difficulty keeping up with the binary translation preferred by VMware \autocite{_vmware_1}.
 The silicon vendors, however have been hard at work improving their VT performance and adding hooks to enable virtualization of their hardware.
 Since operating systems for x86 were already common when hardware assisted virtualization was introduced, the architecture needed subtle modifications to help enable virtualization without breaking existing software.  This was accomplished with the introduction of yet another protection ring that would run below the kernel's ring 0.  
-The hypervisor would now run in ring -1, below the operating system kernel, and trap privileged instructions when they were executed by the guest. \autocite{_vmware_1}.  
+The hypervisor would now run in ring -1, below the operating system kernel, and trap privileged instructions when they were executed by the guest.
+
 For each virtual machine, a new structure is created and maintained in the host kernel memory.  
-Logically similar to a process control block, these structures, known as a Virtual Machine Control Structure (VMCS-IA) or VM Control Block, (VMCB-AMD), maintain the state of the virtual machine and are updated when the guest needs to perform a "vm-exit" to allow the host to execute privileged instructions.\autocite{_vmware_1}
+Logically similar to a process control block, these structures, known as a Virtual Machine Control Structure (VMCS-IA) or VM Control Block, (VMCB-AMD), maintain the state of the virtual machine and are updated when the guest needs to perform a "vm-exit" to allow the host to execute privileged instructions.
 This vm-exit process has been a significant source of latency for guest privileged instructions, but advancements in virtualization-aware driver models like SR-IOV have improved both latency and the frequency of these exits \autocite{_nasa_1}.
 
 Although a deep discussion could be had regarding the hardware systems and mechanisms of processor and platform virtualization, that discussion is slightly outside the scope of this document.
@@ -134,7 +128,7 @@ Virtualization uses memory structures similar to those developed for virtual mem
 Virtual memory was created to allow multiprogramming and process address spaces that are larger than the available physical memory.
 Modern CPUs implement virtual memory with the aid of a memory management unit (MMU) and translation lookaside buffer (TLB) to manage page tables and accelerate page lookups.
 The host system must carefully control access to memory which holds the system state along with program data.
-Fairly recent developments in x86 processors have allowed hypervisors to maintain guest memory mappings with shadow page tables, known as Extended Page Tables (EPT) in Intel processors and Nested Page Tables (NPT) for AMD [TODO: reference??].
+Fairly recent developments in x86 processors have allowed hypervisors to maintain guest memory mappings with shadow page tables, known as Extended Page Tables (EPT) in Intel processors and Nested Page Tables (NPT) for AMD.
 A hypervisor may use TLB hardware to map guest memory pages onto the physical memory similar to a native process, reducing the overhead of guest OS memory access.
 Along with virtualization of guest memory, another significant improvement to virtual machine performance can be had with the utilization of hugepage memory \autocite{_romer_1}.
 Hugepages, referred to as superpages in Romer, can simply be described as a memory page that is a power-of-two multiple of a standard 4096 byte (4k) memory page.
@@ -143,11 +137,10 @@ When system memory sizes were very small, virtual memory and swapping smaller pa
 As memory sizes have grown to hundreds of gigabytes per server and applications can consume multiple gigabytes each, 4k memory pages no longer seem like such an obvious fit.
 Hugepages seek to reduce the frequency of TLB lookups and page table walks by simply using larger pages of memory.
 Romer showed that they could reduce TLB overhead by as much as 99\% using \emph{superpage promotion} which is a system of aggregating smaller pages together as they are used \autocite{_romer_1}.
-Current implementations of hugepages in Linux, however, offer a set of large memory pages available to the kernel for memory allocation [TODO: reference here].
+Current implementations of hugepages in Linux, however, offer a set of large memory pages available to the kernel for memory allocation.
 Unlike Romer's superpages, hugepages must be allocated at boot, rather than being coalesced dynamically, but the performance of the Linux hugepages are similar except for increased memory consumption due to unused portions of hugepages.
 For virtual machines that are potentially using multiple levels of memory page walk, thereby increasing the latency of those operations, any reduction in the frequency of lookups will be beneficial.
 Hugepages are not standard practice, however, so we have chosen to include hugepages as an important mechanism for improving the memory performance of our virtual machines.
-One popular use of hugepages in accelerating network workloads is through the Data Plane Development Kit, first introduced by Intel and now an open source project \autocite{_dpdk_1}.  NOTE: I would really like to use DPDK, but don't think I have time so maybe I should just drop it here :(
 
 \subsection{I/O Virtualization}
 \label{sec:vt_io}
@@ -164,14 +157,14 @@ In this configuration, QEMU provides user-space device emulation for simple devi
 Userspace emulation has the advantage of removing the responsibility from the kernel, thereby minimizing the potential attack surface of the kernel.
 As mentioned earlier, paravirtualized devices are another variation on this theme of emulation where the paravirtualized guest driver communicates with the host paravirtualized devices.
 In addition to Xen's paravirtualized driver model, the KVM virtio library is the basis for paravirtualized devices in Linux \autocite{_virtio_1}.
-The virtio library takes inspiration from paravirtualization and userspace emulation and uses QEMU to implement the device emulation in userspace so host drivers are not necessary \autocite{_virtio_1}.
+The virtio library takes inspiration from paravirtualization and userspace emulation and uses QEMU to implement the device emulation in userspace so host drivers are not necessary.
 
 While device emulation can provide important flexibility and hardware independence, it brings up the recurring theme of software managing hardware functions which is often less efficient than utilizing dedicated, specialized hardware to perform the function.
 The alternative is to avoid any device emulation and allow the guest OS to access hardware directly as if it belonged to the guest rather than the host system.
 Since it is conceptually similar to virtualization of the MMU for memory, virtualizing the DMA transactions of modern I/O devices requires an I/O MMU (IOMMU) to allow communication between the guest and I/O devices.
 In x86 architecture, this feature is known as AMD-Vi or Intel VT-d, but both utilize the same concept of an IOMMU to avoid vm-exits when processing I/O.
 This allows the hypervisor to unbind a hardware device from its kernel and "pass through" or "direct assign" the device to the guest OS \autocite{_jones_1}.
-Direct assignment of hardware to guests also comes with the high cost of dedicating network interfaces or other important devices to a guest, but these devices provide significant performance improvements over paravirtualized or emulated guest devices, thereby enabling applications that could not previously be virtualized due to low-latency constraints \autocite{_jones_1}.
+Direct assignment of hardware to guests also comes with the high cost of dedicating network interfaces or other important devices to a guest, but these devices provide significant performance improvements over paravirtualized or emulated guest devices, thereby enabling applications that could not previously be virtualized due to low-latency constraints.
 If a host system has a large number of virtual machines that need high-performing I/O, it can be difficult to fit enough peripheral cards into the host chassis to passthrough devices to the virtual machines, thus providing each VM with dedicated hardware.
 A solution to this apparent conflict of interests can be found in PCI-SIG Single Root I/O Virtualization (SR-IOV) \autocite{_pcisig_1, intelvtd}.
 SR-IOV is a general method by which the host system can configure a single hardware device to create and control multiple additional \emph{virtual functions} of the device.
@@ -193,35 +186,28 @@ Should I elaborate on hypervisors here?
 \label{sec:container_arch}
 At a high level, containers can be thought of as another level of access control beyond the traditional user and group permission systems. 
 While those systems provide resource access control, containers can provide these resources with finer granularity, thus allowing only those resources and privileges that are required by the process \autocite{_felter_1}. 
-In a sense, containers are finally applying bounds to program execution that should logically have been included in process control from the very start so it is encouraging to see increased interest in their performance and security. [TODO: opinion, conclusions??]
+In a sense, containers are finally applying bounds to program execution that should logically have been included in process control from the very start so it is encouraging to see increased interest in their performance and security.
 
 \subsection{Operating System Virtualization}
 \label{sec:os_vt}
 Also known as \emph{operating system virtualization}, containers are a construct of the operating system that serves to provide limited context, and resources to a process executing on the host system. 
 The subsystems that enable a containerized process, including chroot, cgroups, and namespaces, have been gradually added to the Linux kernel over time.
 
-The current state of Linux containers has been stable since the introduction of [TODO chroot, then cgroups, then namespaces , add references].
-Much like the limitations imposed on apps in mobile devices [TODO: reference needed], all processes on a server or desktop system should have a view of the system that is limited in context and scope - they should only have access to the resources that they require (maybe with some margin for error).  
+The current state of Linux containers has been fairly stable since the recent inclusion of namespaces in the Linux kernel.
+Much like the limitations imposed on apps running sandboxed in mobile devices, all processes on a server or desktop system should have a view of the system that is limited in context and scope - they should only have access to the resources that they require (maybe with some margin for error).  
 One of the most important duties of the kernel is to control access to the system's resources including CPU, memory, and I/O.  
-In a sense, containers represent a desired level of control by the kernel of any arbitrary process.   
-Without containers or a similar resource limitation, the kernel is not fulfilling its whole purpose [TODO: elaborate here].
+In a sense, Containers represent a point in the evolution of the kernel where it finally appears to be truly isolating processes from the system. 
 
-The earliest popular concept in containers was the idea of limiting the filesystem scope of an executing process, which is embodied in the chroot system call and user-binary. The chroot call has its origins in BSD Jails and Solaris Zones [TODO:ref?].  
-Next on the container scene was the addition of cgroups to the Linux kernel.  Contributed by Google [TODO:reference], cgroups serves to limit the resources available to a process in a hierarchy, enabling child processes to inherit their parent's cgroup assignment. 
-Namespaces, a recent addition to the kernel [TODO:ref?], are the mechanism by which the scope or view of the process may be limited and controlled.  
+The earliest popular concept in containers was the idea of limiting the filesystem scope of an executing process, which is embodied in the chroot system call and user-binary. The chroot call has its origins in BSD Jails and Solaris Zones \autocite{_zones_1}.
+Next on the container scene was the addition of cgroups to the Linux kernel.  Contributed by Google \autocite{googlecgroups}, cgroups serve to limit the resources available to a process in a hierarchy, enabling child processes to inherit their parent's cgroup assignment. 
+Namespaces, also a recent addition to the kernel, are the mechanism by which the scope or resource view of the process may be limited and controlled.
 Linux capabilities are the mechanism by which the monolithic permissions granted to the root user for full system administration are broken down into more granular permissions.  
-
-NOTE: I don't think this paragraph needs to be here, but I just wanted to say it somewhere.
-Although it may be a controversial statement, it is the author's opinion that it is somewhat incorrect to think of containers as \emph{virtualization} per se.  
-Without arguing the definition of virtualization, a container does little to actually virtualize anything, but is more of a system for isolating and limiting the resource consumption of processes while providing dependencies necessary for them to run.  
-The only actual virtualization that is happening in a container is the masking of resources and, perhaps virtualization of network or other I/O resources to enable controlled sharing with other containers and processes in the system. 
-
 
 \subsection{Container Systems}
 \label{sec:container_systems}
 While Docker has recently popularized this form of sandboxing, related concepts have been used in earlier operating systems.
 FreeBSD introduced the Jails concept in 1999 as a process isolation technique \autocite{_zones_1}.  
-The Solaris-variant of the Unix operating system added the concept of Zones (Solaris Containers) in 2004 which was supposed to be an upgrade of the BSD Jails concept \autocite{_zones_1}.  
+The Solaris-variant of the Unix operating system added the concept of Zones (Solaris Containers) in 2004 which was supposed to be an upgrade of the BSD Jails concept.  
 Other containers have come before (Linux VServer, OpenVZ, FreeBSD Jails, Solaris Zones) and even LXC more recently.  
 
 "LXC is nothing else than “OpenVZ redesigned to be able to be merged into the mainline kernel”. Therefore, OpenVZ will eventually sunset, to be fully replaced by LXC." [TODO:http://blog.docker.com/2013/08/containers-docker-how-secure-are-they/ Comparison with Other Containerization Systems] 
@@ -241,8 +227,8 @@ Although, Docker may not be representative of container systems as a whole, we h
 Docker is largely responsible for the current wave of "hype/excitement/momentum" around containers so seems to be the de facto container in the mind of most people.  
 The Open Container Initiave was recently formed as a collaborative project under the Linux Foundation \autocite{_oci_1}.
 Members of this auspicious organization span the industry from major cloud players like Microsoft and Amazon to virtualization vendors such as VMware and CoreOS.  
-The goal of this new organization is to promote an open, standardized format for containers and the engine runtime libraries \autocite{_oci_1}. 
-They even have a head start on the process with Docker donating its container format, libcontainer) and runtime, runC, to the organization as a starting point \autocite{_oci_1}.
+The goal of this new organization is to promote an open, standardized format for containers and the engine runtime libraries. 
+They even have a head start on the process with Docker donating its container format, libcontainer) and runtime, runC, to the organization as a starting point.
 
 Characteristics of Docker/containers
 
@@ -253,7 +239,7 @@ Docker is a "Lightweight container virtualization platform with workflows and to
 \label{sec:resource_scope}
 
 Introduced in Version 7 Unix in 1979, one of the earliest Linux systems to enable some kind of Operating System virtualization is the chroot system call.
-It was later expanded to become FreeBSD Jails and, later, Solaris Zones (TODO: Jails reference, Zones reference).  
+It was later expanded to become FreeBSD Jails and, later, Solaris Zones \autocite{_zones_1}.  
 This tool allows a user to change the root directory of a process and its children to a specified directory such that the process subsequently views that directory as its root directory, "/" .  
 This is useful for providing partial filesystem isolation to processes thus controlling libraries and binaries that are available to the process.
 Although this should work well for a normal process, it will not prevent a malicious process from accessing arbitrary inodes or files, so it can be fairly easily circumvented.
@@ -269,9 +255,9 @@ Linux namespaces: Namespaces and cgroups have been included only for a short tim
 \subsection{Resource Control}
 \label{sec:resource_control}
 Resource Control (cpu/mem scope too): 
-Linux cgroups
+Linux cgroups \autocite{kernelcgroups}.
 
-"Control Groups provide a mechanism for aggregating/partitioning sets of tasks, and all their future children, into hierarchical groups with specialized behaviour." [TODO:  https://www.kernel.org/doc/Documentation/cgroups/cgroups.txt ]
+"Control Groups provide a mechanism for aggregating/partitioning sets of tasks, and all their future children, into hierarchical groups with specialized behaviour."
 
 Cgroups are organized into hierarchies with the root being the default cgroup for all processes.  Child processes can be organized into sub-trees that subdivide the resources of its parent process.  Each process must belong to one and only one cgroup. 
 
@@ -283,11 +269,25 @@ Implications \& differences between VMs and containers
 
 since containers need not emulate a second kernel or set of virtual hardware
 
+\subsubsection{docker networking} % (fold)
+\label{ssub:dockernetworking}
+
 Docker networking can be fairly complex with multiple options available to both the daemon and the run commands \autocite{dockernetworking1}.
+
+There are a few standard varieties of network interfaces that are commonly used in virtual environments.
+These include both hardware and software options with varying degrees of versatility and performance.  
+Most common among software options, virtual bridges are operated by the host kernel with a non-trivial CPU involvement. 
+Software bridges are also commonly used by virtual machines and often combined with the virtio library to provide a paravirtualized interface to the guest \autocite{_virtio_1}. 
+Bridges are, in fact, the \emph{de facto} layer 2 networking used by Docker \autocite{dockernetworking1}.  
+The Docker daemon also uses the common Linux firewall IPTables for layer 3 connectivity, routing, and NAT.
+Docker also uses IPTables and Network Address Translation to allow the container to communicate with the outside world.
+Another reason to study the bridged networking paradigm is that bridges are very important in networking in general and useful in systems where containers may be linked together or their functions pipelined.
+Additionally, the popular software switch package, Open vSwitch (OVS) may be configured to use virtual bridging as its default network topology.
 
 Maximum theoretical speed of Ethernet (copper or fiber) is only about 95\% of the line rate.
 This is due only to the overhead of Ethernet frames (1518 bytes + 8 byte preamble and 12 byte (96 ns) interframe gap (IFG)), Ethernet header (14 bytes), 4 byte Frame Check Sequence (FCS), 20 byte IP header, 20 byte TCP header, 1460 MSS for TCP.
 Overall, this amounts to 78 bytes of overhead at various layers to transmit only 1460 bytes of data representing 94.9\% efficiency in the best case.  
+% subsubsection dockernetworking (end)
 
 \section{Comparisons and Performance Analysis} % (fold)
 \label{sec:comparisons_performance_analysis}
@@ -301,5 +301,5 @@ A simple overview of their architecture can be seen in Figure~\ref{fig:docker_ov
 \end{figure}
 % section comparisons_performance_analysis (end)
 
-\nocite{_adams_1, _chowdhury_1, _perry_1, _grinberg_1, rathore2013kvm}
+\nocite{_dpdk_1, _adams_1, _chowdhury_1, _perry_1, _grinberg_1, rathore2013kvm}
 

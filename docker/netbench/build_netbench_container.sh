@@ -1,7 +1,7 @@
 #!/bin/bash
 # docker build [OPTIONS] PATH | URL | -
 REPO="bench/network"
-TAG="netperf"
+TAG="netbench"
 DOCKERFILE="Dockerfile.netbench"
 
 echo Building ${REPO}:${TAG} $(grep FROM $DOCKERFILE)

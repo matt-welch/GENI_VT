@@ -1,11 +1,14 @@
 #!/bin/bash
+function usage(){
+    echo Usage: 
+    echo "$0 <driver-name>"
 
-if [ -z $1 ] ; then 
-    ORIG_DRIVER=ixgbe
-    CURR_DRIVER=pci-stub
-    DEVICE_BDF="04:00.0"
-    DEVICE_VEND="8086"
-    DEVICE_NUM="10fb"
+    lspci -k | grep Ethernet
+}
+
+if [ -z "$1" ] ; then 
+    usage
+    exit 1
 else
     FNAME="${1}.unbound"
     INFO=$(cat $FNAME)
@@ -36,4 +39,7 @@ echo "Dev ID: $DEVICE_ID"
 echo "$DEVICE_ID" > $TARGET1
 echo "0000:${DEVICE_BDF}" > $TARGET2
 echo "0000:${DEVICE_BDF}" > $TARGET3
+
+# remove *.unbound files 
+rm ./${1}.unbound
 

@@ -2,7 +2,13 @@
 \label{cha:conclusions}
 \label{sec:conclusions}
 Conclusions text here
+Although it may be a controversial statement, it is the author's opinion that it is somewhat incorrect to think of containers as \emph{virtualization} per se.  
+Without arguing the definition of virtualization, a container does little to actually virtualize anything, but is more of a system for isolating and limiting the resource consumption of processes while providing dependencies necessary for them to run.  
+The only actual virtualization that is happening in a container is the masking of resources and, perhaps virtualization of network or other I/O resources to enable controlled sharing with other containers and processes in the system. 
 
+Bridging was shown to have more variability and lower throughput than the physical network connections.  
+This paradigm is concerning for large numbers of guests because any networking paradigm that requires host kernel involvement cannot scale to a large number of guests without a performance impact.
+This is because the work required by the host to monitor and handle bridge traffic and layer 3 decisions for multiple guests can be significant and induces additional latency for each guest added to the bridge.    
 
 \section{Future Work}
 \label{sec:future_work}

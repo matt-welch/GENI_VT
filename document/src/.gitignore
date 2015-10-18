@@ -13,6 +13,16 @@ thesis.blg
 thesis.acn
 thesis.xdy
 thesis.snippet
+*.pdf
+*.pdf_tex
+*.svg
+*.png
+*.jpg
+*.dat
+*.summary
+*.column
+data
+figures
 current_refs_list
 garbage*
 *~

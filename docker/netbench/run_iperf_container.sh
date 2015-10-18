@@ -1,8 +1,8 @@
 #!/bin/bash
 REPO="bench/network"
 TAG="netperf"
-NAME="iperfclient"
-HWADDR="de:ad:be:ef:42:01"
+NAME="container2"
+HWADDR="de:ad:be:ef:42:02"
 MAC="--mac-address $HWADDR "
 RUN_CMD="/bin/bash"
 HOST_VOLUME="/home/matt/GENI_VT/benchmarks/"

@@ -15,6 +15,7 @@ CPUTYPE="host,level=9"
 if [[ "$HOST_KERNEL" == *"$RTKERN"* ]] ; then 
     # we're running an RT-kernel, apply Rt-tuning to guest
     # check hugepages
+    echo "Running under RT-Kernel $(uname -a)"
     CPU_PARAMS="-cpu $CPUTYPE -smp 4"
     source $GENI_HOME/util/memory_fcns.sh
     mount_hugetlbfs 
@@ -103,34 +104,29 @@ ps -ef | grep $PID --color
 
 # open a telnet connection to qemu to determine the vcpu TIDs
 telnet localhost $TELNET_PORT 
-# (qemu) info cpus
-# ./pin_cpu_threads.sh
+# (qemu) info cpus ./pin_cpu_threads.sh
 
-# PERFORMANCE TUNING TODO: 
-# control cpu pinning?
-# -numa node[,mem=size][,cpus=cpu[-cpu]][,nodeid=node]
+# PERFORMANCE TUNING TODO: control cpu pinning?  -numa
+# node[,mem=size][,cpus=cpu[-cpu]][,nodeid=node]
 
-#  I don't think these work - they may disable the vnc server
-#    -chardev stdio,id=virtiocon0 \
-#    -device virtio-serial \
-#    -device virtconsole,chardev=virtiocon0 
+#  I don't think these work - they may disable the vnc server -chardev
+#  stdio,id=virtiocon0 \ -device virtio-serial \ -device
+#  virtconsole,chardev=virtiocon0 
 
-# potential optimizations: 
-# -no-reboot \
-#    -net nic -net user \i
+# potential optimizations: -no-reboot \ -net nic -net user \i
 #-net user[,vlan=n][,name=str][,net=addr[/mask]][,host=addr][,restrict=on|off]
 #         [,hostname=host][,dhcpstart=addr][,dns=addr][,dnssearch=domain][,tftp=dir]
 #         [,bootfile=f][,hostfwd=rule][,guestfwd=rule][,smb=dir[,smbserver=addr]]
-#                connect the user mode network stack to VLAN 'n', configure its
-#                DHCP server and enabled optional services
+#         connect the user mode network stack to VLAN 'n', configure its DHCP
+#         server and enabled optional services
 #
-# -net user,id=myNet0,net=192.168.2.0/24,hostfwd=192.168.2.2:5555-192.168.2.4:23 \
+# -net
+# user,id=myNet0,net=192.168.2.0/24,hostfwd=192.168.2.2:5555-192.168.2.4:23 \
 #
-#    -net user,net=192.168.2.22,hostfwd=tcp::10022-:22 \
-#    -net nic 
+#    -net user,net=192.168.2.22,hostfwd=tcp::10022-:22 \ -net nic 
 #
 #
 
-# NOTE: to enable forwarding over SSH (VNC in particular): 
-# ssh -L 5901:localhost:5901 -N -f -l mattwel pc4.instageni.illinois.edu
-# then connect to localhost:5901 on the local host (VNC viewer)
+# NOTE: to enable forwarding over SSH (VNC in particular): ssh -L
+# 5901:localhost:5901 -N -f -l mattwel pc4.instageni.illinois.edu then connect
+# to localhost:5901 on the local host (VNC viewer)

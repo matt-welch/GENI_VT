@@ -2,7 +2,7 @@
 # NOTE: if this is run when the interface is the ONLY interface, 
 # you will lose your SSH connection when the interface goes down
 # use 10G network connection for data
-IF=p258p2 # $(ifconfig | grep 192.168 -B 1 | head -n 1 | cut -d ' ' -f 1)
+IF=eth10 # $(ifconfig | grep 192.168 -B 1 | head -n 1 | cut -d ' ' -f 1)
 BR=br0
 
 echo "Creating ${BR} in $0"

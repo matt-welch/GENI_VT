@@ -34,7 +34,7 @@ INTERFACE_LIST=" virtio_net ixgbe igbvf "  # ixgbevf
 NET_OPTS=""
 if [[ $INTERFACE_LIST == *"igbvf"* ]] ; then 
     # one virtual function from eth1 for internet/control (enable_vfs)
-    CONTROL_DEVICE="09:10.1"
+    CONTROL_DEVICE="05:10.0"
     if [ -z "$(lspci | grep $CONTROL_DEVICE)" ] ; then 
         echo "$0: ERROR: Control network interface device <$CONTROL_DEVICE> not available."
         exit
@@ -43,9 +43,9 @@ if [[ $INTERFACE_LIST == *"igbvf"* ]] ; then
     NET_OPTS="$NET_OPTS $NET_CONTROL"
 fi
 if [[ $INTERFACE_LIST == *" ixgbe "* ]] ; then 
-    # one physical function from p258p1 for data (disable virtual functions)
-    P258P1_PF="04:00.0"
-    DATA_DEVICE="$P258P1_PF"
+    # one physical function from ixgbe device for data (disable virtual functions)
+    IXGBE_VF="03:00.1"
+    DATA_DEVICE="$IXGBE_VF"
     if [ -z "$(lspci | grep $DATA_DEVICE)" ] ; then 
         echo "$0: ERROR: Data network interface device <$DATA_DEVICE> not available."
         exit
@@ -54,8 +54,8 @@ if [[ $INTERFACE_LIST == *" ixgbe "* ]] ; then
     NET_OPTS="$NET_OPTS $NET_DATA"
 fi
 if [[ $INTERFACE_LIST == *" ixgbevf "* ]] ; then 
-    # one virtual function from p258p2 for VF-data (enable_vfs)
-    P258P2_VF="04:10.1"
+    # one virtual function from p258p1 for VF-data (enable_vfs)
+    P258P2_VF="05:10.1"
     NET_DATA_VF="-device pci-assign,host=${P258P2_VF} "   
     NET_OPTS="$NET_OPTS $NET_DATA_VF"
 fi

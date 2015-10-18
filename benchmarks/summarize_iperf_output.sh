@@ -11,6 +11,6 @@ for FILE in $(ls iperf*.dat); do
     grep "Server output" -B 4 $FILE | grep receiver >> $OUTPUT
     echo >> $OUTPUT
     echo "### iperf UDP bandwidth, ${IPADDR}:${PORT} ### " >> $OUTPUT
-    grep "Server output" -B 4 $FILE | grep datagrams -B 1 | grep Gbits/sec >> $OUTPUT
+    grep "Server output" -B 4 $FILE | grep datagrams -B 1 | grep " ms" >> $OUTPUT
     echo >> $OUTPUT
 done

@@ -9,32 +9,22 @@ The two configurations include the standard Linux kernel, version 3.18.20, and t
 
 \section{Experimental Setup} % (fold)
 \label{sec:experimental_setup}
-In this section, we will describe the experimental environment used herein including system hardware, operating system versions, kernel versions, kernel parameters, and kernel configurations.  
+In this section, we will describe the experimental environment constructed for this study including system hardware, operating system versions, docker parameters, QEMU parameters, kernel versions, kernel parameters, and kernel configurations.  
 
 \subsection{Hardware} % (fold)
 \label{sec:hardware}
-The motherboard used for the test (server) system was a SuperMicro server board with dual CPU sockets, model TODO: XXYY.
-Each of the two CPU sockets on the motherboard were populated with an Intel Xeon E5-2608L v3 6-core processor running at 2.00 GHz.  
-Hyperthreading was disabled in the BIOS as a performance optimization.  
+The motherboard used for the test (server) system was a SuperMicro X10DRH-C/i server board with dual CPU sockets.
+Both CPU sockets on the motherboard were populated with an Intel Xeon E5-2608L v3, having 6-core running at 2.00 GHz.  
+Hyperthreading, CPU Turbo, P-states, and C-states were all disabled in the BIOS as a performance optimization.  
 The platform was populated with with two 16GB memory sticks per socket for a total of 64 GB of DDR4 memory running at 1866 MHz in Dual-channel mode.  
-The network card used was an Intel 82599ES 10-Gigabit PCIe card with two optical interfaces.  
-10 Gigabit network interfaces used because almost any virtualization system, be it container or virtual machine, can push 1 Gbps of traffic per core.
-With a 10 Gbps interface, however, the work required to push that bandwidth through the interface means that both the virtual machines and containers should see some performance differences
-
-TODO: Should I expand more on hardware details and BIOS settings including hyperthreading (+reasoning)??
+The network card used was an Intel 82599ES 10-Gigabit PCIe card with two optical interfaces, each directly connected to the client system.  
+The 10 Gigabit network interfaces were used in order to stress the performance of the virtual systems.  
+The computation involved in processing a 1Gbps flow is generally not significant enough to stress a virtual machine, whereas a 10 Gbps stream provides a significant workload where we should observe significant differences between the systems.  
 
 % subsection hardware (end)
 
 \subsection{Networking and Topology} % (fold)
 \label{sub:expt_networking}
-There are many varieties of network interfaces available in virtual environments.
-These include both hardware and software options with varying degrees of versatility and performance.  
-Most common among software options, virtual bridges are operated by the host kernel with a non-trivial CPU involvement. 
-Software bridges are also commonly used by virtual machines and often combined with the virtio library \autocite{_virtio_1}. 
-Bridges are the \emph{de facto} layer 2 networking used by Docker.  
-The Docker daemon also uses the common Linux firewall IPTables for layer 3 connectivity, routing, and NAT.
-This implies that bridging or any networking paradigm that requires host kernel involvement cannot scale to a large number of guests because the work required by the host to monitor and handle bridge traffic and layer 3 decisions for multiple guests can be significant.    
-
 \subsubsection{Software Networking} % (fold)
 \label{ssub:software_networking}
 The default networking paradigm of Docker is to create a bridge and pair of virtual Ethernet interfaces.
@@ -65,13 +55,6 @@ As we have seen in Section~\ref{sec:vt_io}, this is known as passthrough for vir
 In the version of Docker used herein, 1.8.1, direct physical assignment is not enabled by default.
 Instead, a fairly simple script was written [TODO reference prepare\_network\_stack.sh?], with inspiration borrowed from J\'{e}r\^{o}me Petazzoni's pipework \autocite{pipework1jpetazzo}, Jason Anderson's direct-phys fork of pipework \autocite{pipework1Rakurai}, and a serverfault.com post \autocite{serverfault1} to assign a physical interface to the container namespace. 
 
-Another network interface that may be provided to a virtual environment is that of a virtual function.
-We've seen these described in Section~\ref{sec:vt_io} as a multiplexed interface into the actual physical connection of the device.
-These interfaces run at line rates, but have fewer receive and transmit queues than the original interface.
-This implies that they can achieve native performance for small workloads that do not saturate their buffers.
-These interfaces have significantly improved performance over the bridged interfaces since the host kernel need not be involved in processing these packets which happens in the card itself instead.
-For the most part, virtual functions may be handled by the operating system or guest OS as if they were any other physical device.  
-Passthrough or direct assignment is used to attach them to VMs and containers, respectively.
 % subsubsection hardware_networking (end)
 
 % subsection expt_networking (end)
@@ -164,12 +147,9 @@ The image building process of Docker is controlled by the \lstinline{docker buil
 This tool takes recipe files known as Dockerfiles \autocite{_dockerfile_1} and constructs the image based on instructions therein.
 A Dockerfile usually specifies the base image that should be used for the build along with setting environment variables and installing necessary packages and binaries to the container's filesystem. 
 It is consumed by the \lstinline{docker build} tool and the image is constructed as the composite overlay of each step in the build process \autocite{_docker_build_1}.
-All of the containers used herein were based on the official Debian image, \lstinline{debian:wheezy}, which is based on the latest release of Debian 7: Wheezy.  
-The image was pulled from the Docker.io repository on September 1, 2015 with image ID bbe78c1a5a53.
-The Debian image was chosen since it has a very small starting size of only 85 MB and no additional tools provided by larger base images were necessary.
-In retrospect, this decision creates a small discrepancy in the comparison of these containers to the virtual machines used herein since the VMs were all using Ubuntu 14.04.3.
-Since the userpace tools of the distro are not the subject of this investigation, it was decided that the base container image of Debian would not cause any issues since the kernel function inside the containers was of interest and that version is common among all of the environments used.  
-The image created for benchmarking was called netbench and created with the Dockerfile.netbench [ reference here??].  It only pulled the Debian base image, applied some labels and installed netperf.  
+All of the containers used herein were based on the official Ubuntu image, which is based on the latest release of Ubuntu 14.04 LTS.
+The Ubuntu image was chosen in order to maintain a consistent environment with the host and virtual machines.
+The image created for benchmarking was called netbench and created with the Dockerfile.netbench.  It only pulled the Ubuntu base image, applied some labels, and installed netperf.  
 
 The daemon has a number of parameters that may be modified to tune parameters such as available cgroup cpu sets, bridged networking, and the storage driver used for container filesystems.
 In this study, the docker daemon was launched with mostly standard parameters but for the following exceptions.

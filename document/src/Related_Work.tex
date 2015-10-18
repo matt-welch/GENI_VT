@@ -269,11 +269,22 @@ Implications \& differences between VMs and containers
 
 since containers need not emulate a second kernel or set of virtual hardware
 
+\subsubsection{docker networking} % (fold)
+\label{ssub:dockernetworking}
+
 Docker networking can be fairly complex with multiple options available to both the daemon and the run commands \autocite{dockernetworking1}.
+
+There are a few standard varieties of network interfaces that are commonly used in virtual environments.
+These include both hardware and software options with varying degrees of versatility and performance.  
+Most common among software options, virtual bridges are operated by the host kernel with a non-trivial CPU involvement. 
+Software bridges are also commonly used by virtual machines and often combined with the virtio library to provide a paravirtualized interface to the guest \autocite{_virtio_1}. 
+Bridges are, in fact, the \emph{de facto} layer 2 networking used by Docker \autocite{dockernetworking1}.  
+The Docker daemon also uses the common Linux firewall IPTables for layer 3 connectivity, routing, and NAT.
 
 Maximum theoretical speed of Ethernet (copper or fiber) is only about 95\% of the line rate.
 This is due only to the overhead of Ethernet frames (1518 bytes + 8 byte preamble and 12 byte (96 ns) interframe gap (IFG)), Ethernet header (14 bytes), 4 byte Frame Check Sequence (FCS), 20 byte IP header, 20 byte TCP header, 1460 MSS for TCP.
 Overall, this amounts to 78 bytes of overhead at various layers to transmit only 1460 bytes of data representing 94.9\% efficiency in the best case.  
+% subsubsection dockernetworking (end)
 
 \section{Comparisons and Performance Analysis} % (fold)
 \label{sec:comparisons_performance_analysis}

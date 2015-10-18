@@ -1,12 +1,17 @@
 \chapter{Results}
 \label{cha:results}
 \label{sec:results}
-We analyzed the network performance of docker containers and virtual machines using standard benchmarking tools.  
+Network performance of docker containers and virtual machines was analyzed using standard benchmarking tools including netperf and ping.  
 Twenty measurements were taken for each type of virtual environment using the standard 3.18.20 kernel and the preempt-rt tuned kernel.
-For each kernel, virtual environment, and network conenction type, the latency and bandwidth of both TCP and UDP streams were measured 20 times.
-The data is shown in all STREAM and RR figures as a box plot with the median in the center, 25th and 75th percentiles at the ends of the box and min and max at the ends of the error bars.
-This plot helps to show the one-sided variance that is often observed in performance anaylsis.  
-The measurements can only approach the theoretical maxima for each test, but are free to perform poorly or not at all below the median.  
+For each kernel, virtual environment, and network conenction type, the latency and bandwidth of both TCP and UDP streams were measured 20 times along with 100 measurements of ICMP latency.
+The data is shown in all STREAM and RR figures as box plots with the median in the center, 25th and 75th percentiles at the bottom and top bounds of the box and min and max at the ends of the error bars.
+This plot helps to illustrate the one-sided variance that may often be observed in network performance anaylsis.  
+The measurements can only approach the theoretical maxima for each test.  
+
+Variation in the measured latency is partly due to the non-determinism of typical Linux systems, but there is also a component of the latency due only to the network delays.
+The 10 Gbps optical cables connecting the two systems are approximately 2 meters long so the propagation delay along these connections should be about 6.7 ns.
+In-network queueing delay can be ignored since the systems are directly connected and queuing is only occurring at their network interfaces.
+The transmission or packetization delay for transmitting or receiving a large 1500 byte packet would be 1.214 $\mu$s.
 
 \begin{table}[ht!]
     \centering
@@ -23,32 +28,28 @@ The measurements can only approach the theoretical maxima for each test, but are
 
 \section{Network Bandwidth} % (fold)
 \label{sec:networkbandwidth}
+Given the 
 \subsection{TCP Bandwidth} % (fold)
 \label{sub:tcpbandwidth}
-The netperf tool uses TCP connections by default for its control channel as well as measuring network performance. 
-    The goal of the study was to improve network performance in both virtual machines and containers 
-We measured TCP bandwidth of the various network interfaces and kernels using the TCP\_STREAM test in netperf.
-The results of the bridged measurements are shown in Figure~\ref{fig:tcp_stream_bridge}.
-We see in Figure~\ref{fig:tcp_stream_bridge} that, while both environments show significant variation with standard kernels, the rt-variant kernels showed only minimal variance and the docker-rt test even reached line rate.  
-The performance of both the container and virtual machine, with minima close to the median and maxima only slightly above that point, are consistent with a realtime kernel in that the performance is essentially deterministic with little variance (TODO: cite variance here).
+TCP bandwidth of the various network interfaces and kernels was measured using the TCP\_STREAM bandwidth test in netperf.
+The results of the bridged measurements are shown in Figure~\ref{fig:tcp_stream_bridge} where it is evident that, while both environments show significant variation with standard kernels, the realtime-variant kernels show only minimal variance and the docker-rt test even reached line rate.
+The performance of both the container and virtual machine, with minima close to the median and maxima only slightly above that point, are consistent with a realtime kernel in that the performance is essentially deterministic with little variance (TODO: cite variance or figure??).
 
 The results of the physical connection measurements are shown in Figure~\ref{fig:tcp_stream_phys}.
 \begin{figure}
     \centering
     \def\svgwidth{\columnwidth}
-    \input{ICMP_LAT_PHY.pdf_tex}
+    \input{TCP_STREAM_PHY.pdf_tex}
     \caption{TCP Streaming Bandwidth: Bridged Network}
     \label{fig:tcp_stream_bridge}
 \end{figure}
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 \begin{figure}
     \centering
     \def\svgwidth{\columnwidth}
-    \input{ICMP_LAT_PHY.pdf_tex}
+    \input{TCP_STREAM_PHY.pdf_tex}
     \caption{TCP Streaming Bandwidth: Physical Network}
     \label{fig:tcp_stream_phys}
 \end{figure}
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 % subsection tcpbandwidth (end)
 
 \subsection{UDP Bandwidth} % (fold)
@@ -60,7 +61,6 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
     \caption{UDP Streaming Bandwidth: Bridged Network}
     \label{fig:udp_stream_bridge}
 \end{figure}
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 \begin{figure}
     \centering
     \def\svgwidth{\columnwidth}
@@ -70,13 +70,11 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 \end{figure}
 % subsection udpbandwidth (end)
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 
 % section networkbandwidth (end)
 
 \section{Network Latency} % (fold)
 \label{sec:networklatency}
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 
 \subsection{TCP Latency} % (fold)
 \label{sub:tcplatency}
@@ -87,7 +85,6 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
     \caption{TCP Request/Response Latency: Bridged Network}
     \label{fig:tcp_rr_bridge}
 \end{figure}
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 \begin{figure}
     \centering
     \def\svgwidth{\columnwidth}
@@ -96,7 +93,6 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
     \label{fig:tcp_rr_phys}
 \end{figure}
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 % subsection tcplatency (end)
 
 \subsection{UDP Latency} % (fold)
@@ -108,7 +104,6 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
     \caption{UDP Request/Response Latency: Bridged Network}
     \label{fig:udp_rr_bridge}
 \end{figure}
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 \begin{figure}
     \centering
     \def\svgwidth{\columnwidth}
@@ -116,7 +111,6 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
     \caption{UDP Request/Response Latency: Physical Network}
     \label{fig:udp_rr_phys}
 \end{figure}
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 % subsection udplatency (end)
 
 \subsection{ICMP latency} % (fold)
@@ -131,7 +125,6 @@ The standard network tool ping, which measures ICMP response latency \autocite{p
 \end{figure}
 The box-plot results of the ping testing of the bridged connections are shown in Figure~\ref{fig:icmplatencybridge}.  
 The box-plot results of the ping testing of the physical connections are shown in Figure~\ref{fig:icmplatencyphys}.  
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 \begin{figure}
     \centering
     \def\svgwidth{\columnwidth}
@@ -140,14 +133,12 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
     \label{fig:icmplatencyphys}
 \end{figure}
 The box-plot results of the docker-phy, native, and docker-bridge connections for the standard kernel are shown in Figure~\ref{fig:icmplatencyphony}.  
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 \begin{figure}
     \centering
     \includegraphics[width=150mm]{ICMP-all-column.png}
     \caption{ICMP latency: docker-phy, native, docker-bridge, respectively}
     \label{fig:icmplatencyphony}
 \end{figure}
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 
 % subsection icmplatency (end)
 

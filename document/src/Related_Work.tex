@@ -280,6 +280,9 @@ Most common among software options, virtual bridges are operated by the host ker
 Software bridges are also commonly used by virtual machines and often combined with the virtio library to provide a paravirtualized interface to the guest \autocite{_virtio_1}. 
 Bridges are, in fact, the \emph{de facto} layer 2 networking used by Docker \autocite{dockernetworking1}.  
 The Docker daemon also uses the common Linux firewall IPTables for layer 3 connectivity, routing, and NAT.
+Docker also uses IPTables and Network Address Translation to allow the container to communicate with the outside world.
+Another reason to study the bridged networking paradigm is that bridges are very important in networking in general and useful in systems where containers may be linked together or their functions pipelined.
+Additionally, the popular software switch package, Open vSwitch (OVS) may be configured to use virtual bridging as its default network topology.
 
 Maximum theoretical speed of Ethernet (copper or fiber) is only about 95\% of the line rate.
 This is due only to the overhead of Ethernet frames (1518 bytes + 8 byte preamble and 12 byte (96 ns) interframe gap (IFG)), Ethernet header (14 bytes), 4 byte Frame Check Sequence (FCS), 20 byte IP header, 20 byte TCP header, 1460 MSS for TCP.

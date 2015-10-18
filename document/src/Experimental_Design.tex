@@ -169,7 +169,7 @@ The image was pulled from the Docker.io repository on September 1, 2015 with ima
 The Debian image was chosen since it has a very small starting size of only 85 MB and no additional tools provided by larger base images were necessary.
 In retrospect, this decision creates a small discrepancy in the comparison of these containers to the virtual machines used herein since the VMs were all using Ubuntu 14.04.3.
 Since the userpace tools of the distro are not the subject of this investigation, it was decided that the base container image of Debian would not cause any issues since the kernel function inside the containers was of interest and that version is common among all of the environments used.  
-The image created for benchmarking was called netbench and created with the Dockerfile.netbench [ reference here??].  It only pulled the Debian base image, applied some labels and installed netperf.  Later that same image was used with iperf by mounting a host volume containing the iperf directory which was then copied into the container's filesystem.
+The image created for benchmarking was called netbench and created with the Dockerfile.netbench [ reference here??].  It only pulled the Debian base image, applied some labels and installed netperf.  
 
 The daemon has a number of parameters that may be modified to tune parameters such as available cgroup cpu sets, bridged networking, and the storage driver used for container filesystems.
 In this study, the docker daemon was launched with mostly standard parameters but for the following exceptions.
@@ -198,13 +198,13 @@ Containers are all launched with a specified MAC address for their bridge interf
 Given the experimental setup described in Section~\ref{sec:experimental_setup}, the performance of virtual machines and containers could be compared.  
 We wanted to compare the performance of the systems with RT tuning to those without.
 The performance of latency-sensitive network workloads are often not bound by memory or CPU, but by their ability to process I/O traffic.
-We concentrated our testing on network-related benchmarks including netperf and iperf.  
+We concentrated our testing on network-related benchmarks to evaluate bandwidth and latency of the various operating system and network configurations.
 The network paths that were tested were mostly layer 4 related including both TCP and UDP flows.
 
-Network performance was measured with netperf \autocite{_netperf_1}, iperf \autocite{_iperf_1}, and ping. 
-The system under test ran the server process for iperf and netperf inside the virtual environment because we are trying to see how these systems can perform work in a server context and it is a rare case that client systems are virtualized.  
+Network performance was measured with netperf \autocite{_netperf_1} and ping. 
+The system under test ran the server process for netperf inside the virtual environment because we are trying to see how these systems can perform work in a server context and it is a rare case that client systems are virtualized.  
 Using netperf version 2.7.0 \autocite{_netperf_2}, network bandwidth and latency were measured with tests comprising the default bandwidth test TCP\_STREAM, TCP\_RR, UDP\_STREAM, and UDP\_RR.\\  
-For each of the netperf and iperf tests, 20 samples were collected (TODO: include command lines, reference in appendix?).  For the ping test, 100 samples were collected with a 1 second interval.  
+For each of the netperf tests, 20 samples were collected (TODO: include command lines, reference in appendix?).  For the ping test, 100 samples were collected with a 1 second interval.  
 
 (TODO: insert table here to describe the subtests and maybe a topology diagram too. ) \\
 %\begin{table}
@@ -224,4 +224,4 @@ The transmission or packetization delay for transmitting or receiving a large 15
 
 % section experimental_procedure (end)
 
-\nocite{rathore2013kvm}
+\nocite{rathore2013kvm, iperf3}

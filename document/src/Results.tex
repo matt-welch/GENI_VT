@@ -40,15 +40,15 @@ The results of the physical connection measurements are shown in Figure~\ref{fig
     \centering
     \def\svgwidth{\columnwidth}
     \input{TCP_STREAM_PHY.pdf_tex}
-    \caption{TCP Streaming Bandwidth: Bridged Network}
-    \label{fig:tcp_stream_bridge}
+    \caption{TCP Streaming Bandwidth: Physical Network}
+    \label{fig:tcp_stream_phys}
 \end{figure}
 \begin{figure}
     \centering
     \def\svgwidth{\columnwidth}
-    \input{TCP_STREAM_PHY.pdf_tex}
-    \caption{TCP Streaming Bandwidth: Physical Network}
-    \label{fig:tcp_stream_phys}
+    \input{TCP_STREAM_BRG.pdf_tex}
+    \caption{TCP Streaming Bandwidth: Bridged Network}
+    \label{fig:tcp_stream_bridge}
 \end{figure}
 % subsection tcpbandwidth (end)
 
@@ -57,14 +57,14 @@ The results of the physical connection measurements are shown in Figure~\ref{fig
 \begin{figure}
     \centering
     \def\svgwidth{\columnwidth}
-    \input{ICMP_LAT_PHY.pdf_tex}
+    \input{UDP_STREAM_BRG.pdf_tex}
     \caption{UDP Streaming Bandwidth: Bridged Network}
     \label{fig:udp_stream_bridge}
 \end{figure}
 \begin{figure}
     \centering
     \def\svgwidth{\columnwidth}
-    \input{ICMP_LAT_PHY.pdf_tex}
+    \input{UDP_STREAM_PHY.pdf_tex}
     \caption{UDP Streaming Bandwidth: Physical Network}
     \label{fig:udp_stream_phys}
 \end{figure}
@@ -81,14 +81,14 @@ The results of the physical connection measurements are shown in Figure~\ref{fig
 \begin{figure}
     \centering
     \def\svgwidth{\columnwidth}
-    \input{ICMP_LAT_PHY.pdf_tex}
+    \input{TCP_RR_BRG.pdf_tex}
     \caption{TCP Request/Response Latency: Bridged Network}
     \label{fig:tcp_rr_bridge}
 \end{figure}
 \begin{figure}
     \centering
     \def\svgwidth{\columnwidth}
-    \input{ICMP_LAT_PHY.pdf_tex}
+    \input{TCP_RR_PHY.pdf_tex}
     \caption{TCP Request/Response Latency: Physical Network}
     \label{fig:tcp_rr_phys}
 \end{figure}
@@ -100,46 +100,38 @@ The results of the physical connection measurements are shown in Figure~\ref{fig
 \begin{figure}
     \centering
     \def\svgwidth{\columnwidth}
-    \input{ICMP_LAT_PHY.pdf_tex}
+    \input{UDP_RR_BRG.pdf_tex}
     \caption{UDP Request/Response Latency: Bridged Network}
     \label{fig:udp_rr_bridge}
 \end{figure}
 \begin{figure}
     \centering
     \def\svgwidth{\columnwidth}
-    \input{ICMP_LAT_PHY.pdf_tex}
+    \input{UDP_RR_PHY.pdf_tex}
     \caption{UDP Request/Response Latency: Physical Network}
     \label{fig:udp_rr_phys}
 \end{figure}
 % subsection udplatency (end)
 
-\subsection{ICMP latency} % (fold)
+%\subsection{ICMP latency} % (fold)
 \label{sub:icmplatency}
-The standard network tool ping, which measures ICMP response latency \autocite{pingexplained}, was used to get an idea of the layer 3 latency of our virtual hosts.  
-\begin{figure}
-    \centering
-    \includegraphics[width=150mm]{ICMP_raw_dat.png}
-%    \input{ICMP_Latency.pdf_tex}
-    \caption{ICMP latency: Phony bridge}
-    \label{fig:icmplatencybridge}
-\end{figure}
+The standard network tool ping was used to get an idea of the layer 3 latency of the virtual hosts.  
 The box-plot results of the ping testing of the bridged connections are shown in Figure~\ref{fig:icmplatencybridge}.  
 The box-plot results of the ping testing of the physical connections are shown in Figure~\ref{fig:icmplatencyphys}.  
 \begin{figure}
     \centering
     \def\svgwidth{\columnwidth}
-    \input{ ICMP_Latency.pdf_tex}
-    \caption{ICMP latency: Phony physical}
-    \label{fig:icmplatencyphys}
+    \input{ICMP_LAT_BRG.pdf_tex}
+    \caption{ICMP latency: Bridged network}
+    \label{fig:icmplatencybridge}
 \end{figure}
-The box-plot results of the docker-phy, native, and docker-bridge connections for the standard kernel are shown in Figure~\ref{fig:icmplatencyphony}.  
 \begin{figure}
     \centering
-    \includegraphics[width=150mm]{ICMP-all-column.png}
-    \caption{ICMP latency: docker-phy, native, docker-bridge, respectively}
-    \label{fig:icmplatencyphony}
+    \def\svgwidth{\columnwidth}
+    \input{ICMP_LAT_PHY.pdf_tex}
+    \caption{ICMP latency: Physical network}
+    \label{fig:icmplatencyphys}
 \end{figure}
-
 % subsection icmplatency (end)
 
 % section networklatency (end)

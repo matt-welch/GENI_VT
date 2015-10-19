@@ -74,7 +74,7 @@ Further limitations, while not as impactful as the choice of the 3.18 kernel inc
 
 \subsubsection{Kernel Configuration} % (fold)
 \label{ssub:kernel_configuration}
-One of the steps involved in tuning the RT variant of our kernel was to apply a specific set of kernel configuration choices during the kernel build process.
+One of the steps involved in tuning the RT variant of the kernel was to apply a specific set of kernel configuration choices during the kernel build process.
 The kernel shipped with Ubuntu 14.04.3 was version 3.19.0-25-generic.
 That kernel's default configuration (.config file) was used as the basis for the configuration and building of the test kernel version 3.18.20. 
 This default kernel configuration omits even simple omtimizations such as disabling CPU frequency scaling, and enabling a pre-emptible kernel, but the default kernel configuration is probably the most common on servers that have not done significant performance tuning and optimizations so it seemed appropriate. 
@@ -123,8 +123,10 @@ After Ubuntu was installed, the packages for vim, ethtool, screen, qemu-kvm, exu
 \subsubsection{QEMU and hypervisor parameters} % (fold)
 \label{ssub:qemu_params}
 QEMU is responsible for device emulation so this is where it is important to set up the virtual machine to be as performant as possible.
-For optimal performance inside our performance-tuned virtual machine, QEMU was used to launch the guest virtual machine with some additional command-line arguments to improve guest and hypervisor performance.  
+For optimal performance inside the performance-tuned virtual machine, QEMU was used to launch the guest virtual machine with some additional command-line arguments to improve guest and hypervisor performance.  
 The complete set of additional QEMU parameters is shown in Table~\ref{tab:qemu_params_table}.  
+In this work, higher-level libraries such as libvirt or VMware orchestration are not used in favor of running as efficiently as possibly without additional software layers of abstraction impacting performance.
+The hope is for maximal performance so minimal abstraction layers were utilized in the system configuration.
 
 \input{qemu_parameters_table.tex}
 
@@ -169,7 +171,7 @@ Containers are all launched with a specified MAC address for their bridge interf
 Given the experimental setup described in Section~\ref{sec:experimental_setup}, the performance of virtual machines and containers could be compared.  
 We wanted to compare the performance of the systems with RT tuning to those without.
 The performance of latency-sensitive network workloads are often not bound by memory or CPU, but by their ability to process I/O traffic.
-We concentrated our testing on network-related benchmarks to evaluate bandwidth and latency of the various operating system and network configurations.
+We concentrated testing on network-related benchmarks to evaluate bandwidth and latency of the various operating system and network configurations.
 The network paths that were tested comprised both TCP and UDP flows in addition to ICMP latency.
 
 Network performance was measured with netperf \autocite{_netperf_1} and ping. 

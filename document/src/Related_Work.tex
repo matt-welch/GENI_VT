@@ -2,17 +2,28 @@
 \label{cha:related_work}
 \label{sec:related_work}
 Virtualization has been an important part of computing since early mainframes needed to be shared among multiple processes.
-This section will describe some of the work in the field of virtualization that has brought virtualization to the current state of the art.
-Some of the subsystems in Linux and processor hardware that enable virtualization will also be discussed in this section.
+The use cases for virtualization in network-resident workloads are numerous, but performance of virtual systems is often a concern.
+Traditional virtualization uses have mostly used virtual machines with containers having a secondary role as a process isolation mechanism.
+Recent growth in containers, specifically the very popular Docker, has fueled a resurgence in their uses in the enterprise.
+Network Functions Virtualization (NFV) and cloud computing have also grown recently, driving performance improvements of virtual systems, including both virtual machines and containers.
+There have been many comparisons between virtual systems, but they mostly lack any kind of tuning to improve network performance of these systems.
+It is possible to improve the performance of virtual systems with fairly simple configuration changes to the kernel and modification of boot parameters.
+This section will discuss some of the enabling developments in virtual system architecture as well as some of the comparisons among them.  
 
 \section{Use-Cases for Virtualization} % (fold)
 \label{sec:usecasesvt}
 The use cases for virtualization are numerous and growing. 
 \begin{enumerate}
   \item Virtualization as growth driver for datacenters and enterprise networks
-  \item Containers
-  \item NFV
+  \item NFV has recently become popular 
+  \item Containers gain popularity as a distribution platform in parallel with explosion of NFV
 \end{enumerate}
+Rathore [A61] compared KVM and LXC performance and isolation in hardware-assisted virtual routers, but used dynamic allocation which can kill latency \autocite{rathore2013kvm}.
+Their isolation could have improved with realtime tuning and cpu isolation.  
+Containers alone cannot provide real isolation of processes without explicit CPU control with cgroups, but the organization of processes and CPU assignment can be tricky.
+Orchestration of containers and virtual machines needs to take realtime tuning into account for maximal I/O performance.
+
+
 
 Recently, the Linux Foundation announced that they would be fully supporting the efforts to promote and advance the development of Real-Time Linux \autocite{_linux_foundation_1}.
 The Linux Foundation is the body that guides and sponsors the direction of Linux.
@@ -34,11 +45,11 @@ In order to meet their processing target window of only 3 µs, any latency due to
 % section usecasesvt (end)
 
 \section{Virtual Machine Architecture}
-\label{sec:vm_arch}
-In the following sections, virtual machine architecture will be discussed illustrate the resource needs and potential improvements available.
+\label{sec:vmarchitecture}
+In the following sections, virtual machine architecture will be discussed illustrate their resource needs and potential areas for improvement.
 
 \subsection{Virtual Machines}
-\label{sec:virtual_machines}
+\label{sec:virtualmachines}
 The architectures available in virtual environments are as widely varied as the types of hardware they seek to emulate.
 Many of the concepts currently in use regarding virtual machines originated in a seminal 1974 paper by Popek and Goldberg \autocite{_popek_1}.
 Although virtual machines had already been implemented on "third-generation computer systems" such as the IBM 360/67 by then, Popek and Goldberg sought to establish formal requirements for and prove whether other systems of that era were capable of supporting a "virtual machine monitor" \autocite{_popek_1}.
@@ -60,7 +71,7 @@ Robin's analysis related to the potential for the Pentium processor to support a
 The vendors of hypervisor solutions also have an interest in perpetuating the distinction between the two types of hypervisors, but the need to differentiate between these products has become less important over time.  
 
 Although it's arguable whether there is a performance difference between Type 1 and Type 2 hypervisors, the market for virtualization is full of both.
-VMware, one of the more popular enterprise virtualization vendors, has products covering both architectures including ESXi, their Type 1 enterprise hypervisor product that is responsible for running large-scale virtualized systems all around the world\autocite{_vmware_0}.
+VMware, one of the more popular enterprise virtualization vendors, has products covering both architectures including ESXi, their Type 1 enterprise hypervisor product that is responsible for running large-scale virtualized systems all around the world\autocite{vmwareProducts}.
 They also provide Type 2 hypervisors such as VMware Workstation Player that runs on systems from desktops to small-scale servers that don't need the higher levels of orchestration and performance offered by ESXi.
 
 In addition to numerous other available hypervisors, the Kernel Virtual Machine (KVM) is the de facto hypervisor in Linux that has been included as a module in the Linux kernel since February 2007 when it was included with Linux kernel version 2.6.20 \autocite{_kvm_1}.
@@ -73,7 +84,7 @@ Combined, the KVM/QEMU hypervisor runs natively on Linux with kernel modules and
 
 
 \subsection{CPU Virtualization}
-\label{sec:vt_cpu}
+\label{sec:vtcpu}
 In addition to the variations in hypervisors that may or may not have an impact on performance, the type of virtualizion used to provide devices to the guest operating system can have a significant impact on performance.
 In the following sections, some important types of hardware emulation will be reviewed comprising virtio, paravirtualization, and hardware assisted virtualization.
 
@@ -83,14 +94,14 @@ Operating systems utilizing the x86 instruction set execute user code in ring 3 
 Virtual machines on x86 execute their instructions as a user-space process in ring 3 so the host OS can maintain control of the system.
 The mechanism by which the processor executes privileged instructions on behalf of the guest has been the topic of considerable effort in the advancement of virtualization which has spawned multiple techniques for handling these instructions.
 
-One of the earliest methods, known as binary translation, involved trapping privileged guest instructions in the hypervisor and translating them into "sequences of instructions that have the intended effect on the virtual hardware" \autocite{_vmware_1}.
+One of the earliest methods, known as binary translation, involved trapping privileged guest instructions in the hypervisor and translating them into "sequences of instructions that have the intended effect on the virtual hardware" \autocite{vmwareVT}.
 The binary translation technique, developed by VMware, was one of the most efficient methods in early hypervisors, but is now considered to have high overhead due to the additional time required to perform the code translation.
 This same translation process, however, allows a hypervisor using this technique to run guest operating systems for virtually any processor on any other instruction set, provided that an efficient translation can be achieved.
 This flexibility makes binary translation one of the most versatile methods of virtualization available which makes it well-suited for virtualization of very old instruction sets or hardware.
 
 Paravirtualization is another technique for handling guest privileged instructions.
 It involves cooperation between the guest and host operating systems to improve efficiency.
-The guest OS must be modified to replace privileged instructions "with hypercalls that communicate directly with the virtualization layer hypervisor." \autocite{_vmware_1}.
+The guest OS must be modified to replace privileged instructions "with hypercalls that communicate directly with the virtualization layer hypervisor." \autocite{vmwareVT}.
 VMware has incorporated this method in their vmxnet series of network drivers to accelerate network workloads.
 A more widely known example of paravirtualization is one of the first open-source hypervisors, known as the Xen hypervisor \autocite{_barham_1}.
 At the risk of oversimplification, the Xen project is, essentially, a modified Linux host that communicates directly with the guest kernel.
@@ -98,10 +109,10 @@ The guest kernels and modules must also be modified in a paravirtualized system 
 Although the Xen hypervisor was originally developed with the intent of being hardware agnostic, the modifications required to the guest operating system mean that only vendors wishing to participate in the open-source community will provide paravirtualized drivers.
 The community itself is free to develop these drivers, but this adds a barrier to adoption for most new hardware products.
 Despite the additional effort required, Xen maintained their lead as a very popular open-source hypervisor for many years.
-Paravirtualizaion has its fans, however, and much work has been done previously comparing Xen to containers and other hypervisors such as KVM \autocite{_felter_1, _younge_1, _wang_1, _che_1, _scheepers_1, _wang_2, rathore2013kvm}.
+Paravirtualizaion has its fans, however, and much work has been done previously comparing Xen to containers and other hypervisors such as KVM \autocite{_felter_1, _younge_1, wangAmazon2010, _che_1, _scheepers_1, wangAllocation2007, rathore2013kvm}.
 
 The third popular virtualization method is what appears to be the \emph{de facto} standard as virtualization matures.
-Hardware Assisted virtualization, which is heavily promoted by CPU vendors such as Intel and AMD, started out as an effort to accelerate instruction translation, but early generations of hardware had difficulty keeping up with the binary translation preferred by VMware \autocite{_vmware_1}.
+Hardware Assisted virtualization, which is heavily promoted by CPU vendors such as Intel and AMD, started out as an effort to accelerate instruction translation, but early generations of hardware had difficulty keeping up with the binary translation preferred by VMware \autocite{vmwareVT}.
 The silicon vendors, however have been hard at work improving their VT performance and adding hooks to enable virtualization of their hardware.
 Since operating systems for x86 were already common when hardware assisted virtualization was introduced, the architecture needed subtle modifications to help enable virtualization without breaking existing software.  This was accomplished with the introduction of yet another protection ring that would run below the kernel's ring 0.  
 The hypervisor would now run in ring -1, below the operating system kernel, and trap privileged instructions when they were executed by the guest.
@@ -205,7 +216,7 @@ The development of the common container and runtime for Linux under the OCI shou
 
 The Linux subsystems supporting containers have become sophisitcated enough that Docker or LXC are no longer strictly necessary to create containers, because administrators can create their containers with native Linux  tools such as SystemD or just scripts that stitch together the correct cgroups, chroot, and namespace allocation.  
 The \emph{de facto} standard for containers in Linux, however, seems to be Docker based on the amount of media coverage and hype surrounding the young startup.  
-Docker is popular for good reason: in addition to providing a robust tool set for isolating processes, the Docker team has been extremely open about their development and responsive to issues submitted by users on their github account \autocite{_github_docker}.  
+Docker is popular for good reason: in addition to providing a robust tool set for isolating processes, the Docker team has been extremely open about their development and responsive to issues submitted by users on their github account \autocite{githubdocker}.  
 It is for the reasons of its ubiquity and ease of use that Docker is the container format selected for comparison herein.
 
 Although, Docker may not be representative of container systems as a whole, the majority of the subsystems used by Docker to instantiate containers is part of the Linux kernel so it is expected that containers utilizing these technologies should perform similarly.  
@@ -215,16 +226,15 @@ Members of this auspicious organization span the industry from major cloud playe
 The goal of this new organization is to promote an open, standardized format for containers and the engine runtime libraries. 
 They even have a head start on the process with Docker donating its container format, libcontainer) and runtime, runC, to the organization as a starting point.
 
-The architecture of Docker is 
-\autocite{dockerarch1} https://docs.docker.com/introduction/understanding-docker/ (architecture, good pictures too, maybe use them?)
+The architecture of Docker is based almost completely on the underlying Linux systems combined with user space tools written in Go \autocite{dockerarch1}. 
 \begin{figure}
     \centering
-    \includegraphics[width=150mm]{dockerarchitecture.png}
+    \includegraphics[width=150mm]{dockerecosystem.png}
     \caption{Docker ecosystem architecture}
     \label{fig:dockerecosystem}
 \end{figure}
-The ecosystem of docker is what makes it so powerful \autocite{dockerecosystem}.  
-In Figure~\ref{fig:dockerecosystem}, the overall flow of a container is shown.  
+The ecosystem of docker is what makes it so powerful.  
+In Figure~\ref{fig:dockerecosystem}, borrowed from \autocite{dockerarch1}, the overall flow of a container is shown as it moves from registry to host and then controlled through the docker client.  
 
 
 \subsection{Resource Scope}
@@ -283,14 +293,49 @@ Overall, this amounts to 78 bytes of overhead at various layers to transmit only
 
 \section{Comparisons and Performance Analysis} % (fold)
 \label{sec:comparisons_performance_analysis}
-Many studies to date have compared the performance of virtual machines and containers.
-A simple overview of their architecture can be seen in Figure~\ref{fig:docker_overview}, virtual machines have multiple additional libraries and operating system instances, which increases the latency of protected operations.  
+Some of the important details of the architecture of virtual machines and containers was described in Section~\ref{sec:vmarchitecture}
 \begin{figure}
     \centering
-    \includegraphics[width=90mm]{docker_overview.jpg}
+    \includegraphics[width=150mm]{vt_schematic.jpg}
     \caption{Architecture Overview of Virtual Machine and Container}
-    \label{fig:docker_overview}
+    \label{fig:vtschematic}
 \end{figure}
+Many studies to date have compared the performance of virtual machines and containers.
+A simple overview of their architecture can be seen in Figure~\ref{fig:vtschematic}, virtual machines have multiple additional libraries and operating system instances, which increases the latency of protected operations.  
+
+Performance comparisons: 
+Felter et. al. made an extensive evaluation of containers and virtual machines including memory, compute, and I/O, but they did not attempt to tune the systems \autocite{_felter_1}.
+They also used the AUFS which has been deprecated.
+
+Scheepers discusses Xen and LXC macro benchmark comparison \autocite{_scheepers_1}.  
+He showed that public clouds need virtual machines for their isolation potential, but containers can be used to maximize the \emph{utilization} of the hardware.
+
+Wang et. al. studied the performance overhead of dynamic resource allocation and found that static allocation seemed to perform better in most cases \autocite{wangAllocation2007}.
+The performance degradation of of Xen virtual machines was blamed on intensive network I/O which could be helped by static allocatino and physical device assignment.
+Indeed, their conclusion that decreasing the switching magnitude and frequency of their allocation schedule led to performance improvements.  
+The limit of this allocation is static, with processed pinned to CPUs and assigned physical resources.
+
+Sherry, et. al examined Middleboxes which are the heart of NFV \autocite{_perry_1}.
+They show that, as streaming data uses increase in the Internet, the need for additional middleboxes to process and handle the traffic is also increasing.  These systems are increasingly assigned to virtual machines due to the flexibility and scaling that can be acheived with increased density.
+
+Middleboxes are also examined in a paper by Sekar, et. al., where they make the case that middlebox innovation, i.e. NFV, as at least as important as for switches and routers \autocite{sekar2011middlebox}.
+They propose that the role of middleboxes in the network comprose the critical usability and security considerations of network design.:w
+One idea presented in their article that has significant potential with containers is the chaining of middlebox functions and its analogy to processing operations on a packet.  
+This is one of the core ideas of NFV in that the entirety of the network functions need not be accomplished in one system or even one physical box, but can be distributed around the network as processing nodes.  
+By their estimates, there also appears to be a significant amount of common traffic overlap ranging from 64 to 99\% in middlebox processing. 
+While this seems shockingly high, it also presents an interesting alternative use case for contaienrs and virtual machines which may be pipelined and even potentially share resources to decrease the redundancy present in current schema.
+
+Xavier, et. al. examine the suitability of Linux vServer, OpenVZ, and LXC for high performance computing environments \autocite{xavier2013performance}.
+While the high compute-density of containers is an advantage in HPC, it is often the network that has the most impact on system performance.
+Containers lack the necessary isolation for co-located workloads, but, since HPC workloads and cluster topologies are often more controllable and predicatable, the lack of isolation in containers should not pose a significant problem.
+One of the shortcomings of their study, however, was that they were not using high-throughput network interfaces that are so critical in HPC, which makes it difficult to properly draw distinctions among the systems.
+That comparison, specifically since it was targeted at HPC, would have benefitted from more rigorous CPU isolation and tuning.  
+
+The work of Wang and Ng analyzed the impact of virtualization on network performance in the Amazon cloud \autocite{wangAmazon2010}.
+Although they found that Amazon does not have the same emphasis on performance as an HPC cluster, there are instances available in their cloud that completely isolate their CPUs for guaranteed performance.  
+Although they did not have access into Amazon's orchestration or control systems, the high-performing virtual machines were not likely oversubscribed with other systems sharing their CPUs. 
+These high-performing virtual systems are the subject of this thesis and a step toward realtime tuning that is supported herein.  
+
 % section comparisons_performance_analysis (end)
 
 \nocite{_dpdk_1, _adams_1, _chowdhury_1, _perry_1, _grinberg_1, rathore2013kvm}

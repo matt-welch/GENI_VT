@@ -142,7 +142,7 @@ The docker run command is responsible for requesting resources and privileges fo
 The image building process of Docker is controlled by the \lstinline{docker build} command line tool.  
 This tool takes recipe files known as Dockerfiles \autocite{_dockerfile_1} and constructs the image based on instructions therein.
 A Dockerfile usually specifies the base image that should be used for the build along with setting environment variables and installing necessary packages and binaries to the container's filesystem. 
-It is consumed by the \lstinline{docker build} tool and the image is constructed as the composite overlay of each step in the build process \autocite{_docker_build_1}.
+It is consumed by the \lstinline{docker build} tool and the image is constructed as the composite overlay of each step in the build process \autocite{dockerbuild1}.
 All of the containers used herein were based on the official Ubuntu image, which is based on the latest release of Ubuntu 14.04 LTS.
 The Ubuntu image was chosen in order to maintain a consistent environment with the host and virtual machines.
 The image created for benchmarking was called netbench and created with the Dockerfile.netbench.  It only pulled the Ubuntu base image, applied some labels, and installed netperf.  
@@ -174,9 +174,9 @@ The performance of latency-sensitive network workloads are often not bound by me
 We concentrated testing on network-related benchmarks to evaluate bandwidth and latency of the various operating system and network configurations.
 The network paths that were tested comprised both TCP and UDP flows in addition to ICMP latency.
 
-Network performance was measured with netperf \autocite{_netperf_1} and ping. 
+Network performance was measured with netperf \autocite{netperfHome} and ping. 
 The system under test ran the server process for netperf inside the virtual environment in order to determine how these systems perform in a server context.
-Using netperf version 2.7.0 \autocite{_netperf_2}, network bandwidth and latency were measured with tests comprising the default bandwidth test TCP\_STREAM, TCP\_RR, UDP\_STREAM, and UDP\_RR.
+Using netperf version 2.7.0 \autocite{netperfManual}, network bandwidth and latency were measured with tests comprising the default bandwidth test TCP\_STREAM, TCP\_RR, UDP\_STREAM, and UDP\_RR.
 The subtests are summarized in Table~\ref{tab:netperfsubtests}\\  
 For each of the netperf tests, 20 samples were collected.  For the ping test, 100 samples were collected with a 1 second interval.  
 

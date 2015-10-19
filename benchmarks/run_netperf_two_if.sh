@@ -1,13 +1,35 @@
 #!/bin/bash
-TEST=netperf
 CLNTTYPE=remote
-SERVTYPE=cont
+SERVTYPE=kvm
+KERNTYPE=rt
+if [ "$KERNTYPE" == "rt" ] ; then 
+    DATADIR=/root/results/3.18.20-rt18
+else
+    DATADIR=/root/results/3.18.20
+fi
+echo "Datadir = $DATADIR"
 
-SERVER_IP=192.168.42.246
-IF_TYPE=br
-./run_netperf_client.sh $SERVER_IP | tee /root/results/3.18.20/${TEST}-${CLNTTYPE}-${SERVTYPE}-${IF_TYPE}.dat 
+SERVER_IP=192.168.2.21
+IF_TYPE=brg
 
-SERVER_IP=192.168.3.1
+TEST=netperf
+FILENAME=$DATADIR/${TEST}-${KERNTYPE}-${CLNTTYPE}-${SERVTYPE}-${IF_TYPE}.dat 
+echo Saving data to $FILENAME
+./run_netperf_client.sh $SERVER_IP | tee $FILENAME
+TEST=icmp
+FILENAME=$DATADIR/${TEST}-${KERNTYPE}-${CLNTTYPE}-${SERVTYPE}-${IF_TYPE}.dat 
+echo Saving data to $FILENAME
+taskset 0x2 ping $SERVER_IP -c 100 | tee $DATADIR/${TEST}-${KERNTYPE}-${CLNTTYPE}-${SERVTYPE}-${IF_TYPE}.dat 
+
+SERVER_IP=192.168.3.21
 IF_TYPE=phy
-./run_netperf_client.sh $SERVER_IP | tee /root/results/3.18.20/${TEST}-${CLNTTYPE}-${SERVTYPE}-${IF_TYPE}.dat
 
+TEST=netperf
+FILENAME=$DATADIR/${TEST}-${KERNTYPE}-${CLNTTYPE}-${SERVTYPE}-${IF_TYPE}.dat 
+echo Saving data to $FILENAME
+./run_netperf_client.sh $SERVER_IP | tee $DATADIR/${TEST}-${KERNTYPE}-${CLNTTYPE}-${SERVTYPE}-${IF_TYPE}.dat
+
+TEST=icmp
+FILENAME=$DATADIR/${TEST}-${KERNTYPE}-${CLNTTYPE}-${SERVTYPE}-${IF_TYPE}.dat 
+echo Saving data to $FILENAME
+taskset 0x2 ping $SERVER_IP -c 100 | tee $DATADIR/${TEST}-${KERNTYPE}-${CLNTTYPE}-${SERVTYPE}-${IF_TYPE}.dat 

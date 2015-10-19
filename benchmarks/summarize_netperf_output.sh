@@ -11,10 +11,19 @@ for FILE in $(ls netperf*.dat); do
     if [ -f "$OUTPUT" ] ; then 
         rm $OUTPUT
     fi
-    echo "### netperf  TCP bandwidth ### " >> $OUTPUT
-    grep "TCP STREAM" -A 6 $FILE | grep "^ 8" >> $OUTPUT
+    echo "### netperf TCP bandwidth ### " >> $OUTPUT
+    grep "TCP STREAM TEST" -A 6 $FILE | grep "^ 8" >> $OUTPUT
     echo >> $OUTPUT
-    echo "### netperf  TCP Request/Response ### " >> $OUTPUT
+    echo "### netperf UDP bandwidth (server side?) ### " >> $OUTPUT
+    grep "UDP STREAM TEST" -A 5 $FILE | grep "^2" >> $OUTPUT
+    echo >> $OUTPUT
+    echo "### netperf UDP bandwidth (client side?) ### " >> $OUTPUT
+    grep "UDP STREAM TEST" -A 6 $FILE | grep "^212992    " >> $OUTPUT
+    echo >> $OUTPUT
+    echo "### netperf TCP Request/Response ### " >> $OUTPUT
     grep "TCP REQUEST/RESPONSE TEST" -A 6 $FILE | grep "^[ ]*8" >> $OUTPUT
+    echo >> $OUTPUT
+    echo "### netperf UDP Request/Response ### " >> $OUTPUT
+    grep "UDP REQUEST/RESPONSE TEST" -A 6 $FILE |  grep "^2"  >> $OUTPUT
     echo >> $OUTPUT
 done

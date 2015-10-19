@@ -13,16 +13,22 @@ This section will discuss some of the enabling developments in virtual system ar
 \section{Use-Cases for Virtualization} % (fold)
 \label{sec:usecasesvt}
 The use cases for virtualization are numerous and growing. 
+Recently, the "cloud" and cloud services have been the subject of significant development and interest.
+Growth has been strong in cloud services for good reason as outlined in \autocite{_younge_1}.
+They describe many of the benefits offered by cloud services such as scalability, controlling quality of service (QoS), customization of user infrastructure, cost effectiveness, and simplified access interfaces, almost all of which are enabled by virtualization.  
+Since the cloud is really just a collection of virtual systems running in datacenters, HPC can potentially also reap the benefits of innovations in the cloud.
+
+
 \begin{enumerate}
   \item Virtualization as growth driver for datacenters and enterprise networks
   \item NFV has recently become popular 
   \item Containers gain popularity as a distribution platform in parallel with explosion of NFV
 \end{enumerate}
-Rathore [A61] compared KVM and LXC performance and isolation in hardware-assisted virtual routers, but used dynamic allocation which can kill latency \autocite{rathore2013kvm}.
-Their isolation could have improved with realtime tuning and cpu isolation.  
-Containers alone cannot provide real isolation of processes without explicit CPU control with cgroups, but the organization of processes and CPU assignment can be tricky.
-Orchestration of containers and virtual machines needs to take realtime tuning into account for maximal I/O performance.
 
+The popular networking paradigm of NFV is driving growth and innovation throughout the sector.
+A number of trade organizations have sprouted up recently to promote its adoption and accelerate development.
+Both the ETSI (European Telecommunications Standards Institute) and OPNVF (Open Platform for Network Functions Virtualization) \autocite{opnfv1} are driving NFV adoption \autocite{cohnopnfv}.
+In their survey of network virtualization \autocite{_chowdhury_1}, Chowdhury and Boutaba describe some of the older technilogies and challenges that define this problem space.
 
 
 Recently, the Linux Foundation announced that they would be fully supporting the efforts to promote and advance the development of Real-Time Linux \autocite{_linux_foundation_1}.
@@ -31,10 +37,6 @@ Realtime Linux has been struggling to find funding until recently \autocite{_lwn
 This project is important because realtime Linux will also improve virtualization determinism.
 This will ensure that the realtime branch of Linux is supported going forward.
 The Linux Foundation is the governing body that not only helps to set direction, but also to fund some important projects so their interest in RT Linux will be a critical boost to its development and adoption.  
-
-The popular new paradigm of NFV is driving growth and innovation throughout the sector.
-A number of trade organizations have sprouted up recently to promote its adoption and accelerate development.
-Both the ETSI (European Telecommunications Standards Institute) and OPNVF (Open Platform for Network Functions Virtualization) \autocite{opnfv1} are driving NFV adoption \autocite{cohnopnfv}.
 
 To support high definition video of 340,000 packets per second into 4 Gbps streams, the BBC is offloading packet processing into a userspace application to avoid the Linux Kernel TCP/IP stack \autocite{bbcbypass}.   
 The same source mentions CloudFlare using a similar userspace processing approach to offload packet inspection during packet flood attacks.
@@ -150,7 +152,7 @@ Hugepages are not standard practice, however, so hugepages will be included as a
 
 \subsection{I/O Virtualization}
 \label{sec:vt_io}
-After achieving performant virtualization solutions for compute and memory, the last component in achieving full system virtualization was the virtualization of devices and I/O (IOV) [TODO:  history reference?].
+After achieving performant virtualization solutions for compute and memory, the last component in achieving full system virtualization was the virtualization of devices and I/O (IOV).
 Along with compute and storage, processing of I/O is one of the most critical components of a server's workload due simply to the fact that I/O can be a large source of latency for remote transactions.
 Efficiently utilizing I/O allows virtual machines to perform nearly any task possible in a native system, particularly the processing of network packets and workloads.
 Similar to the "virtualization penalty" that occurs with nested page table lookups and binary translation, latency inherent in the processing of network packets with multiple levels of handoffs should be avoided when possible.
@@ -293,7 +295,11 @@ Overall, this amounts to 78 bytes of overhead at various layers to transmit only
 
 \section{Comparisons and Performance Analysis} % (fold)
 \label{sec:comparisons_performance_analysis}
-Some of the important details of the architecture of virtual machines and containers was described in Section~\ref{sec:vmarchitecture}
+Some of the important details of the architecture of virtual machines and containers was described in Section~\ref{sec:vmarchitecture}.
+An interesting summary of the differences between virtual machines and containers comes from \autocite{morabitohypervisors}: "Hypervisors abstract hardware, containers abstract the operating system". 
+This perfectly summarizes the important difference between these two types of virtualization in that virtual machines must emulate hardware devices with software which almost always has some performance impact.  
+Virtualization of the operating system, however, need not create additional overhead with containers, but simply use alternate paths through schedulers, etc. to operate the container. 
+
 \begin{figure}
     \centering
     \includegraphics[width=150mm]{vt_schematic.jpg}
@@ -336,7 +342,26 @@ Although they found that Amazon does not have the same emphasis on performance a
 Although they did not have access into Amazon's orchestration or control systems, the high-performing virtual machines were not likely oversubscribed with other systems sharing their CPUs. 
 These high-performing virtual systems are the subject of this thesis and a step toward realtime tuning that is supported herein.  
 
+Rathore [A61] compared KVM and LXC performance and isolation in hardware-assisted virtual routers, but used dynamic allocation which can kill latency \autocite{rathore2013kvm}.
+Their isolation could have improved with realtime tuning and cpu isolation.  
+Containers alone cannot provide real isolation of processes without explicit CPU control with cgroups, but the organization of processes and CPU assignment can be tricky.
+Orchestration of containers and virtual machines needs to take realtime tuning into account for maximal I/O performance.
+
+There seems to be a significant interest in utilizing virtual systems for HPC.  Another study that investigated this paradigm was performed by Younge et. al, where they performed an in-depth analysis of current virtualization technologies in HPC \autocite{_younge_1}.
+They investigated a set of current hypervisors for performance and help to guide the choice of hypervisors herein. 
+In their article, they examine VMware, KVM, Xen, and VirtualBox hypervisors. 
+Using VMware herein was shown to be compicated by the need to clear VMware results with them and the fact that it is proprietary and not open source all discourage its use for academic research.  
+The populare Xen hypervisor, while open source, requires paravirtualization which creates additional burden.
+VirtualBox, while widely available, is also not open source and has little available perfornace data for the Type 2 hypervisor.  
+Finally, KVM, the open source hypervisor seems to be the best choice due to its ubiquity and deep library of literature supporting it.
+This choice is also supported by \autocite{_younge_1} who also proclaim it the best performer in internode bandwidth.  
+
+One of the considerations when designing the performance analysis of network systems is the composition of the traffic that they will handle.  
+Virtual systems often reside in datacenters where it has been reported that TCP traffic represents a share of about 90\% if the overall traffic \autocite{haTCPCloud2013}.
+This observatin highlights the need for performant network interfaces due to the high overhead required in maintaining TCP flows.
+
+
 % section comparisons_performance_analysis (end)
 
-\nocite{_dpdk_1, _adams_1, _chowdhury_1, _perry_1, _grinberg_1, rathore2013kvm}
+\nocite{_dpdk_1, _adams_1, _chowdhury_1, _perry_1, _grinberg_1, rathore2013kvm, seo2014performance, gomes2014performance}
 

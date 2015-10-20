@@ -2,10 +2,12 @@
 \chapter{Experimental Design}
 \label{cha:experimental_design}
 \label{sec:experimental_design}
-As described in the previous sections, the performance comparisons that have been made between containers and virtual machines have, for the most part, not tuned their systems for the comparison.
-Indeed, due to the numerous potential parameters and the resulting massive number of configuration combinations, the sheer number of comparisons to be made among the effects of various tuning parameters are myriad.
-To avoid this potential explosion in the scope of the comparison, performance was only compared herein between only two system configurations for each type of virtual environment.
-The two configurations include the standard Linux kernel, version 3.18.20, and the same kernel with preempt-rt patches applied \autocite{preemptrtpatches} and some important tuning parameters for the kernel and environment.  
+As described in Section~\ref{sec:comparisons_performance_analysis}, the performance comparisons that have been made between containers and virtual machines have, for the most part, not tuned their systems for the comparison.
+Tuning can be a daunting task, indeed, due to the numerous potential parameters and the resulting massive number of configuration combinations possible.  
+The multitude of parameters causes the number of comparisons to be made among the effects of various tuning parameters to grow exponentially with each additional parameter.
+To avoid this potential explosion in the scope of the comparison, performance was only compared herein between only two system configurations and two network types for each type of virtual environment.
+The two configurations include the standard Linux kernel, version 3.18.20, and the same kernel with preempt-rt patches applied \autocite{preemptrtpatches} and some important tuning parameters for the kernel and environment.
+Network interfaces compared include the standard bridged networking for each virtual system and a physical interface in passthrough to a VM or assigned to the namespace of a container.
 
 \section{Experimental Setup} % (fold)
 \label{sec:experimental_setup}
@@ -49,7 +51,7 @@ The focus of this work is not on tuning the network interfaces themselves, howev
 In order to obtain optimal performance for both virtual machines and containers, a physical interface may be passed from the host into the domain of the virtual machine or into the namespace of the container.
 As was described in Section~\ref{sec:vt_io}, this is known as passthrough for virtual machines and is supported by CPU virtualization extensions \autocite{_grinberg_1}..
 In the version of Docker used herein, 1.8.1, direct physical assignment is not enabled by default.
-Instead, a fairly simple script was written [TODO reference prepare\_network\_stack.sh?], with inspiration borrowed from J\'{e}r\^{o}me Petazzoni's pipework \autocite{pipework1jpetazzo}, Jason Anderson's direct-phys fork of pipework \autocite{pipework1Rakurai}, and a serverfault.com post \autocite{serverfault1} to assign a physical interface to the container namespace. 
+Instead, a fairly simple script was written, with inspiration borrowed from J\'{e}r\^{o}me Petazzoni's pipework \autocite{pipework1jpetazzo}, Jason Anderson's direct-phys fork of pipework \autocite{pipework1Rakurai}, and a serverfault.com post \autocite{serverfault1} to assign a physical interface to the container namespace. 
 
 % subsubsection hardware_networking (end)
 
@@ -60,7 +62,7 @@ Instead, a fairly simple script was written [TODO reference prepare\_network\_st
 The operating system used in this study needed to have a balance of stability, advanced features, and performance, so a Long Term Support version of Ubuntu, 14.04.3 LTS was chosen.
 The Linux 3.18.20 kernel was selected for both the host and guest OS due to a set of factors affecting usability and performance.
 Choosing which Linux kernel version to use for this study was complicated by factors that were not known until system configuration.
-It was already understood prior to configuration that Docker was not supported in kernel versions prior to 3.10 [reference?] which helped to narrow down the possibilities.
+It was already understood prior to configuration that Docker was not supported in kernel versions prior to 3.10 which helped to narrow down the possibilities.
 One of the side-goals of this study was to use as much standard and open software as possible so that the kernel and system configurations could be easily reproduced by other investigators.
 This goal had a substantial influence on the choice of kernel due to the performance impact of the Docker's storage driver.
 By default, Docker currently  uses the AUFS filesystem for its back-end storage driver.
@@ -77,7 +79,7 @@ Further limitations, while not as impactful as the choice of the 3.18 kernel inc
 One of the steps involved in tuning the RT variant of the kernel was to apply a specific set of kernel configuration choices during the kernel build process.
 The kernel shipped with Ubuntu 14.04.3 was version 3.19.0-25-generic.
 That kernel's default configuration (.config file) was used as the basis for the configuration and building of the test kernel version 3.18.20. 
-This default kernel configuration omits even simple omtimizations such as disabling CPU frequency scaling, and enabling a pre-emptible kernel, but the default kernel configuration is probably the most common on servers that have not done significant performance tuning and optimizations so it seemed appropriate. 
+This default kernel configuration omits even simple optimizations such as disabling CPU frequency scaling, and enabling a preemptable kernel, but the default kernel configuration is probably the most common on servers that have not done significant performance tuning and optimizations so it seemed appropriate. 
 The "performance" kernel used was the 3.18.20-rt18 kernel which is the 3.18.20 kernel with the 3.18.20-rt18 patches, posted 2015-08-11, from \autocite{preemptrtsource} applied.
 The initial kernel configuration used was that of the 3.18.20 kernel. 
 Only a few important parameters of the kernel were modified to tune the systems for performance with the preempt-rt patch.
@@ -93,14 +95,14 @@ Standard kernels usually boot with only a few parameters passed to the kernel su
 The preempt-rt kernel used herein, Linux 3.18.20-rt18, was booted with a specific set of additional parameters to improve its performance and determinism for guest virtual machines and containers.
 The set of parameters passed to the "performance" kernel are summarized in Table~\ref{tab:kernel_params_table}
 \input{kernel_parameters_table.tex}
-One of the most important tuning parameters in a virtual machine host relates to the level of oversubscription for each physical CPU.
+One of the most important tuning parameters in a virtual machine host relates to the level of over-subscription for each physical CPU.
 Systems with low performance requirements may stack multiple guest vCPUs (virtual CPUs) on each physical CPU.  This stacking can lead to multiple vCPUs from unrelated virtual machines sharing the pCPU or just host processes running on the pCPU assigned to the guest.
 Either of these scenarios can have a large impact on guest latency.
 If a pCPU is running another task when a guest vCPU is not in the current context, the additional latency required to change context to the guest and resume the guest OS operation can be a significant source of latency.
 These resource conflicts can be all but eliminated by "unplugging" pCPUs assigned to a guest from the host scheduler with the isolcpus=X kernel boot parameters.
 Assigning a pCPU to the isolcpus list, like isolcpus=2, will remove that pCPU from the kernel scheduler's CPU pool, preventing the kernel scheduler from running any processes there.
 The isolated CPUs can still be used to run user processes with Linux utilities like taskset or numactl, but will remain quiescent until that happens.
-Scalability of a system with isolated CPUs is reduced, but in an era of server processors with up to 18 cores [Intel Xeon reference here, Xeons may be moving toward something like many-core Knights Landing], the impact of dedicating individual pCPUs to latency-sensitive processes is reduced.
+Scalability of a system with isolated CPUs is reduced, but in an era of server processors with more and more cores, the impact of dedicating individual pCPUs to latency-sensitive processes is reduced.
 
 Access to memory can be one of the greatest sources of latency in computationally intensive processes.
 Virtual machines have a similar sensitivity to latency in that memory accesses can require both guest and host-level page walks.
@@ -136,7 +138,7 @@ The hope is for maximal performance so minimal abstraction layers were utilized 
 \label{ssub:docker_params}
 The Docker environment is logically separated into building with \lstinline{docker build}, back-end management performed by the docker daemon, and the \lstinline{docker run} command that actually instantiates containers from images and assigns the appropriate cgroups and namespacing to the containers.
 The docker daemon essentially sets up the software environment for the containers, specifically their filesystems, libraries, and available binaries.  
-Along with the files available to the container, the daemon also manages cgroups and namespaces to properly control the container's resoruces and limit its scope.  
+Along with the files available to the container, the daemon also manages cgroups and namespaces to properly control the container's resources and limit its scope.  
 The docker run command is responsible for requesting resources and privileges for the container as it is instantiated.
 
 The image building process of Docker is controlled by the \lstinline{docker build} command line tool.  
@@ -147,10 +149,10 @@ All of the containers used herein were based on the official Ubuntu image, which
 The Ubuntu image was chosen in order to maintain a consistent environment with the host and virtual machines.
 The image created for benchmarking was called netbench and created with the Dockerfile.netbench.  It only pulled the Ubuntu base image, applied some labels, and installed netperf.  
 
-The daemon has a number of parameters that may be modified to tune parameters such as available cgroup cpu sets, bridged networking, and the storage driver used for container filesystems.
+The daemon has a number of parameters that may be modified to tune parameters such as available cgroup CPU sets, bridged networking, and the storage driver used for container filesystems.
 In this study, the docker daemon was launched with mostly standard parameters but for the following exceptions.
 As discussed in Section~\ref{sub:software_environment}, the overlayfs storage driver was chosen, requiring the docker daemon to be launched with \lstinline{--storage-driver=overlay}.  
-Additionally, docker's default bridge, docker0, was configured to draw on a pool of IP addresses from the subnet 192.168.42.240/28 for its bridged virtual ethernet interfaces.
+Additionally, docker's default bridge, docker0, was configured to draw on a pool of IP addresses from the subnet 192.168.42.240/28 for its bridged virtual Ethernet interfaces.
 The additional arguments used with \lstinline{docker run} and their importance are summarized in \ref{tab:dockerrunparams}.
 
 
@@ -169,22 +171,34 @@ Containers are all launched with a specified MAC address for their bridge interf
 \section{Experimental Procedure} % (fold)
 \label{sec:experimental_procedure}
 Given the experimental setup described in Section~\ref{sec:experimental_setup}, the performance of virtual machines and containers could be compared.  
-We wanted to compare the performance of the systems with RT tuning to those without.
-The performance of latency-sensitive network workloads are often not bound by memory or CPU, but by their ability to process I/O traffic.
-We concentrated testing on network-related benchmarks to evaluate bandwidth and latency of the various operating system and network configurations.
-The network paths that were tested comprised both TCP and UDP flows in addition to ICMP latency.
+\begin{table}[ht!]
+    \centering
+    \label{tab:environmentvariables}
+    \caption{System test configurations}
+    \begin{tabular}{|l|c|c|}
+    \hline
+    Parameter & variants & \\
+    \hline \hline
+    kernel & 3.18.20 & 3.18.20-rt18 \\ 
+    environment & docker & KVM \\ 
+    network interface & bridge & physical \\ 
+    \hline
+    \end{tabular}
+\end{table}
 
-Network performance was measured with netperf \autocite{netperfHome} and ping. 
-The system under test ran the server process for netperf inside the virtual environment in order to determine how these systems perform in a server context.
-Using netperf version 2.7.0 \autocite{netperfManual}, network bandwidth and latency were measured with tests comprising the default bandwidth test TCP\_STREAM, TCP\_RR, UDP\_STREAM, and UDP\_RR.
-The subtests are summarized in Table~\ref{tab:netperfsubtests}\\  
-For each of the netperf tests, 20 samples were collected.  For the ping test, 100 samples were collected with a 1 second interval.  
+We wanted to compare the performance of the systems with tuning to those without and compare the performance of two different network interfaces.
+The set of 3 variables and 2 parameters each produced 8 configurations to test.  The variables are summarized in Table~\ref{tab:environmentvariables} 
+
+The performance of latency-sensitive network workloads are often not bound by memory or CPU, but by their ability to process I/O traffic.
+Testing herein concentrated on network-related benchmarks to evaluate bandwidth and latency of the various operating system and network configurations.
+The network paths that were tested comprised both TCP and UDP flows in addition to ICMP latency.
 
 \begin{table}
     \centering
     \caption{netperf 2.7.0 benchmark subtests}
     \label{tab:netperfsubtests}
     \begin{tabular}{|l|c|c|}
+        Subtest & Description \\ 
     \hline
         TCP-STREAM & TCP bandwidth over a 10 second connection \\ \hline
         TCP-RR & TCP Request-Response latency \\ \hline
@@ -192,6 +206,11 @@ For each of the netperf tests, 20 samples were collected.  For the ping test, 10
         UDP-RR & UDP Request-Response latency \\ \hline
     \end{tabular}
 \end{table}
+Network performance was measured with netperf \autocite{netperfHome} and ping. 
+The system under test ran the server process for netperf inside the virtual environment in order to determine how these systems perform in a server context.
+Using netperf version 2.7.0 \autocite{netperfManual}, network bandwidth and latency were measured with tests comprising the default bandwidth test TCP\_STREAM, TCP\_RR, UDP\_STREAM, and UDP\_RR.
+The subtests are summarized in Table~\ref{tab:netperfsubtests}\\  
+For each of the netperf tests, 20 samples were collected.  For the ping test, 100 samples were collected with a 1 second interval.  
 
 % section experimental_procedure (end)
 

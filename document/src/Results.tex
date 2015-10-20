@@ -2,47 +2,33 @@
 \label{cha:results}
 \label{sec:results}
 Network performance of docker containers and virtual machines was analyzed using standard benchmarking tools including netperf and ping.  
-Twenty measurements were taken for each type of virtual environment using the standard 3.18.20 kernel and the preempt-rt tuned kernel.
-For each kernel, virtual environment, and network conenction type, the latency and bandwidth of both TCP and UDP streams were measured 20 times along with 100 measurements of ICMP latency.
-The data is shown in all STREAM and RR figures as box plots with the median in the center, 25th and 75th percentiles at the bottom and top bounds of the box and min and max at the ends of the error bars.
-This plot helps to illustrate the one-sided variance that may often be observed in network performance anaylsis.  
-The measurements can only approach the theoretical maxima for each test.  
+The results of each STREAM and RR test are presented as box plots with the median in the center, 25th and 75th percentiles at the bottom and top bounds of the box and min and max at the ends of the error bars.
+This plot helps to illustrate the one-sided variance that may often be observed in network performance analysis where measurements can only approach the theoretical maxima for each test.  
 
 Variation in the measured latency is partly due to the non-determinism of typical Linux systems, but there is also a component of the latency due only to the network delays.
 The 10 Gbps optical cables connecting the two systems are approximately 2 meters long so the propagation delay along these connections should be about 6.7 ns.
-In-network queueing delay can be ignored since the systems are directly connected and queuing is only occurring at their network interfaces.
+In-network queuing delay can be ignored since the systems are directly connected and queuing is only occurring at their network interfaces.
 The transmission or packetization delay for transmitting or receiving a large 1500 byte packet would be 1.214 $\mu$s.
-
-\begin{table}[ht!]
-    \centering
-    \begin{tabular}{|l|c|c|}
-    \hline
-    Parameter & variants & \\
-    \hline \hline
-    kernel & 3.18.20 & 3.18.20-rt18 \\ 
-    environment & docker & KVM \\ 
-    network interface & bridge & physical \\ 
-    \hline
-    \end{tabular}
-\end{table}
+This represents as much as 3\% of the total latency observed in fast connections, but this offset should be constant and have little effect on the variance observed. 
 
 \section{Network Bandwidth} % (fold)
 \label{sec:networkbandwidth}
-Given the 
+Network bandwidth was measured for all test configurations with both TCP and UDP streaming flows.
+It should be noted, however, that the maximum theoretical speed for Ethernet connections, both optical and copper, is just below 95\% of the physical data rate.
+This is due only to the overhead of Ethernet frames (1518 bytes + 8 byte preamble and 12 byte (96 ns) interframe gap (IFG)), Ethernet header (14 bytes), 4 byte Frame Check Sequence (FCS), 20 byte IP header, 20 byte TCP header, 1460 MSS for TCP.
+Overall, this amounts to 78 bytes of overhead at various layers to transmit only 1460 bytes of data representing 94.9\% efficiency in the best case.  
+Thus, any performance above 9.4 Gbps (9400 Mbps) is considered line rate.  
+
 \subsection{TCP Bandwidth} % (fold)
 \label{sub:tcpbandwidth}
-TCP bandwidth of the various network interfaces and kernels was measured using the TCP\_STREAM bandwidth test in netperf.
-The results of the bridged measurements are shown in Figure~\ref{fig:tcp_stream_bridge} where it is evident that, while both environments show significant variation with standard kernels, the realtime-variant kernels show only minimal variance and the docker-rt test even reached line rate.
-The performance of both the container and virtual machine, with minima close to the median and maxima only slightly above that point, are consistent with a realtime kernel in that the performance is essentially deterministic with little variance (TODO: cite variance or figure??).
+Section~\ref{sec:related_work} illustrated the importance of TCP performance in network workloads.
+Bandwidth of the various network interfaces and kernels was measured using the TCP\_STREAM bandwidth test in netperf.
+The results of the bridged measurements are shown in Figure~\ref{fig:tcp_stream_bridge}. 
+It is evident in this figure that the streaming TCP bandwidth of both environments improves with tuning as well as decrease in variance.  
+It is even fairly impressive that the realtime container reached line rate with only a few points below the median.  
+The performance of both the container and virtual machine are consistent with a realtime kernel in that the performance is essentially deterministic with minimal variance.
+This is the result that is desired when tuning a system for deterministic performance.
 
-The results of the physical connection measurements are shown in Figure~\ref{fig:tcp_stream_phys}.
-\begin{figure}
-    \centering
-    \def\svgwidth{\columnwidth}
-    \input{TCP_STREAM_PHY.pdf_tex}
-    \caption{TCP Streaming Bandwidth: Physical Network}
-    \label{fig:tcp_stream_phys}
-\end{figure}
 \begin{figure}
     \centering
     \def\svgwidth{\columnwidth}
@@ -50,10 +36,28 @@ The results of the physical connection measurements are shown in Figure~\ref{fig
     \caption{TCP Streaming Bandwidth: Bridged Network}
     \label{fig:tcp_stream_bridge}
 \end{figure}
+
+The results of the TCP STREAM test on the physical connection are shown in Figure~\ref{fig:tcp_stream_phys}.
+This figure shows exceptional performance from the virtual environments with all of the variants reaching line rate.
+While line rate performance was somewhat expected in the physical interfaces, even the standard kernel variants show exceptional performance here.
+The realtime tuned kernel decreases variance in this case, but, since the baseline performance is so high already, little to no gain is observed in the median performance, with all configurations less than 0.01\% separated from each other.  
+The differences between the bridged and physical network performance seen in Figures \ref{fig:tcp_stream_bridge} and \ref{fig:tcp_stream_phys} partly illustrate the risks of using host bridging for networking due to the additional additive latency that would be contributed by additional guest systems on that host.  
+
+\begin{figure}
+    \centering
+    \def\svgwidth{\columnwidth}
+    \input{TCP_STREAM_PHY.pdf_tex}
+    \caption{TCP Streaming Bandwidth: Physical Network}
+    \label{fig:tcp_stream_phys}
+\end{figure}
 % subsection tcpbandwidth (end)
 
 \subsection{UDP Bandwidth} % (fold)
 \label{sub:udpbandwidth}
+Although a significant fraction of datacenter traffic has been shown to use TCP, one of the greatest sources of congestion in the Internet is streaming video and audio which are typically UDP flows.
+UDP usually uses less computation in processing the flow due to the reduced capacity for flow control and loss correction in the protocol, which seems to indicate that UDP performance should be equivalent or higher than TCP performance.  
+The UDP bandwidth results observed herein, however, are somewhat confusing and contrary to that idea.
+
 \begin{figure}
     \centering
     \def\svgwidth{\columnwidth}
@@ -61,6 +65,12 @@ The results of the physical connection measurements are shown in Figure~\ref{fig
     \caption{UDP Streaming Bandwidth: Bridged Network}
     \label{fig:udp_stream_bridge}
 \end{figure}
+Figure~\ref{fig:udp_stream_bridge} shows the UDP bandwidth performance for the bridged network connections.  
+In One of the more confusing results of this study, the UDP STREAM test could not complete over a bridged connection to a container.
+Regardless of attempts to vary the routing tables or connections between systems, the UDP STREAM test over a bridge to a container consistently failed to initiate.
+The virtual machine, however, with its paravirtualized virtio driver over a bridge did not seem to have any issues completing the test.  
+Its performance, however, seems significantly lower than line-rate expectations, but the variance in bandwidth decreased dramatically from the standard to realtime kernel as expected.  
+
 \begin{figure}
     \centering
     \def\svgwidth{\columnwidth}
@@ -68,6 +78,15 @@ The results of the physical connection measurements are shown in Figure~\ref{fig
     \caption{UDP Streaming Bandwidth: Physical Network}
     \label{fig:udp_stream_phys}
 \end{figure}
+
+The second UDP bandwidth test performed was over the physical network interface is shown in Figure~\ref{fig:udp_stream_phys} .  
+This figure shows that both virtual systems perform similarly when using a physical interface, achieving line rate and nearly zero variance in the realtime systems.
+As expected, the standard kernel systems had about 15\% lower median performance, peaking up to line rate in the virtual machine.
+This test further illustrates the strange UDP behavior in that the peak bandwidth of the two realtime systems and the standard virtual machine all exceeded 9.5 Gbps. 
+This is confusing in light of the maximum Ethernet bandwidth calculation described at the beginning of Section~\ref{sec:networkbandwidth}.
+It seems that some burst transmission is happening for UDP streaming, which may bias the result higher than actual performance.
+When comparing the results of the UDP STREAM test over a physical connection to that of the bridged connection in Figure~\ref{fig:udp_stream_bridge}, it seems that the bridged virtual machine interface simply suffered reduced performance as a result of the additional host CPU involvement required to process bridge traffic.
+
 % subsection udpbandwidth (end)
 
 
@@ -75,9 +94,21 @@ The results of the physical connection measurements are shown in Figure~\ref{fig
 
 \section{Network Latency} % (fold)
 \label{sec:networklatency}
+Bandwidth measurements get a lot of attention due to the desire to push more packets through the high-bandwidth connections in network backbones.
+Latency and latency jitter however, are often the critical metric when evaluating a network workload because low bandwidth will not prevent streaming services from running effectively whereas high latency can cause dropped calls or prevent connectivity in the first place.
+In this section, the results of netperf and ping latency measurements are discussed.  
 
 \subsection{TCP Latency} % (fold)
 \label{sub:tcplatency}
+The netperf test TCP-RR and UDP-RR both measure the time required to initiate then tear down a network connection, i.e. the latency between the first SYN packet is sent and the last FIN packet is ACKed.  
+This test only sends a few packets so congestion should not be a concern in this test environment, but CPU involvement in the packet processing may comprise a significant portion of the latency.  
+Figure~\ref{fig:tcp_rr_bridge} shows the TCP Request-Response latency of the bridged topologies.
+This figure perfectly illustrates the desired result for tuning a system toward realtime performance.
+Both the virtual machine and container show a significant reduction in variance when using realtime over standard kernel.
+The realtime docker result does not show much decrease in its median latency, but variance decreases dramatically as expected.
+The virtual machine, however, showed reductions in latency as well as its variance.
+This figure seems to show the difference inherent between containers and virtual machines in that the vm can achieve the low latency of the container, but tends to have additional interferences which increase variance.  
+
 \begin{figure}
     \centering
     \def\svgwidth{\columnwidth}
@@ -85,6 +116,15 @@ The results of the physical connection measurements are shown in Figure~\ref{fig
     \caption{TCP Request/Response Latency: Bridged Network}
     \label{fig:tcp_rr_bridge}
 \end{figure}
+
+Measurements of TCP RR latency over a physical interface are shown in Figure~\ref{fig:tcp_rr_phys}.  
+Similar to the bridged TCP latency, the physical interface shows improvement moving from the standard to realtime kernel, but all four modes seem to perform fairly similarly here regardless.
+This appears to be a trend in the physical interfaces where performance is more consistent across interfaces and virtual systems.
+What is confusing, however, is that the median latency of the virtual machine seemed to show an increase in median latency, but a decrease in its variance.  
+This is to be expected with a realtime kernel, however, where it's possible to trade some performance for a more deterministic result.  
+It also seems strange that the docker measurements here do not seem to vary at all.  
+They initially seemed to be the same data, but on closer inspection, differ by less than 5\% at the minima and less than 1\% at the maxima.
+
 \begin{figure}
     \centering
     \def\svgwidth{\columnwidth}
@@ -94,9 +134,17 @@ The results of the physical connection measurements are shown in Figure~\ref{fig
 \end{figure}
 
 % subsection tcplatency (end)
-
 \subsection{UDP Latency} % (fold)
 \label{sub:udplatency}
+Although the TCP measurements presented so far seem to be fairly consistent with expectations, the UDP workloads have not been as straightforward.
+The latency of both of the UDP Request-Response tests are exemplary of the strange behavior seen herein.
+When measuring network latency, it is expected that the majority of the delay will come from transit across the network and queuing delays at intermediate nodes along the way.  
+The UDP latency shown in Figure~\ref{fig:udp_rr_bridge}, however, shows that network effects can be trivially small in comparison to other delays in the system.
+These latency measurements are roughly 10 times the magnitude of the latency observed in the TCP case.
+This effect does not seem possible without some system interference causing the additional delays.  
+As before, these measurements were repeated multiple times with the same result each time, indicating that there is some persistent configuration issue slowing down the UDP test.
+Further investigation into the source code of netperf or system network parameters may uncover the issue, but it is difficult to draw any further conclusions from these data at this time.
+
 \begin{figure}
     \centering
     \def\svgwidth{\columnwidth}
@@ -104,6 +152,13 @@ The results of the physical connection measurements are shown in Figure~\ref{fig
     \caption{UDP Request/Response Latency: Bridged Network}
     \label{fig:udp_rr_bridge}
 \end{figure}
+Results of the UDP Request-Response measurements over a physical interface are shown in Figure~\ref{fig:udp_rr_phys}.  
+This figure shows the same curiously-high latency as observed over the bridged connection, but at least the physical interface has lower variance than the bridge as expected.
+The docker results are additionally confusing due to the increase in variance observed in the realtime tuned variant over the standard docker system.
+They seem to have been switched, but the data was consistent upon inspection which creates more questions than it answers.
+The virtual machine results are also troubling because both measurements are so incredibly precise at 8004 $\pm$ 0.5 $\mu$s.  
+This level or precision seems too deterministic, especially for the standard kernel so it is assumed that netperf is doing something strange with the measurements.
+
 \begin{figure}
     \centering
     \def\svgwidth{\columnwidth}
@@ -113,11 +168,19 @@ The results of the physical connection measurements are shown in Figure~\ref{fig
 \end{figure}
 % subsection udplatency (end)
 
-%\subsection{ICMP latency} % (fold)
+\subsection{ICMP Latency} % (fold)
 \label{sub:icmplatency}
-The standard network tool ping was used to get an idea of the layer 3 latency of the virtual hosts.  
-The box-plot results of the ping testing of the bridged connections are shown in Figure~\ref{fig:icmplatencybridge}.  
-The box-plot results of the ping testing of the physical connections are shown in Figure~\ref{fig:icmplatencyphys}.  
+In order to get an idea of how the whole system responds to a realtime kernel, ICMP latency was also measured with the standard network tool ping.  
+The ping tool presents a slightly different case than netperf due to the location of the responding agent.  
+Since netperf is a userspace process, its CPU affinity may be set to any CPU in the system, specifically those that have been isolated from the kernel.
+ICMP responses, however, come directly from the kernel's network stack so cannot be easily assigned to a CPU, which limits how isolated its performance can be from the rest of the system.
+The results of the ping testing of the bridged connections are shown in Figure~\ref{fig:icmplatencybridge}.
+It's interesting that the container performance improved only slightly with the realtime kernel, whereas the virtual machine latency improved significantly.  
+The difference in effect is likely due to the CPU affinity of the virtual machine.  
+The standard kernel virtual machine sees very high peak latency due to the additional abstraction layers that must be traversed for each packet and the nondeterministic floating CPU cores that might respond.
+When the VM is pinned to specific, isolated CPU cores as in the realtime example, the host kernel is not involved in the ICMP response so it does not contribute to the variance.
+The containers, however, do not have this same benefit because, while the container processes may be pinned to its cgroup cpuset, the host kernel is still doing the responding so should behave almost identically for both configurations.
+
 \begin{figure}
     \centering
     \def\svgwidth{\columnwidth}
@@ -125,6 +188,10 @@ The box-plot results of the ping testing of the physical connections are shown i
     \caption{ICMP latency: Bridged network}
     \label{fig:icmplatencybridge}
 \end{figure}
+Aside from the expected decrease in latency from the bridged interfaces to the physical, the results of the physical interface ping testing are very similar to those of the bridged interface, Figure~\ref{fig:icmplatencyphys}.  
+This is due to the same constraints mentioned in the discussion of the bridged ICMP results where the host kernel is only slightly affected by the tuning, but the guest kernel gets private cores to run on, allowing a modest decrease in both variance and magnitude.  
+Both of these ICMP latency test serve to illustrate that ping cannot accurately assess the effect of kernel tuning on guest systems.  
+
 \begin{figure}
     \centering
     \def\svgwidth{\columnwidth}

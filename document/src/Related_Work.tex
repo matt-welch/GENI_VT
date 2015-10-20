@@ -28,7 +28,7 @@ Since the cloud is really just a collection of virtual systems running in datace
 The popular networking paradigm of NFV is driving growth and innovation throughout the sector.
 A number of trade organizations have sprouted up recently to promote its adoption and accelerate development.
 Both the ETSI (European Telecommunications Standards Institute) and OPNVF (Open Platform for Network Functions Virtualization) \autocite{opnfv1} are driving NFV adoption \autocite{cohnopnfv}.
-In their survey of network virtualization \autocite{_chowdhury_1}, Chowdhury and Boutaba describe some of the older technilogies and challenges that define this problem space.
+In their survey of network virtualization \autocite{_chowdhury_1}, Chowdhury and Boutaba describe some of the older technologies and challenges that define this problem space.
 
 
 Recently, the Linux Foundation announced that they would be fully supporting the efforts to promote and advance the development of Real-Time Linux \autocite{_linux_foundation_1}.
@@ -69,7 +69,7 @@ The ideal difference between these two types of hypervisors is that the Type 1 h
 Although Type 1 hypervisors do not require an operating system to \emph{run}, they do require an operating system for \emph{control} of the hypervisor and guests \autocite{_liguori_1}.
 It would appear that Type 1 systems seem to have an efficiency advantage over Type 2 since they tend to use microkernels instead of the macrokernels that are usually required to host Type 2 hypervisors.
 According to \autocite{_liguori_1}, however, the difference between them has little to do with performance, robustness, or other qualitative factors, but, rather, relates back to  observations about their differences made in \autocite{_popek_1} and the analyses of these differences by \autocite{_robin_1}.
-Robin's analysis related to the potential for the Pentium processor to support a secure HVM \autocite{_robin_1}, so it was important for them to draw conclusions about the capabilities and suitability of various hypervisors.
+Robin's analysis related to the potential for the Pentium processor to support a secure VMM \autocite{_robin_1}, so it was important for them to draw conclusions about the capabilities and suitability of various hypervisors.
 The vendors of hypervisor solutions also have an interest in perpetuating the distinction between the two types of hypervisors, but the need to differentiate between these products has become less important over time.  
 
 Although it's arguable whether there is a performance difference between Type 1 and Type 2 hypervisors, the market for virtualization is full of both.
@@ -87,7 +87,7 @@ Combined, the KVM/QEMU hypervisor runs natively on Linux with kernel modules and
 
 \subsection{CPU Virtualization}
 \label{sec:vtcpu}
-In addition to the variations in hypervisors that may or may not have an impact on performance, the type of virtualizion used to provide devices to the guest operating system can have a significant impact on performance.
+In addition to the variations in hypervisors that may or may not have an impact on performance, the type of virtualization used to provide devices to the guest operating system can have a significant impact on performance.
 In the following sections, some important types of hardware emulation will be reviewed comprising virtio, paravirtualization, and hardware assisted virtualization.
 
 One of the early challenges in the virtualization of the x86 architecture was handling privileged instructions.
@@ -140,7 +140,7 @@ Fairly recent developments in x86 processors have allowed hypervisors to maintai
 A hypervisor may use TLB hardware to map guest memory pages onto the physical memory similar to a native process, reducing the overhead of guest OS memory access.
 Along with virtualization of guest memory, another significant improvement to virtual machine performance can be had with the utilization of hugepage memory \autocite{_romer_1}.
 Hugepages, referred to as superpages in Romer, can simply be described as a memory page that is a power-of-two multiple of a standard 4096 byte (4k) memory page.
-Romer et. al. demonstrated a significant improvement in performance when using hugepages for memory-hungry applications.
+Romer et al demonstrated a significant improvement in performance when using hugepages for memory-hungry applications.
 When system memory sizes were very small, virtual memory and swapping smaller pages was found to be more efficient than larger pages.
 As memory sizes have grown to hundreds of gigabytes per server and applications can consume multiple gigabytes each, 4k memory pages no longer seem like such an obvious fit.
 Hugepages seek to reduce the frequency of TLB lookups and page table walks by simply using larger pages of memory.
@@ -178,7 +178,7 @@ A solution to this apparent conflict of interests can be found in PCI-SIG Single
 SR-IOV is a general method by which the host system can configure a single hardware device to create and control multiple additional \emph{virtual functions} of the device.
 These virtual functions can be directly assigned to and accessed by the guest, similar to passthrough, without removing the main physical function from the host.
 The host's physical function represents the original hardware and is responsible for the management functions of the peripheral.  
-An illustrative example is the Intel 82599 10 gigabit network card, used later in this study.
+An illustrative example is the Intel 82599 10 Gigabit network card, used later in this study.
 Each physical network interface (physical function or pf) in these network cards has 64 Rx/Tx queue pairs that are normally used as send and receive buffers to maintain multiple simultaneous flows.
 The individual queue pairs may be "broken out" of the main pool to create a virtual function that is, essentially, a new network device sharing the same physical interface as the physical function.
 These new devices are assigned unique MAC addresses and IP addresses to differentiate them on the network so that an outside observer cannot tell them apart from a physical device.
@@ -216,14 +216,14 @@ It is that author's opinion that OpenVZ will eventually lose support since its f
 The Linux container infrastructure has evolved some as have the many other containerization systems to the point that there was need to unify the standards on a single container format, libcontainer, which has recently been adopted by the Open Container Initiative under the Linux Foundation \autocite{_oci_1}.  
 The development of the common container and runtime for Linux under the OCI should surely accelerate the standardization and adoption of containers under Linux.
 
-The Linux subsystems supporting containers have become sophisitcated enough that Docker or LXC are no longer strictly necessary to create containers, because administrators can create their containers with native Linux  tools such as SystemD or just scripts that stitch together the correct cgroups, chroot, and namespace allocation.  
+The Linux subsystems supporting containers have become sophisticated enough that Docker or LXC are no longer strictly necessary to create containers, because administrators can create their containers with native Linux  tools such as SystemD or just scripts that stitch together the correct cgroups, chroot, and namespace allocation.  
 The \emph{de facto} standard for containers in Linux, however, seems to be Docker based on the amount of media coverage and hype surrounding the young startup.  
 Docker is popular for good reason: in addition to providing a robust tool set for isolating processes, the Docker team has been extremely open about their development and responsive to issues submitted by users on their github account \autocite{githubdocker}.  
 It is for the reasons of its ubiquity and ease of use that Docker is the container format selected for comparison herein.
 
 Although, Docker may not be representative of container systems as a whole, the majority of the subsystems used by Docker to instantiate containers is part of the Linux kernel so it is expected that containers utilizing these technologies should perform similarly.  
 Docker is largely responsible for the current wave of "hype/excitement/momentum" around containers so seems to be the de facto container in the mind of most people.  
-The Open Container Initiave was recently formed as a collaborative project under the Linux Foundation \autocite{_oci_1}.
+The Open Container Initiative was recently formed as a collaborative project under the Linux Foundation \autocite{_oci_1}.
 Members of this auspicious organization span the industry from major cloud players like Microsoft and Amazon to virtualization vendors such as VMware and CoreOS.  
 The goal of this new organization is to promote an open, standardized format for containers and the engine runtime libraries. 
 They even have a head start on the process with Docker donating its container format, libcontainer) and runtime, runC, to the organization as a starting point.
@@ -288,9 +288,6 @@ Docker also uses IPTables and Network Address Translation to allow the container
 Another reason to study the bridged networking paradigm is that bridges are very important in networking in general and useful in systems where containers may be linked together or their functions pipelined.
 Additionally, the popular software switch package, Open vSwitch (OVS) may be configured to use virtual bridging as its default network topology.
 
-Maximum theoretical speed of Ethernet (copper or fiber) is only about 95\% of the line rate.
-This is due only to the overhead of Ethernet frames (1518 bytes + 8 byte preamble and 12 byte (96 ns) interframe gap (IFG)), Ethernet header (14 bytes), 4 byte Frame Check Sequence (FCS), 20 byte IP header, 20 byte TCP header, 1460 MSS for TCP.
-Overall, this amounts to 78 bytes of overhead at various layers to transmit only 1460 bytes of data representing 94.9\% efficiency in the best case.  
 % subsubsection dockernetworking (end)
 
 \section{Comparisons and Performance Analysis} % (fold)
@@ -309,59 +306,58 @@ Virtualization of the operating system, however, need not create additional over
 Many studies to date have compared the performance of virtual machines and containers.
 A simple overview of their architecture can be seen in Figure~\ref{fig:vtschematic}, virtual machines have multiple additional libraries and operating system instances, which increases the latency of protected operations.  
 
-Performance comparisons: 
-Felter et. al. made an extensive evaluation of containers and virtual machines including memory, compute, and I/O, but they did not attempt to tune the systems \autocite{_felter_1}.
+Felter, et al made an extensive evaluation of containers and virtual machines including memory, compute, and I/O, but they did not attempt to tune the systems \autocite{_felter_1}.
 They also used the AUFS which has been deprecated.
 
 Scheepers discusses Xen and LXC macro benchmark comparison \autocite{_scheepers_1}.  
 He showed that public clouds need virtual machines for their isolation potential, but containers can be used to maximize the \emph{utilization} of the hardware.
 
-Wang et. al. studied the performance overhead of dynamic resource allocation and found that static allocation seemed to perform better in most cases \autocite{wangAllocation2007}.
-The performance degradation of of Xen virtual machines was blamed on intensive network I/O which could be helped by static allocatino and physical device assignment.
+Wang et al studied the performance overhead of dynamic resource allocation and found that static allocation seemed to perform better in most cases \autocite{wangAllocation2007}.
+The performance degradation of of Xen virtual machines was blamed on intensive network I/O which could be helped by static allocation and physical device assignment.
 Indeed, their conclusion that decreasing the switching magnitude and frequency of their allocation schedule led to performance improvements.  
 The limit of this allocation is static, with processed pinned to CPUs and assigned physical resources.
 
-Sherry, et. al examined Middleboxes which are the heart of NFV \autocite{_perry_1}.
-They show that, as streaming data uses increase in the Internet, the need for additional middleboxes to process and handle the traffic is also increasing.  These systems are increasingly assigned to virtual machines due to the flexibility and scaling that can be acheived with increased density.
+Sherry, et al examined Middleboxes which are the heart of NFV \autocite{_perry_1}.
+They show that, as streaming data uses increase in the Internet, the need for additional middleboxes to process and handle the traffic is also increasing.  These systems are increasingly assigned to virtual machines due to the flexibility and scaling that can be achieved with increased density.
 
 Middleboxes are also examined in a paper by Sekar, et. al., where they make the case that middlebox innovation, i.e. NFV, as at least as important as for switches and routers \autocite{sekar2011middlebox}.
-They propose that the role of middleboxes in the network comprose the critical usability and security considerations of network design.:w
+They propose that the role of middleboxes in the network comprise the critical usability and security considerations of network design.
 One idea presented in their article that has significant potential with containers is the chaining of middlebox functions and its analogy to processing operations on a packet.  
 This is one of the core ideas of NFV in that the entirety of the network functions need not be accomplished in one system or even one physical box, but can be distributed around the network as processing nodes.  
 By their estimates, there also appears to be a significant amount of common traffic overlap ranging from 64 to 99\% in middlebox processing. 
-While this seems shockingly high, it also presents an interesting alternative use case for contaienrs and virtual machines which may be pipelined and even potentially share resources to decrease the redundancy present in current schema.
+While this seems shockingly high, it also presents an interesting alternative use case for containers and virtual machines which may be pipelined and even potentially share resources to decrease the redundancy present in current schema.
 
-Xavier, et. al. examine the suitability of Linux vServer, OpenVZ, and LXC for high performance computing environments \autocite{xavier2013performance}.
+Xavier, et al examine the suitability of Linux vServer, OpenVZ, and LXC for high performance computing environments \autocite{xavier2013performance}.
 While the high compute-density of containers is an advantage in HPC, it is often the network that has the most impact on system performance.
-Containers lack the necessary isolation for co-located workloads, but, since HPC workloads and cluster topologies are often more controllable and predicatable, the lack of isolation in containers should not pose a significant problem.
+Containers lack the necessary isolation for co-located workloads, but, since HPC workloads and cluster topologies are often more controllable and predictable, the lack of isolation in containers should not pose a significant problem.
 One of the shortcomings of their study, however, was that they were not using high-throughput network interfaces that are so critical in HPC, which makes it difficult to properly draw distinctions among the systems.
-That comparison, specifically since it was targeted at HPC, would have benefitted from more rigorous CPU isolation and tuning.  
+That comparison, specifically since it was targeted at HPC, would have benefited from more rigorous CPU isolation and tuning.  
 
 The work of Wang and Ng analyzed the impact of virtualization on network performance in the Amazon cloud \autocite{wangAmazon2010}.
 Although they found that Amazon does not have the same emphasis on performance as an HPC cluster, there are instances available in their cloud that completely isolate their CPUs for guaranteed performance.  
 Although they did not have access into Amazon's orchestration or control systems, the high-performing virtual machines were not likely oversubscribed with other systems sharing their CPUs. 
 These high-performing virtual systems are the subject of this thesis and a step toward realtime tuning that is supported herein.  
 
-Rathore [A61] compared KVM and LXC performance and isolation in hardware-assisted virtual routers, but used dynamic allocation which can kill latency \autocite{rathore2013kvm}.
-Their isolation could have improved with realtime tuning and cpu isolation.  
+Rathore compared KVM and LXC performance and isolation in hardware-assisted virtual routers, but used dynamic allocation which can kill latency \autocite{rathore2013kvm}.
+Their isolation could have improved with realtime tuning and CPU isolation.  
 Containers alone cannot provide real isolation of processes without explicit CPU control with cgroups, but the organization of processes and CPU assignment can be tricky.
 Orchestration of containers and virtual machines needs to take realtime tuning into account for maximal I/O performance.
 
 There seems to be a significant interest in utilizing virtual systems for HPC.  Another study that investigated this paradigm was performed by Younge et. al, where they performed an in-depth analysis of current virtualization technologies in HPC \autocite{_younge_1}.
 They investigated a set of current hypervisors for performance and help to guide the choice of hypervisors herein. 
 In their article, they examine VMware, KVM, Xen, and VirtualBox hypervisors. 
-Using VMware herein was shown to be compicated by the need to clear VMware results with them and the fact that it is proprietary and not open source all discourage its use for academic research.  
-The populare Xen hypervisor, while open source, requires paravirtualization which creates additional burden.
-VirtualBox, while widely available, is also not open source and has little available perfornace data for the Type 2 hypervisor.  
+Using VMware herein was complicated by the need to clear VMware results with them and the fact that it is proprietary and not open source all discourage its use for academic research.  
+The popular Xen hypervisor, while open source, requires paravirtualization which creates additional burden.
+VirtualBox, while widely available, is also not open source and has little available performance data for the Type 2 hypervisor.  
 Finally, KVM, the open source hypervisor seems to be the best choice due to its ubiquity and deep library of literature supporting it.
 This choice is also supported by \autocite{_younge_1} who also proclaim it the best performer in internode bandwidth.  
 
 One of the considerations when designing the performance analysis of network systems is the composition of the traffic that they will handle.  
 Virtual systems often reside in datacenters where it has been reported that TCP traffic represents a share of about 90\% if the overall traffic \autocite{haTCPCloud2013}.
-This observatin highlights the need for performant network interfaces due to the high overhead required in maintaining TCP flows.
+This observation highlights the need for performant network interfaces due to the high overhead required in maintaining TCP flows.
 
 
 % section comparisons_performance_analysis (end)
 
-\nocite{_dpdk_1, _adams_1, _chowdhury_1, _perry_1, _grinberg_1, rathore2013kvm, seo2014performance, gomes2014performance}
+\nocite{_dpdk_1, _adams_1, _chowdhury_1, _perry_1, _grinberg_1, rathore2013kvm, seo2014performance, gomes2014performance, kivity2014osv, wang2011understanding}
 

@@ -10,7 +10,13 @@
     \hline
     rcu\_nocb\_poll=1 & Rather than requiring that offloaded CPUs (specified by rcu\_nocbs= above) explicitly awaken the corresponding "rcuoN" kthreads, make these kthreads poll for callbacks. This improves the real-time response for the offloaded CPUs by relieving them of the need to wake up the corresponding kthread, but degrades energy efficiency by requiring that the kthreads periodically wake up to do the polling. \\
     \hline
-    isolcpus=1-4 & isolate CPUs 1-4, removing them from the scheduler pool of available CPUs. \\ 
+    isolcpus=1-4 & Isolate CPUs 1-4, removing them from the scheduler pool of available CPUs. \\ 
+    \hline
+    nohz\_full=1-4 & Set scheduler timer interrupt interval to 1 Hz from 250 Hz default. \\ 
+    \hline
+    hugepagesz=2M & Set hugepage size to 2 MB (from default 4 KB) \\
+    \hline
+    hugepages=4096 & Allocate 4096 hugepages for a total of 8192 MB \\ 
     \hline
 \end{tabular}
 \end{table}

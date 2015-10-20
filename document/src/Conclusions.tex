@@ -13,10 +13,11 @@ This is because the work required by the host to monitor and handle bridge traff
 \section{Future Work}
 \label{sec:future_work}
 \subsection{DPDK}
-DPDK is, like, super awesome and should be used by everyone!
+DPDK can allow ssytems to avoid any interference by the kernel by removing the interfaces from the kernel domain and using poll mode userspace drivers to minimize response latency.  
 Optimizing parameters of the network stack in Linux or implementing benchmarks in DPDK are additional optimizations for improving network performance and may be considered in future work.
 
 \subsection{Virtual Functions}
 \label{sec:virtual_functions}
-Virtual functions would be really good for scaling
+Virtual functions are a mechanism by which physical devices may be multiplexed and share their resources among many virtual devices.  
+A virtual function for a network interface card, for example, is composed of one pair of transmit and receive queues of the 64 available in the physical device.
 

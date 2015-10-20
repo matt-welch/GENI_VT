@@ -12,7 +12,6 @@
 \usepackage{graphicx,color}
 \usepackage{tikz}
 \usepackage{pgfplots}
-%\usepackage{amssymb,amsbsy,amsthm}
 \usepackage{titlecaps}
 \usepackage[activate={true,nocompatibility},final,tracking=true,kerning=true,spacing=true,factor=1100,stretch=10,shrink=10]{microtype}
 % activate={true,nocompatibility} - activate protrusion and expansion
@@ -24,22 +23,18 @@
 \usepackage{tocloft}
 \usepackage[english]{babel}
 \usepackage[babel=true]{csquotes}
-%\usepackage[acronym,xindy,toc]{glossaries}
-%\usepackage[chapter]{algorithm}
-%\usepackage{algpseudocode}
 \usepackage{listings}
 
 \usepackage{asudis}
 
 \newtheorem{mydef}{Definition}[chapter]
 \newcommand*\vtick{\textsc{\char13}}
-%\makeglossaries
 
 \begin{document}
 %-----------------------front matter
 \pagenumbering{roman}
 \title{\input{title.tex}}
-\author{Matthew Welch}
+\author{James Matthew Welch}
 \degreeName{Master of Science}
 \paperType{Thesis}
 \defensemonth{November}
@@ -47,8 +42,8 @@
 \defenseyear{2015}
 \gradyear{2015}
 \chair{Violet Syrotiuk}
-\memberOne{Gil Speyer}
-\memberTwo{Carole-Jean Wu}
+\memberOne{Carole-Jean Wu}
+\memberTwo{Gil Speyer}
 \clearpage
 \maketitle
 \doublespace
@@ -57,7 +52,11 @@
 }
 \clearpage
 \dedicationpage{
-    dedication goes here
+To my mother who inspired my curiosity \\
+because she could never answer my questions of ``What if...?''\\
+To my wife who's unwavering support, boundless love, and endless patience \\
+have buoyed my spirits and kept me going. \\
+To my children, who give me purpose. \\
 }
 \acknowledgements{
 \input{Acknowledge.tex}
@@ -89,5 +88,4 @@
 \clearpage
 \singlespace
 \printbibliography[heading=references]
-%\printglossary
 \end{document}

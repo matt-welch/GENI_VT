@@ -12,6 +12,8 @@ Parameter & Description \\
 \hline
 -mem-prealloc & Preallocates guest memory, decreasing latency for most memory accesses.\\
 \hline
+CPU pinning & Not a QEMU parameter, but use taskset to assign the smp\_affinity of each vCPU thread to one of the pCPUs assigned to it.\\
+\hline
 \end{tabular}
 \end{table}
 

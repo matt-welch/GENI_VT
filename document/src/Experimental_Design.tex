@@ -153,8 +153,8 @@ The daemon has a number of parameters that may be modified to tune parameters su
 In this study, the docker daemon was launched with mostly standard parameters but for the following exceptions.
 As discussed in Section~\ref{sub:software_environment}, the overlayfs storage driver was chosen, requiring the docker daemon to be launched with \lstinline{--storage-driver=overlay}.  
 Additionally, docker's default bridge, docker0, was configured to draw on a pool of IP addresses from the subnet 192.168.42.240/28 for its bridged virtual Ethernet interfaces.
-The additional arguments used with \lstinline{docker run} and their importance are summarized in \ref{tab:dockerrunparams}.
-
+The additional arguments used with \lstinline{docker run} were only used to assign the cgroup cpusets and corresponding memory node for the realtime kernel.  
+These arguments comprised \lstinline{--cpuset-cpus=1-4} which tells Docker to create a cgroup containing those CPUs and assign the container to that cgroup and \lstinline{--cpuset-mems=0} which tells Docker to assign socket 0 (the local socket) as the only available memory node.
 
 All containers were run with non-persistent filesystems by using the \lstinline{--rm} option in the docker run line.
 This had the effect of removing the container's filesystem overlay after it exits, preventing any filesystem modifications between runs.
@@ -170,7 +170,6 @@ Containers are all launched with a specified MAC address for their bridge interf
 
 \section{Experimental Procedure} % (fold)
 \label{sec:experimental_procedure}
-Given the experimental setup described in Section~\ref{sec:experimental_setup}, the performance of virtual machines and containers could be compared.  
 \begin{table}[ht!]
     \centering
     \label{tab:environmentvariables}
@@ -186,7 +185,8 @@ Given the experimental setup described in Section~\ref{sec:experimental_setup}, 
     \end{tabular}
 \end{table}
 
-We wanted to compare the performance of the systems with tuning to those without and compare the performance of two different network interfaces.
+The experimental setup described in Section~\ref{sec:experimental_setup} was designed to enable the performance comparison of virtual machines and containers for network workloads.  
+The intent of this study was to compare the performance of the systems with tuning to those without and compare the performance of two different network interfaces.
 The set of 3 variables and 2 parameters each produced 8 configurations to test.  The variables are summarized in Table~\ref{tab:environmentvariables} 
 
 The performance of latency-sensitive network workloads are often not bound by memory or CPU, but by their ability to process I/O traffic.
@@ -198,7 +198,9 @@ The network paths that were tested comprised both TCP and UDP flows in addition 
     \caption{netperf 2.7.0 benchmark subtests}
     \label{tab:netperfsubtests}
     \begin{tabular}{|l|c|c|}
+    \hline
         Subtest & Description \\ 
+    \hline
     \hline
         TCP-STREAM & TCP bandwidth over a 10 second connection \\ \hline
         TCP-RR & TCP Request-Response latency \\ \hline

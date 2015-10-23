@@ -5,7 +5,7 @@ Network performance of Docker containers and KVM/QEMU virtual machines was analy
 The results of the tests are presented as box plots with the median in the center, 25th and 75th percentiles at the bottom and top bounds of the box and min and max at the ends of the error bars.
 This plot helps to illustrate the one-sided variance that may often be observed in network performance analysis where measurements can only approach the theoretical maxima for each test.  
 
-Variation in the measured latency is partly due to the non-determinism of typical Linux systems, but there is also a component of the latency due only to the network delays.
+Variation in the measured latency is partly due to the non-determinism of typical operating systems, but there is also a component of the latency due only to the network delays.
 The 10 Gbps optical cables connecting the two systems are approximately 2 meters long so the propagation delay along these connections should be about 6.7 ns.
 In-network queuing delay can be ignored since the systems are directly connected and queuing is only occurring at their network interfaces.
 The transmission or packetization delay for transmitting or receiving a large 1500 byte packet would be 1.214 $\mu$s.
@@ -70,7 +70,7 @@ Figure~\ref{fig:udp_stream_bridge} shows the UDP bandwidth for the bridged netwo
 In one of the more confusing results of this study, the UDP STREAM test could not complete over a bridged connection to a container.
 Regardless of attempts to vary the routing tables or connections between systems, the UDP STREAM test over a bridge to a container consistently failed to initiate.
 The virtual machine, however, with its paravirtualized virtio driver over a bridge did not seem to have any issues completing the test.  
-Its performance, however, seems significantly lower than line-rate expectations, but the variance in bandwidth decreased dramatically from the standard to realtime kernel as expected.  
+Its performance, however, is significantly lower than line-rate expectations, but the variance in bandwidth decreased dramatically from the standard to realtime kernel as expected.  
 
 \begin{figure}
     \centering
@@ -123,7 +123,7 @@ This appears to be a trend in the physical interfaces where performance is more 
 What is confusing, however, is that the median latency of the virtual machine seemed to show an increase for the realtime kernel, but a decrease in its variance.  
 This may be normal with a realtime kernel, however, where improved determinism may come at the cost of maximum performance.  
 It also seems strange that the Docker measurements here do not seem to vary at all.  
-They initially seemed to be the same data, but on closer inspection, differ by less than 5\% at the minima and less than 1\% at the maxima.
+They initially appeared to be the same data, but on closer inspection, differ by less than 5\% at the minima and less than 1\% at the maxima.
 
 \begin{figure}
     \centering
@@ -157,7 +157,7 @@ This figure shows the same curiously-high latency as observed over the bridged c
 The Docker results are additionally confusing due to the increase in variance observed in the realtime tuned variant over the standard Docker system.
 They seem to have been switched, but the data was consistent upon inspection which creates more questions than it answers.
 The virtual machine results are also troubling because both measurements are so incredibly precise at 8004 $\pm$ 0.5 $\mu$s.  
-This level or precision seems too deterministic, especially for the standard kernel so it is assumed that netperf or some kernel configuration is interfering with the maximum performance of the measurements.
+This level of precision seems too deterministic, especially for the standard kernel so it is assumed that netperf or some kernel configuration is interfering with the maximum performance of the measurements.
 
 \begin{figure}
     \centering

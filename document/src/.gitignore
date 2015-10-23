@@ -30,4 +30,4 @@ garbage*
 ~*
 .pdf
 figures*
-
+*.pyc

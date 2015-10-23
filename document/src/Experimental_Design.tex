@@ -95,11 +95,12 @@ Standard kernels usually boot with only a few parameters passed to the kernel su
 The preempt-rt kernel used herein, Linux 3.18.20-rt18, was booted with a specific set of additional parameters to improve its performance and determinism for guest virtual machines and containers.
 The set of parameters passed to the "performance" kernel are summarized in Table~\ref{tab:kernel_params_table}
 \input{kernel_parameters_table.tex}
-One of the most important tuning parameters in a virtual machine host relates to the level of over-subscription for each physical CPU.
-Systems with low performance requirements may stack multiple guest vCPUs (virtual CPUs) on each physical CPU.  This stacking can lead to multiple vCPUs from unrelated virtual machines sharing the pCPU or just host processes running on the pCPU assigned to the guest.
+One of the most important tuning parameters in a virtual machine host relates to the level of over-subscription for each physical CPU (pCPU).
+Systems with low performance requirements may stack multiple guest virtual CPUs (vCPUs) on each pCPU.  
+This stacking can lead to multiple vCPUs from unrelated virtual machines sharing the pCPU or host processes running on the pCPU assigned to the guest.
 Either of these scenarios can have a large impact on guest latency.
 If a pCPU is running another task when a guest vCPU is not in the current context, the additional latency required to change context to the guest and resume the guest OS operation can be a significant source of latency.
-These resource conflicts can be all but eliminated by "unplugging" pCPUs assigned to a guest from the host scheduler with the isolcpus=X kernel boot parameters.
+These resource conflicts can be all but eliminated by "unplugging" pCPUs assigned to a guest from the host scheduler with the \lstinline{isolcpus} kernel boot parameters.
 Assigning a pCPU to the isolcpus list, like isolcpus=2, will remove that pCPU from the kernel scheduler's CPU pool, preventing the kernel scheduler from running any processes there.
 The isolated CPUs can still be used to run user processes with Linux utilities like taskset or numactl, but will remain quiescent until that happens.
 Scalability of a system with isolated CPUs is reduced, but in an era of server processors with more and more cores, the impact of dedicating individual pCPUs to latency-sensitive processes is reduced.

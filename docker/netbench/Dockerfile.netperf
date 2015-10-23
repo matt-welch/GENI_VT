@@ -15,12 +15,6 @@ RUN wget ftp://ftp.netperf.org/netperf/netperf-2.7.0.tar.bz2 && \
     ln -s /root/netperf-2.7.0/src/netserver /root/netserver && \
     ln -s /root/netperf-2.7.0/src/netperf /root/netperf 
 
-RUN git clone https://github.com/esnet/iperf.git && \
-    cd iperf && \
-    ./configure && \
-    make -j $(nproc) && \
-    ln -s /root/iperf/src/iperf3 /root/iperf3
-
 CMD ["/root/netserver","-p","65432","-D"]
 
 # this Dockerfile has been verified to operate correctly up to here

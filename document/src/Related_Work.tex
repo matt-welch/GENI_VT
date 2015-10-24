@@ -3,8 +3,8 @@
 \label{sec:related_work}
 Virtualization has been an important part of computing since early mainframes needed to be shared among multiple processes.
 The use cases for virtualization in network-resident workloads are numerous, but performance of virtual systems is often a concern.
-Traditional virtualization uses have mostly used virtual machines with containers having a secondary role as a process isolation mechanism.
-Recent growth in containers, specifically the very popular Docker, has fueled a resurgence in their uses in the enterprise.
+Traditionally, virtual machines have been the common case for systems virtualization, with containers taking a secondary role as a process isolation mechanism.
+Recent growth in containers, however, specifically the very popular Docker, has fueled a resurgence in their uses in the enterprise.
 Network Functions Virtualization (NFV) and cloud computing have also grown recently, driving performance improvements of virtual systems, including both virtual machines and containers.
 There have been many comparisons between virtual systems, but they mostly lack any kind of tuning to improve network performance of these systems.
 It is possible to improve the performance of virtual systems with fairly simple configuration changes to the kernel and modification of boot parameters.
@@ -13,10 +13,11 @@ This section will discuss some of the enabling developments in virtual system ar
 \section{Use-Cases for Virtualization} % (fold)
 \label{sec:usecasesvt}
 The use cases for virtualization are numerous and growing. 
-Recently, the "cloud" and cloud services have been the subject of significant development and interest.
-Growth has been strong in cloud services for good reason as outlined in \autocite{_younge_1}.
+Recently, the ``cloud'' and cloud services have been the subject of significant development and interest.
+Growth has been strong in cloud services for good reason \autocite{_younge_1}.
 They describe many of the benefits offered by cloud services such as scalability, controlling quality of service (QoS), customization of user infrastructure, cost effectiveness, and simplified access interfaces, almost all of which are enabled by virtualization.  
-Since the cloud is really just a collection of virtual systems running in datacenters, HPC can potentially also reap the benefits of innovations in the cloud.
+Cloud infrastructure commonly requires large-scale data centers with high speed networking to support large numbers of systems.  
+High Performance Computing (HPC) shares many of the infrastructure requirements and capabilities of these large computing centers so may also benefit from innovations originating in the cloud and virtual systems \autocite{xavier2013performance, _younge_1}.
 
 
 \begin{enumerate}
@@ -27,22 +28,19 @@ Since the cloud is really just a collection of virtual systems running in datace
 
 The popular networking paradigm of NFV is driving growth and innovation throughout the sector.
 A number of trade organizations have sprouted up recently to promote its adoption and accelerate development.
-Both the ETSI (European Telecommunications Standards Institute) and OPNVF (Open Platform for Network Functions Virtualization) \autocite{opnfv1} are driving NFV adoption \autocite{cohnopnfv}.
+Both the European Telecommunications Standards Institute (ETSI) and Open Platform for Network Functions Virtualization (OPNFV) \autocite{opnfv1} are driving NFV adoption \autocite{cohnopnfv}.
 In their survey of network virtualization \autocite{_chowdhury_1}, Chowdhury and Boutaba describe some of the older technologies and challenges that define this problem space.
 
 
-Recently, the Linux Foundation announced that they would be fully supporting the efforts to promote and advance the development of Real-Time Linux \autocite{_linux_foundation_1}.
-The Linux Foundation is the body that guides and sponsors the direction of Linux.
-Realtime Linux has been struggling to find funding until recently \autocite{_lwn_1}.
-This project is important because realtime Linux will also improve virtualization determinism.
-This will ensure that the realtime branch of Linux is supported going forward.
-The Linux Foundation is the governing body that not only helps to set direction, but also to fund some important projects so their interest in RT Linux will be a critical boost to its development and adoption.  
+Recently, the Linux Foundation announced that they would be fully supporting the efforts to promote and advance the development of realtime Linux \autocite{_linux_foundation_1}.
+The Linux Foundation is the body that guides and sponsors the direction of Linux so their interest comes at an important time for realtime Linux due to recent funding difficuties for realtime Linux \autocite{_lwn_1} so their interest in realtime Linux will provide a critical boost to its development and adoption.
+Virtual systems also benefit from developments to realtime Linux due to improvements in system determinism and responsiveness.
 
 To support high definition video of 340,000 packets per second into 4 Gbps streams, the BBC is offloading packet processing into a userspace application to avoid the Linux Kernel TCP/IP stack \autocite{bbcbypass}.   
 The same source mentions CloudFlare using a similar userspace processing approach to offload packet inspection during packet flood attacks.
 This allows their servers to drop a large number of packets belonging to the flood and inject valid packets back into the kernel to be processed normally.  
 The article did not mention which library BBC was using, but describes CloudFlare's solution as a modification of NetMap's functionality \autocite{netmapbertin}.
-In order to meet their processing target window of only 3 µs, any latency due to network processing must be minimized.
+In order to meet their processing target window of only 3 $\mu$s, any latency due to network processing must be minimized.
 
 % section usecasesvt (end)
 

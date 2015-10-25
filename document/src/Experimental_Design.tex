@@ -11,7 +11,7 @@ Network interfaces compared include the standard bridged networking for each vir
 
 \section{Experimental Setup} % (fold)
 \label{sec:experimental_setup}
-In this section, the experimental environment constructed for this study will be described comprising system hardware, operating system versions, docker parameters, QEMU parameters, kernel versions, kernel parameters, and kernel configurations.
+In this section, the experimental environment constructed for this study is described comprising system hardware, operating system versions, Docker parameters, QEMU parameters, kernel versions, kernel parameters, and kernel configurations.
 
 \subsection{Hardware} % (fold)
 \label{sec:hardware}
@@ -65,12 +65,12 @@ Choosing which Linux kernel version to use for this study was complicated by fac
 It was already understood prior to configuration that Docker was not supported in kernel versions prior to 3.10 which helped to narrow down the possibilities.
 One of the side-goals of this study was to use as much standard and open software as possible so that the kernel and system configurations could be easily reproduced by other investigators.
 This goal had a substantial influence on the choice of kernel due to the performance impact of the Docker's storage driver.
-By default, Docker currently  uses the AUFS filesystem for its back-end storage driver.
-This module allows the classical union filesystem approach of masking important host files and providing private copies of system files to each container.
+By default, Docker currently  uses the AUFS file system for its back-end storage driver.
+This module allows the classical union file system approach of masking important host files and providing private copies of system files to each container.
 Other options for this driver include devicemapper, zfs, btrfs, and overlayfs.
 The AUFS driver has been deprecated in the Linux kernel so it is not available upstream which disqualifies it from any forward-looking uses.
 The devicemapper driver, while ubiquitous, shows significant performance degradation and usability issues disqualifying it as well.
-Both zfs and btrfs have stability issues and are not yet standard filesystem drivers so they were also disqualified.
+Both zfs and btrfs have stability issues and are not yet standard file system drivers so they were also disqualified.
 The remaining choice was overlayfs which was recently upstreamed into the 3.18 kernel and seems to be the choice for Docker storage driver going forward until zfs and btrfs become standard \autocite{petazzonistorage, redhatstorage}.
 Further limitations, while not as impactful as the choice of the 3.18 kernel include the availability of preempt-rt patches for the kernel.
 
@@ -80,7 +80,7 @@ One of the steps involved in tuning the RT variant of the kernel was to apply a 
 The kernel shipped with Ubuntu 14.04.3 was version 3.19.0-25-generic.
 That kernel's default configuration (.config file) was used as the basis for the configuration and building of the test kernel version 3.18.20. 
 This default kernel configuration omits even simple optimizations such as disabling CPU frequency scaling, and enabling a preemptable kernel, but the default kernel configuration is probably the most common on servers that have not done significant performance tuning and optimizations so it seemed appropriate. 
-The "performance" kernel used was the 3.18.20-rt18 kernel which is the 3.18.20 kernel with the 3.18.20-rt18 patches, posted 2015-08-11, from \autocite{preemptrtsource} applied.
+The ``performance'' kernel used was the 3.18.20-rt18 kernel which is the 3.18.20 kernel with the 3.18.20-rt18 patches, posted 2015-08-11, from \autocite{preemptrtsource} applied.
 The initial kernel configuration used was that of the 3.18.20 kernel. 
 Only a few important parameters of the kernel were modified to tune the systems for performance with the preempt-rt patch.
 Kernel CONFIG modifications are described in Table~\ref{tab:kernel_config_table}.  
@@ -91,16 +91,16 @@ Kernel CONFIG modifications are described in Table~\ref{tab:kernel_config_table}
 \subsubsection{Kernel Boot Parameters} % (fold)
 \label{ssub:kernel_params}
 Another important mechanism for tuning a kernel is to modify the parameters passed to the kernel at boot time \autocite{linuxkernelparams}.  
-Standard kernels usually boot with only a few parameters passed to the kernel such as "ro quiet" which will make the kernel read-only and suppress most kernel boot messages.  
+Standard kernels usually boot with only a few parameters passed to the kernel such as \lstinline{ro quiet} which will make the kernel read-only and suppress most kernel boot messages.  
 The preempt-rt kernel used herein, Linux 3.18.20-rt18, was booted with a specific set of additional parameters to improve its performance and determinism for guest virtual machines and containers.
-The set of parameters passed to the "performance" kernel are summarized in Table~\ref{tab:kernel_params_table}
+The set of parameters passed to the performance kernel are summarized in Table~\ref{tab:kernel_params_table}
 \input{kernel_parameters_table.tex}
 One of the most important tuning parameters in a virtual machine host relates to the level of over-subscription for each physical CPU (pCPU).
 Systems with low performance requirements may stack multiple guest virtual CPUs (vCPUs) on each pCPU.  
 This stacking can lead to multiple vCPUs from unrelated virtual machines sharing the pCPU or host processes running on the pCPU assigned to the guest.
 Either of these scenarios can have a large impact on guest latency.
 If a pCPU is running another task when a guest vCPU is not in the current context, the additional latency required to change context to the guest and resume the guest OS operation can be a significant source of latency.
-These resource conflicts can be all but eliminated by "unplugging" pCPUs assigned to a guest from the host scheduler with the \lstinline{isolcpus} kernel boot parameters.
+These resource conflicts can be all but eliminated by ``unplugging'' pCPUs assigned to a guest from the host scheduler with the \lstinline{isolcpus} kernel boot parameters.
 Assigning a pCPU to the isolcpus list, like isolcpus=2, will remove that pCPU from the kernel scheduler's CPU pool, preventing the kernel scheduler from running any processes there.
 The isolated CPUs can still be used to run user processes with Linux utilities like taskset or numactl, but will remain quiescent until that happens.
 Scalability of a system with isolated CPUs is reduced, but in an era of server processors with more and more cores, the impact of dedicating individual pCPUs to latency-sensitive processes is reduced.
@@ -137,29 +137,29 @@ The hope is for maximal performance so minimal abstraction layers were utilized 
 
 \subsubsection{Docker parameters} % (fold)
 \label{ssub:docker_params}
-The Docker environment is logically separated into building with \lstinline{docker build}, back-end management performed by the docker daemon, and the \lstinline{docker run} command that actually instantiates containers from images and assigns the appropriate cgroups and namespacing to the containers.
-The docker daemon essentially sets up the software environment for the containers, specifically their filesystems, libraries, and available binaries.  
+The Docker environment is logically separated into building with \lstinline{docker build}, back-end management performed by the \texttt{docker daemon}, and the \lstinline{docker run} command that actually instantiates containers from images and assigns the appropriate cgroups and namespacing to the containers.
+The \texttt{docker daemon} essentially sets up the software environment for the containers, specifically their file systems, libraries, and available binaries.  
 Along with the files available to the container, the daemon also manages cgroups and namespaces to properly control the container's resources and limit its scope.  
-The docker run command is responsible for requesting resources and privileges for the container as it is instantiated.
+The \texttt{docker run} command is responsible for requesting resources and privileges for the container as it is instantiated.
 
 The image building process of Docker is controlled by the \lstinline{docker build} command line tool.  
 This tool takes recipe files known as Dockerfiles \autocite{_dockerfile_1} and constructs the image based on instructions therein.
-A Dockerfile usually specifies the base image that should be used for the build along with setting environment variables and installing necessary packages and binaries to the container's filesystem. 
+A Dockerfile usually specifies the base image that should be used for the build along with setting environment variables and installing necessary packages and binaries to the container's file system. 
 It is consumed by the \lstinline{docker build} tool and the image is constructed as the composite overlay of each step in the build process \autocite{dockerbuild1}.
 All of the containers used herein were based on the official Ubuntu image, which is based on the latest release of Ubuntu 14.04 LTS.
 The Ubuntu image was chosen in order to maintain a consistent environment with the host and virtual machines.
 The image created for benchmarking was called netbench and created with the Dockerfile.netbench.  It only pulled the Ubuntu base image, applied some labels, and installed netperf.  
 
-The daemon has a number of parameters that may be modified to tune parameters such as available cgroup CPU sets, bridged networking, and the storage driver used for container filesystems.
-In this study, the docker daemon was launched with mostly standard parameters but for the following exceptions.
-As discussed in Section~\ref{sub:software_environment}, the overlayfs storage driver was chosen, requiring the docker daemon to be launched with \lstinline{--storage-driver=overlay}.  
-Additionally, docker's default bridge, docker0, was configured to draw on a pool of IP addresses from the subnet 192.168.42.240/28 for its bridged virtual Ethernet interfaces.
+The daemon has a number of parameters that may be modified to tune parameters such as available cgroup CPU sets, bridged networking, and the storage driver used for container file systems.
+In this study, the \texttt{docker daemon} was launched with mostly standard parameters but for the following exceptions.
+As discussed in Section~\ref{sub:software_environment}, the overlayfs storage driver was chosen, requiring the \texttt{docker daemon} to be launched with \lstinline{--storage-driver=overlay}.  
+Additionally, Docker's default bridge, \texttt{docker0}, was configured to draw on a pool of IP addresses from the subnet 192.168.42.240/28 for its bridged virtual Ethernet interfaces.
 The additional arguments used with \lstinline{docker run} were only used to assign the cgroup cpusets and corresponding memory node for the realtime kernel.  
 These arguments comprised \lstinline{--cpuset-cpus=1-4} which tells Docker to create a cgroup containing those CPUs and assign the container to that cgroup and \lstinline{--cpuset-mems=0} which tells Docker to assign socket 0 (the local socket) as the only available memory node.
 
-All containers were run with non-persistent filesystems by using the \lstinline{--rm} option in the docker run line.
-This had the effect of removing the container's filesystem overlay after it exits, preventing any filesystem modifications between runs.
-Indeed, this is one of the advantages of containers in obtaining consistent performance since the container filesystem is reloaded from the base image at every launch.
+All containers were run with non-persistent file systems by using the \lstinline{--rm} option in the \texttt{docker run} line.
+This had the effect of removing the container's file system overlay after it exits, preventing any file system modifications between runs.
+Indeed, this is one of the advantages of containers in obtaining consistent performance since the container file system is reloaded from the base image at every launch.
 Containers were also run with the flags \lstinline{-i -t} or \lstinline{-it}, which requested that an interactive tty be allocated to the container while it is running.
 This has the effect of a small additional overhead for the terminal process, but this is consistent with the default operation of Docker.  
 Containers are all launched with a specified MAC address for their bridge interface to remove the need to refresh ARP tables with new, randomized MAC addresses.
@@ -180,7 +180,7 @@ Containers are all launched with a specified MAC address for their bridge interf
     Parameter & variants & \\
     \hline \hline
     kernel & 3.18.20 & 3.18.20-rt18 \\ 
-    environment & docker & KVM \\ 
+    environment & Docker & KVM \\ 
     network interface & bridge & physical \\ 
     \hline
     \end{tabular}

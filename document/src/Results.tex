@@ -69,7 +69,7 @@ The UDP bandwidth results observed herein, however, are somewhat confusing and c
 Figure~\ref{fig:udp_stream_bridge} shows the UDP bandwidth for the bridged network connections.  
 In one of the more confusing results of this study, the UDP STREAM test could not complete over a bridged connection to a container.
 Regardless of attempts to vary the routing tables or connections between systems, the UDP STREAM test over a bridge to a container consistently failed to initiate.
-The virtual machine, however, with its paravirtualized virtio driver over a bridge did not seem to have any issues completing the test.  
+The virtual machine, however, with its paravirtualized \texttt{virtio} driver over a bridge did not seem to have any issues completing the test.  
 Its performance, however, is significantly lower than line-rate expectations, but the variance in bandwidth decreased dramatically from the standard to realtime kernel as expected.  
 
 \begin{figure}

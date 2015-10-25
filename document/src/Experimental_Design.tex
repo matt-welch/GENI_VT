@@ -162,7 +162,7 @@ This had the effect of removing the container's file system overlay after it exi
 Indeed, this is one of the advantages of containers in obtaining consistent performance since the container file system is reloaded from the base image at every launch.
 Containers were also run with the flags \lstinline{-i -t} or \lstinline{-it}, which requested that an interactive tty be allocated to the container while it is running.
 This has the effect of a small additional overhead for the terminal process, but this is consistent with the default operation of Docker.  
-Containers are all launched with a specified MAC address for their bridge interface to remove the need to refresh ARP tables with new, randomized MAC addresses.
+Containers are all launched with a specified MAC address for their bridge interface to remove the need to refresh address resolution protocol (ARP) tables with new, randomized MAC addresses.
 % subsubsection docker_params (end)
 
 % subsection software_environment (end)
@@ -213,7 +213,23 @@ Network performance was measured with netperf \autocite{netperfHome} and ping.
 The system under test ran the server process for netperf inside the virtual environment in order to determine how these systems perform in a server context.
 Using netperf version 2.7.0 \autocite{netperfManual}, network bandwidth and latency were measured with tests comprising the default bandwidth test TCP\_STREAM, TCP\_RR, UDP\_STREAM, and UDP\_RR.
 The subtests are summarized in Table~\ref{tab:netperfsubtests}\\  
-For each of the netperf tests, 20 samples were collected.  For the ping test, 100 samples were collected with a 1 second interval.  
+For each of the netperf tests, 20 replicate samples were collected in series.  For the ping test, 100 samples were collected with a 1 second interval.  
+
+The STREAM bandwidth tests of netperf normally rely on the kernel for ARP and routing.  
+When attempting to measure UDP streaming performance over bridged interfaces to the container, however the client system was, initially, not able to establish a connection, displaying an error that indicated a routing problem.
+The cause of this error is a setting in the \texttt{netperf} UDP STREAM test that apparently disables IP routing for that test by default \autocite{stackoverflownetperf}.  
+This effect only shows when routing to a different subnet is required.  
+For each of the network tests performed here, both bridged and physical interfaces are assigned to each virtual system to expedite testing.
+In order to maintain consistency between interfaces, all UDP STREAM tests enabled routing.
+
+Additionally, the UDP STREAM tests show unexpected behavior when the message size used in the test is left at its default size.  
+The default message size of 64KB is fragmented into smaller data packets to fit within the default Ethernet frame size of 1500 bytes.
+If one of the fragmented UDP packets is lost in transit, re-assembling the message fails and that message is counted as lost in bandwidth calculations.
+Although the network connections between the test systems did not carry any additional traffic, packet loss under the test conditions is difficult to predict.
+To avoid the issue of unpredictable packet losses having a significant effect on bandwidth, the UDP STREAM tests were all run with a non-standard message size of 1472 byts with the flag \texttt{-m 1472}.  
+
+For each of the request-response (RR) tests that were measured, the size of the messages exchanged may be set at runtime with the command line parameter \texttt{-- -r 1,1}, which sets the payload size as one byte for each direction.
+This setting was used on all of the RR tests in order to minimize queuing delay at the interfaces.  
 
 % section experimental_procedure (end)
 

@@ -22,7 +22,7 @@ High Performance Computing (HPC) shares many of the infrastructure requirements 
 
 TODO: cite OPNFV and ETSI NFV use-cases paper here.
 \begin{enumerate}
-  \item Virtualization as growth driver for datacenters and enterprise networks
+  \item Virtualization as growth driver for data centers and enterprise networks
   \item NFV has recently become popular 
   \item Containers gain popularity as a distribution platform in parallel with explosion of NFV
 \end{enumerate}
@@ -343,7 +343,7 @@ That comparison, specifically since it was targeted at HPC, would have benefited
 The work of Wang and Ng analyzed the impact of virtualization on network performance in the Amazon cloud \autocite{wangAmazon2010}.
 Although that work found that Amazon does not have the same emphasis on performance as an HPC cluster, there are instances available in the Amazon cloud that completely isolate their CPUs for guaranteed performance.  
 Although Wang and Ng did not have access into Amazon's orchestration or control systems, the high-performing virtual machines were not likely oversubscribed with other systems sharing their CPUs. 
-These high-performing virtual systems are the subject of this thesis and it is the goal of the performance tuned kernel described in Section~\ref{sec:software_environment}.  
+These high-performing virtual systems are the subject of this thesis and it is the goal of the performance tuned kernel described in Section~\ref{sub:software_environment}.  
 
 Rathore et al. compared KVM and LXC performance and isolation in hardware-assisted virtual routers, but used dynamic allocation which can kill latency \autocite{rathore2013kvm}.
 Their isolation could have improved with realtime tuning and CPU isolation.  
@@ -361,7 +361,7 @@ KVM, the open source hypervisor is selected due to its ubiquity and deep library
 This choice is also supported by \autocite{_younge_1} who also proclaim it the best performer in internode bandwidth.  
 
 One of the considerations when designing the performance analysis of network systems is the composition of the traffic that they will handle.  
-Virtual systems often reside in datacenters where it has been reported that TCP traffic represents a share of about 90\% if the overall traffic \autocite{haTCPCloud2013}.
+Virtual systems often reside in data centers where it has been reported that TCP traffic represents a share of about 90\% if the overall traffic \autocite{haTCPCloud2013}.
 This observation highlights the need for performant network interfaces due to the high overhead required in maintaining TCP flows.
 
 While many of the performance analyses described here are focused on high I/O performance for virtual systems, they all declined to investigate the impact of kernel configuration or static resource allocation to improve the network performance of those systems.  

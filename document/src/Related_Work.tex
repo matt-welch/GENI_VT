@@ -1,54 +1,15 @@
 \chapter{Related Work}
 \label{sec:related_work}
-Virtualization has been an important part of computing since early mainframes needed to be shared among multiple processes.
-The use cases for virtualization in network-resident workloads are numerous, but performance of virtual systems is often a concern.
-Traditionally, virtual machines have been the common case for systems virtualization, with containers taking a secondary role as a process isolation mechanism.
-Recent growth in containers, however, specifically the very popular Docker \autocite{dockerdotcom}, has fueled a resurgence in their uses in the enterprise.
-Network Functions Virtualization (NFV) and cloud computing have also grown recently, driving performance improvements of virtual systems, including both virtual machines and containers.
-In NFV, the functionality that used to be embodied in physical devices such as routers, firewalls, and load balancers can now be realized within a virtual system which increases overall network flexiblity and scalability in many cases.
 There have been many comparisons between virtual systems, but they mostly lack any kind of tuning to improve network performance of these systems.
 It is possible to improve the performance of virtual systems with fairly simple configuration changes to the kernel and modification of boot parameters.
 This section discusses some of the enabling developments in virtual system architecture as well as some of the comparisons among them.  
 
-\section{Use-Cases for Virtualization} % (fold)
-\label{sec:usecasesvt}
-The use cases for virtualization are numerous and growing. 
-Recently, the ``cloud'' and cloud services have been the subject of significant development and interest.
-Growth has been strong in cloud services for good reason \autocite{_younge_1}.
-They describe many of the benefits offered by cloud services such as scalability, controlling quality of service (QoS), customization of user infrastructure, cost effectiveness, and simplified access interfaces, almost all of which are enabled by virtualization.  
-Cloud infrastructure commonly requires large-scale data centers with high speed networking to support large numbers of systems.  
-High Performance Computing (HPC) shares many of the infrastructure requirements and capabilities of these large computing centers so may also benefit from innovations originating in the cloud and virtual systems \autocite{xavier2013performance, _younge_1}.
-
-TODO: cite OPNFV and ETSI NFV use-cases paper here.
-\begin{enumerate}
-  \item Virtualization as growth driver for data centers and enterprise networks
-  \item NFV has recently become popular 
-  \item Containers gain popularity as a distribution platform in parallel with explosion of NFV
-\end{enumerate}
-
-The popular networking paradigm of NFV is driving growth and innovation throughout the sector.
-A number of trade organizations have sprouted up recently to promote its adoption and accelerate development.
-Both the European Telecommunications Standards Institute (ETSI) and Open Platform for Network Functions Virtualization (OPNFV) \autocite{opnfv1} are driving NFV adoption \autocite{cohnopnfv}.
-In their survey of network virtualization \autocite{_chowdhury_1}, Chowdhury and Boutaba describe some of the older technologies and challenges that define this problem space.
-
-
-Recently, the Linux Foundation announced that they are fully supporting the efforts to promote and advance the development of realtime Linux \autocite{_linux_foundation_1}.
-The Linux Foundation is the body that guides and sponsors the direction of Linux so their interest comes at an important time for realtime Linux due to recent funding difficuties for realtime Linux \autocite{_lwn_1} so their interest in realtime Linux provide a critical boost to its development and adoption.
-Virtual systems also benefit from developments to realtime Linux due to improvements in system determinism and responsiveness.
-
-To support high definition video of 340,000 packets per second into 4 Gbps streams, the British Broadcasting Corporation (BBC) is offloading packet processing into a userspace application to avoid the Linux Kernel TCP/IP stack \autocite{bbcbypass}, with CloudFlare using a similar userspace processing approach to offload packet inspection during packet flood attacks.
-This allows servers to drop a large number of packets belonging to the flood and inject valid packets back into the kernel to be processed normally.  
-The article did not mention which library BBC was using, but describes CloudFlare's solution as a modification of NetMap's functionality \autocite{netmapbertin}.
-In order to meet their processing target window of only 3 $\mu$s, any latency due to network processing must be minimized.
-
-% section usecasesvt (end)
-
-\section{Virtual Machine Architecture}
-\label{sec:vmarchitecture}
+\section{Virtual Machines}
+\label{sec:virtualmachines}
 In the following sections, virtual machine architecture is discussed to demonstrate their resource needs and potential areas for improvement.
 
-\subsection{Virtual Machines}
-\label{sec:virtualmachines}
+\subsection{Virtual Machine Architecture}
+\label{sec:vmarchitecture}
 The architectures available in virtual environments are as widely varied as the types of hardware they seek to emulate.
 Many of the concepts currently in use regarding virtual machines originated in a seminal 1974 paper by Popek and Goldberg \autocite{_popek_1}.
 Although virtual machines had already been implemented on ``third-generation computer systems'' such as the IBM 360/67 by then, Popek and Goldberg sought to establish formal requirements for and prove whether other systems of that era were capable of supporting a virtual machine monitor (VMM)\autocite{_popek_1}.
@@ -186,14 +147,14 @@ The individual queue pairs may be ``broken out'' of the main pool to create a vi
 These new devices are assigned unique MAC addresses and IP addresses to differentiate them on the network so that an outside observer cannot tell them apart from a physical device.
 The advantage with SR-IOV is that one interface can be multiplexed into multiple independent interfaces that can each reach near-native performance levels \autocite{_nasa_1}.
 
-\section{Container Architecture}
-\label{sec:container_arch}
+\section{Containers}
+\label{sec:containers}
 At a high level, containers can be viewed as another level of access control beyond the traditional user and group permission systems. 
 While those systems provide resource access control, containers can provide these resources with finer granularity, thus allowing only those resources and privileges that are required by the process \autocite{_felter_1}. 
 In a sense, containers are applying bounds to program execution that should logically have been included in process control from the very start so it is encouraging to see increased interest in their performance and security.
 
-\subsection{Operating System Virtualization}
-\label{sec:os_vt}
+\subsection{Container Architecture}
+\label{sec:containerarchitecture}
 Also known as \emph{operating system virtualization}, containers are a construct of the operating system that serves to provide limited context, and resources to a process executing on the host system. 
 The subsystems that enable a containerized process, including \texttt{chroot}, \texttt{cgroups}, and \texttt{namespaces}, have been gradually added to the Linux kernel over time.
 Much like the limitations imposed on applications running sandboxed in mobile devices, all processes on a server or desktop system should have a view of the system that is limited in context and scope -- they should only have access to the resources that they require with some margin for error.  
@@ -207,7 +168,61 @@ Next on the container scene was the addition of \texttt{cgroups} to the Linux ke
 Linux capabilities are the mechanism by which the monolithic permissions granted to the root user for full system administration are broken down into more granular permissions.  
 All of these subsystems, however, are not involved during process execution, but during scheduling and resource assignment by the kernel.  
 
-\subsection{Container Systems}
+The architecture of Docker is based on the underlying Linux systems combined with user space tools written in Go \autocite{dockerarch1}. 
+
+\subsection{Resource Scope}
+\label{sec:resource_scope}
+
+Introduced in Version 7 Unix in 1979, one of the earliest Linux systems to enable some kind of operating system virtualization is the \texttt{chroot} system call.
+It was later expanded to become FreeBSD Jails and, later, Solaris Zones \autocite{_zones_1}.  
+This tool allows a user to change the root directory of a process and its children to a specified directory such that the process subsequently views that directory as its root directory, \texttt{/}.  
+This is useful for providing partial file system isolation to processes thus controlling libraries and binaries that are available to the process.
+Although this works well for a normal process, it does not prevent a malicious process from accessing arbitrary \texttt{inodes}, so it can be easily circumvented.
+It makes this process more difficult, thereby ``hardening'' the target, but was not intended to fully sandbox a process or restrict its file system system calls.
+The Linux capability required for \texttt{chroot} is \texttt{cap\_sys\_root}. 
+
+Some of the techniques common in virtualization, such as protecting certain instructions, have been extended into containers as the protection of system capabilities such as \texttt{cap\_sys\_nice} and \texttt{cap\_sys\_chroot}.  
+Essentially, if a container needs this capability, it must be explicitly assigned and cannot be ``trapped'' in the host kernel as is common in virtualization.
+
+Linux namespaces: Namespaces and \texttt{cgroups} have been included only for a short time since version 3.8 of the Linux kernel.  
+
+TODO expand on capabilities
+% subsection resource_scope (end)
+
+
+\subsection{Resource Control}
+\label{sec:resource_control}
+Resource Control (cpu/mem scope too): 
+Linux \texttt{cgroups} \autocite{kernelcgroups}.
+
+"Control Groups provide a mechanism for aggregating/partitioning sets of tasks, and all their future children, into hierarchical groups with specialized behaviour."
+
+Cgroups are organized into hierarchies with the root being the default \texttt{cgroup} for all processes.  Child processes can be organized into sub-trees that subdivide the resources of its parent process.  Each process must belong to one and only one \texttt{cgroup}. 
+
+Linux capabilities
+
+Subdivision of the capabilities of the root user
+
+Implications \& differences between VMs and containers
+
+since containers need not emulate a second kernel or set of virtual hardware
+% subsection resource_control (end)
+
+\subsection{Docker networking} % (fold)
+\label{sub:dockernetworking}
+Docker networking can be fairly complex with multiple options available to both the daemon and the run commands \autocite{dockernetworking1}.
+There are a few standard varieties of network interfaces that are commonly used in containers.
+These include both hardware and software options with varying degrees of versatility and performance.  
+Most common among software options, virtual bridges are operated by the host kernel with a non-trivial CPU involvement. 
+Software bridges are also commonly used by virtual machines and often combined with the \texttt{virtio} library to provide a paravirtualized interface to the guest \autocite{_virtio_1}. 
+Bridges are the \emph{de facto} layer 2 networking used by Docker \autocite{dockernetworking1}.  
+The Docker daemon also uses the common Linux firewall IPTables for layer 3 connectivity, routing, and network address translation (NAT).
+Docker also uses \texttt{iptables} and its NAT functionality to allow the container to communicate with the outside world.
+Another reason to study the bridged networking paradigm is that bridges are important in networking in general and useful in systems where containers may be linked together or their functions pipelined.
+Additionally, the popular software switch package, Open vSwitch (OVS) may be configured to use virtual bridging as its default network topology.
+% subsection dockernetworking (end)
+
+\subsection{Container Systems} % (fold)
 \label{sec:container_systems}
 While Docker has recently popularized process containers, related concepts have been used in earlier operating systems.
 FreeBSD introduced the Jails concept in 1999 as a process isolation technique \autocite{_zones_1}.  
@@ -227,78 +242,32 @@ The Linux subsystems supporting containers have become sophisticated enough that
 The \emph{de facto} standard for containers in Linux, however, is Docker, based on the amount of media coverage and hype surrounding the young startup.  
 Docker is popular for good reason: in addition to providing a robust tool set for isolating processes, the Docker team has been extremely open about their development and responsive to issues submitted by users on their \texttt{github} account \autocite{githubdocker}.  
 It is for the reasons of its ubiquity and ease of use that Docker is the container format selected for comparison in this thesis.
+% subsection container_systems (end)
 
-
-The architecture of Docker is based on the underlying Linux systems combined with user space tools written in Go \autocite{dockerarch1}. 
+\subsection{Docker Ecosystem} % (fold)
+\label{sec:dockerecosystem}
 \begin{figure}
     \centering
     \includegraphics[width=150mm]{dockerecosystem.png}
     \caption{Docker ecosystem architecture}
     \label{fig:dockerecosystem}
 \end{figure}
+
 The ecosystem of Docker is what makes it so powerful.  
 In Figure~\ref{fig:dockerecosystem}, borrowed from \autocite{dockerarch1}, the overall flow of a container is shown as it moves from registry to host and then controlled through the \texttt{docker} client.  
-
-
-\subsection{Resource Scope}
-\label{sec:resource_scope}
-
-Introduced in Version 7 Unix in 1979, one of the earliest Linux systems to enable some kind of operating system virtualization is the \texttt{chroot} system call.
-It was later expanded to become FreeBSD Jails and, later, Solaris Zones \autocite{_zones_1}.  
-This tool allows a user to change the root directory of a process and its children to a specified directory such that the process subsequently views that directory as its root directory, \texttt{/}.  
-This is useful for providing partial file system isolation to processes thus controlling libraries and binaries that are available to the process.
-Although this works well for a normal process, it does not prevent a malicious process from accessing arbitrary \texttt{inodes}, so it can be easily circumvented.
-It makes this process more difficult, thereby ``hardening'' the target, but was not intended to fully sandbox a process or restrict its file system system calls.
-The Linux capability required for \texttt{chroot} is \texttt{cap\_sys\_root}. 
-
-Some of the techniques common in virtualization, such as protecting certain instructions, have been extended into containers as the protection of system capabilities such as \texttt{cap\_sys\_nice} and \texttt{cap\_sys\_chroot}.  
-Essentially, if a container needs this capability, it must be explicitly assigned and cannot be ``trapped'' in the host kernel as is common in virtualization.
-
-Linux namespaces: Namespaces and \texttt{cgroups} have been included only for a short time since version 3.8 of the Linux kernel.  
-
-TODO expand on capabilities
-
-
-\subsection{Resource Control}
-\label{sec:resource_control}
-Resource Control (cpu/mem scope too): 
-Linux \texttt{cgroups} \autocite{kernelcgroups}.
-
-"Control Groups provide a mechanism for aggregating/partitioning sets of tasks, and all their future children, into hierarchical groups with specialized behaviour."
-
-Cgroups are organized into hierarchies with the root being the default \texttt{cgroup} for all processes.  Child processes can be organized into sub-trees that subdivide the resources of its parent process.  Each process must belong to one and only one \texttt{cgroup}. 
-
-Linux capabilities
-
-Subdivision of the capabilities of the root user
-
-Implications \& differences between VMs and containers
-
-since containers need not emulate a second kernel or set of virtual hardware
-
-\subsubsection{Docker networking} % (fold)
-\label{ssub:dockernetworking}
-
-Docker networking can be fairly complex with multiple options available to both the daemon and the run commands \autocite{dockernetworking1}.
-
-There are a few standard varieties of network interfaces that are commonly used in virtual environments.
-These include both hardware and software options with varying degrees of versatility and performance.  
-Most common among software options, virtual bridges are operated by the host kernel with a non-trivial CPU involvement. 
-Software bridges are also commonly used by virtual machines and often combined with the \texttt{virtio} library to provide a paravirtualized interface to the guest \autocite{_virtio_1}. 
-Bridges are the \emph{de facto} layer 2 networking used by Docker \autocite{dockernetworking1}.  
-The Docker daemon also uses the common Linux firewall IPTables for layer 3 connectivity, routing, and network address translation (NAT).
-Docker also uses \texttt{iptables} and its NAT functionality to allow the container to communicate with the outside world.
-Another reason to study the bridged networking paradigm is that bridges are important in networking in general and useful in systems where containers may be linked together or their functions pipelined.
-Additionally, the popular software switch package, Open vSwitch (OVS) may be configured to use virtual bridging as its default network topology.
-
-% subsubsection dockernetworking (end)
+% subsection dockerecosystem (end)
 
 \section{Comparisons and Performance Analysis} % (fold)
 \label{sec:comparisons_performance_analysis}
-Some of the important details of the architecture of virtual machines and containers was described in Section~\ref{sec:vmarchitecture}.
+Some of the important details of the architecture of virtual machines and containers was described in Sections~\ref{sec:vmarchitecture} and \ref{sec:containerarchitecture}.
 An interesting summary of the differences between virtual machines and containers comes from \autocite{morabitohypervisors}: ``Hypervisors abstract hardware, containers abstract the operating system''. 
 This concisely summarizes the important difference between these two types of virtualization in that virtual machines must emulate hardware devices with software which almost always has some performance impact.  
-Virtualization of the operating system, however, need not create additional overhead with containers, but use alternate paths through schedulers, etc. to operate the container. 
+Virtualization of the operating system, however, need not create additional overhead with containers, but will apply limits to the operation of the container. 
+Figure~\ref{fig:vtschematic} provides a simplified comparison of their architecture. 
+In the traditional virtualization schematic in Figure~\ref{fig:vtschematic}, the hypervisor sits on top of the server operating system and hardware.
+It is responsible for mediating access to the host hardware as well as emulating devices for the guest.  
+This additional hardware emulation comes with some performance cost as does the operation of a complete guest operating system for each guest.  
+Although the Docker system in Figure~\ref{fig:vtschematic} shows the guest OS running op top of the server OS, containers are not emulating another OS, but utilizing the host's OS with limits imposed by the host and container orchestration system, Docker.
 
 \begin{figure}
     \centering
@@ -306,14 +275,17 @@ Virtualization of the operating system, however, need not create additional over
     \caption{Architecture overview of virtual machines and container}
     \label{fig:vtschematic}
 \end{figure}
+
+\subsection{Performance Analysis} % (fold)
+\label{sub:performanceanalysis}
+
 Many studies to date have compared the performance of virtual machines and containers.
-Figure~\ref{fig:vtschematic} provides a simplified overview of their architecture. 
 Virtual machines have multiple additional libraries and operating system instances, which increases the latency of protected operations.  
 
 Felter et al. made an extensive evaluation of containers and virtual machines including memory, compute, and I/O, but they did not attempt to tune the systems \autocite{_felter_1}.
 They also used the advanced multi layered unification filesystem (AUFS) which is deprecated in upstream kernels.
 
-Scheepers discusses Xen and LXC macro benchmark comparison \autocite{_scheepers_1}.  
+In an excellent comparison between containers and virtual machines, Scheepers analyzes Xen and LXC with macro benchmarks \autocite{_scheepers_1}.  
 He showed that public clouds need virtual machines for their isolation potential, but containers can be used to maximize the \emph{utilization} of the hardware.
 
 Wang et al. studied the performance overhead of dynamic resource allocation and found that static allocation performed better in most cases \autocite{wangAllocation2007}.
@@ -364,10 +336,11 @@ Virtual systems often reside in data centers where it has been reported that TCP
 This observation highlights the need for performant network interfaces due to the high overhead required in maintaining TCP flows.
 
 While many of the performance analyses described here are focused on high I/O performance for virtual systems, they all declined to investigate the impact of kernel configuration or static resource allocation to improve the network performance of those systems.  
-In Section~\ref{sec:experimental_design} to follow, 
+In Section~\ref{sec:experimental_design} to follow, the impact of kernel performance tuning and different types of network interfaces are analyzed.  
 
+% subsection performanceanalysis (end)
 
 % section comparisons_performance_analysis (end)
 
-\nocite{_dpdk_1, _adams_1, _chowdhury_1, _grinberg_1, seo2014performance, gomes2014performance, kivity2014osv, wang2011understanding}
+\nocite{_dpdk_1, _adams_1, _chowdhury_1, seo2014performance, gomes2014performance, kivity2014osv, wang2011understanding}
 

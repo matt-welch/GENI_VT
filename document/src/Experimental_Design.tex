@@ -1,7 +1,7 @@
 \lstset{basicstyle=\ttfamily\color{black}}
 \chapter{Experimental Design}
 \label{sec:experimental_design}
-As described in Section~\ref{sec:comparisons_performance_analysis}, the performance comparisons that have been made between containers and virtual machines have, for the most part, not tuned their systems for the comparison.
+As described in Section~\ref{sub:performanceanalysis}, the performance comparisons that have been made between containers and virtual machines have, for the most part, not tuned their systems for the comparison.
 Tuning can be a daunting task due to the numerous parameters and the resulting exponential number of configurations possible.  
 To avoid this potential explosion in the scope of the comparison, performance is restricted to two system configurations and two network types for each type of virtual environment.
 The two configurations include the standard Linux kernel, version 3.18.20, and the same kernel with \texttt{preempt-rt} patches applied \autocite{preemptrtpatches} and some important tuning parameters for the kernel and environment.
@@ -27,7 +27,7 @@ The computation involved in processing a 1 Gbps flow is not significant enough t
 \label{sub:expt_networking}
 \subsubsection{Software Networking} % (fold)
 \label{ssub:software_networking}
-As discussed in Section~\ref{ssub:dockernetworking}, the default networking paradigm of Docker is to create a bridge and pair of virtual Ethernet interfaces \autocite{dockernetworking1}.
+As discussed in Section~\ref{sub:dockernetworking}, the default networking paradigm of Docker is to create a bridge and pair of virtual Ethernet interfaces \autocite{dockernetworking1}.
 Both interfaces are bound to the bridge, one remains in the host’s namespace and the other is assigned to the container namespace as its primary network interface.
 Figure~\ref{fig:topology_bridged_vm} shows the topology of the network connections to virtual systems as configured for this study.
 Each virtual system has three network interfaces comprising localhost (127.0.0.1, not shown), a physical interface, and a bridged interface.

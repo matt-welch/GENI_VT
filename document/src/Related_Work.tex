@@ -1,5 +1,4 @@
 \chapter{Related Work}
-\label{cha:related_work}
 \label{sec:related_work}
 Virtualization has been an important part of computing since early mainframes needed to be shared among multiple processes.
 The use cases for virtualization in network-resident workloads are numerous, but performance of virtual systems is often a concern.
@@ -9,7 +8,7 @@ Network Functions Virtualization (NFV) and cloud computing have also grown recen
 In NFV, the functionality that used to be embodied in physical devices such as routers, firewalls, and load balancers can now be realized within a virtual system which increases overall network flexiblity and scalability in many cases.
 There have been many comparisons between virtual systems, but they mostly lack any kind of tuning to improve network performance of these systems.
 It is possible to improve the performance of virtual systems with fairly simple configuration changes to the kernel and modification of boot parameters.
-This section will discuss some of the enabling developments in virtual system architecture as well as some of the comparisons among them.  
+This section discusses some of the enabling developments in virtual system architecture as well as some of the comparisons among them.  
 
 \section{Use-Cases for Virtualization} % (fold)
 \label{sec:usecasesvt}
@@ -33,8 +32,8 @@ Both the European Telecommunications Standards Institute (ETSI) and Open Platfor
 In their survey of network virtualization \autocite{_chowdhury_1}, Chowdhury and Boutaba describe some of the older technologies and challenges that define this problem space.
 
 
-Recently, the Linux Foundation announced that they would be fully supporting the efforts to promote and advance the development of realtime Linux \autocite{_linux_foundation_1}.
-The Linux Foundation is the body that guides and sponsors the direction of Linux so their interest comes at an important time for realtime Linux due to recent funding difficuties for realtime Linux \autocite{_lwn_1} so their interest in realtime Linux will provide a critical boost to its development and adoption.
+Recently, the Linux Foundation announced that they are fully supporting the efforts to promote and advance the development of realtime Linux \autocite{_linux_foundation_1}.
+The Linux Foundation is the body that guides and sponsors the direction of Linux so their interest comes at an important time for realtime Linux due to recent funding difficuties for realtime Linux \autocite{_lwn_1} so their interest in realtime Linux provide a critical boost to its development and adoption.
 Virtual systems also benefit from developments to realtime Linux due to improvements in system determinism and responsiveness.
 
 To support high definition video of 340,000 packets per second into 4 Gbps streams, the British Broadcasting Corporation (BBC) is offloading packet processing into a userspace application to avoid the Linux Kernel TCP/IP stack \autocite{bbcbypass}, with CloudFlare using a similar userspace processing approach to offload packet inspection during packet flood attacks.
@@ -117,7 +116,7 @@ Hardware assisted virtualization, which is heavily promoted by CPU vendors such 
 The silicon vendors, however have been improving their virtualized performance and adding hooks to enable virtualization of their hardware.
 Since operating systems for x86 were already common when hardware assisted virtualization was introduced, the architecture needed subtle modifications to help enable virtualization without breaking existing software.  
 This was accomplished with the introduction of yet another protection ring that runs below the kernel's ring 0.  
-The hypervisor would runs in ring -1, below the operating system kernel, and trap privileged instructions when they are executed by the guest.
+The hypervisor runs in ring -1, below the operating system kernel, and trap privileged instructions when they are executed by the guest.
 For each virtual machine, a new structure is created and maintained in the host kernel memory.  
 Logically similar to a process control block, this structure, is commonly known as a Virtual Machine Control Structure (VMCS) or, alternately as a VM Control Block, (VMCB-AMD). 
 The VMCS maintains the state of the virtual machine in the host kernel and is updated when the guest needs to perform a ``vm-exit'' to allow the host to execute privileged instructions.
@@ -201,7 +200,7 @@ Much like the limitations imposed on applications running sandboxed in mobile de
 One of the most important duties of the kernel is to control access to the system's resources including CPU, memory, and I/O.  
 In a sense, containers represent a point in the evolution of the kernel where it is truly isolating processes from the system. 
 
-An early implementation of process isolation that would lead to containers was the restriction of an executing process' file system scope, embodied in the \texttt{chroot} system call and program. 
+An early implementation of process isolation that led to containers was the restriction of an executing process' file system scope, embodied in the \texttt{chroot} system call and program. 
 The \texttt{chroot} call has its origins in BSD Jails and Solaris Zones \autocite{_zones_1}.
 Next on the container scene was the addition of \texttt{cgroups} to the Linux kernel.  Contributed by Google \autocite{googlecgroups}, \texttt{cgroups} serve to limit the resources available to a process in a hierarchy, enabling child processes to inherit their parent's \texttt{cgroup} assignment. 
 \texttt{Namespaces}, also a recent addition to the kernel, are the mechanism by which the scope or resource view of the process may be limited and controlled.
@@ -360,7 +359,7 @@ VirtualBox, while widely available, is also not open source and has little avail
 KVM, the open source hypervisor is selected due to its ubiquity and deep library of literature supporting it.
 This choice is also supported by \autocite{_younge_1} who also proclaim it the best performer in internode bandwidth.  
 
-One of the considerations when designing the performance analysis of network systems is the composition of the traffic that they will handle.  
+One of the considerations when designing the performance analysis of network systems is the composition of the traffic that they handle.  
 Virtual systems often reside in data centers where it has been reported that TCP traffic represents a share of about 90\% if the overall traffic \autocite{haTCPCloud2013}.
 This observation highlights the need for performant network interfaces due to the high overhead required in maintaining TCP flows.
 
@@ -370,5 +369,5 @@ In Section~\ref{sec:experimental_design} to follow,
 
 % section comparisons_performance_analysis (end)
 
-\nocite{_dpdk_1, _adams_1, _chowdhury_1, _grinberg_1, rathore2013kvm, seo2014performance, gomes2014performance, kivity2014osv, wang2011understanding}
+\nocite{_dpdk_1, _adams_1, _chowdhury_1, _grinberg_1, seo2014performance, gomes2014performance, kivity2014osv, wang2011understanding}
 

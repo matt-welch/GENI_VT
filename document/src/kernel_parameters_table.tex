@@ -1,22 +1,22 @@
 \begin{table}
     \centering
-    \caption{Kernel Boot parameters and their description}
+    \caption{Kernel boot parameters and their description}
     \label{tab:kernel_params_table}
 \begin{tabular}{|l|p{10cm}|}
     \hline
     Parameter & Description \\
     \hline \hline
-    rcu\_nocbs=1-4 & Set the specified list of CPUs to be no-callback CPUs.  This reduces OS jitter on the   offloaded CPUs, which can be useful for HPC and realtime workloads.  It can also improve energy efficiency for asymmetric multiprocessors. \\ 
+    \texttt{rcu\_nocbs=1-4} & Set the specified list of CPUs to be no-callback CPUs. This reduces OS jitter on the offloaded CPUs, which can be useful for HPC and realtime workloads. It can also improve energy efficiency for asymmetric multiprocessors. \\ 
     \hline
-    rcu\_nocb\_poll=1 & Rather than requiring that offloaded CPUs (specified by rcu\_nocbs= above) explicitly awaken the corresponding ``rcuoN'' kthreads, make these kthreads poll for callbacks. This improves the realtime response for the offloaded CPUs by relieving them of the need to wake up the corresponding kthread, but degrades energy efficiency by requiring that the kthreads periodically wake up to do the polling. \\
+    \texttt{rcu\_nocb\_poll=1} & Rather than requiring that offloaded CPUs (specified by \texttt{rcu\_nocbs=} above) explicitly awaken the corresponding \texttt{rcuoN} kthreads, make these kernel threads poll for callbacks. This improves the realtime response for the offloaded CPUs by relieving them of the need to wake up the corresponding kernel thread, but degrades energy efficiency by requiring that the kernel threads periodically wake up to do the polling. \\
     \hline
-    isolcpus=1-4 & Isolate CPUs 1-4, removing them from the scheduler pool of available CPUs. \\ 
+    \texttt{isolcpus=1-4} & Isolate CPUs 1-4, removing them from the scheduler pool of available CPUs. \\ 
     \hline
-    nohz\_full=1-4 & Set scheduler timer interrupt interval to 1 Hz from 250 Hz default. \\ 
+    \texttt{nohz\_full=1-4} & Set scheduler timer interrupt interval to 1 Hz instead of the 250 Hz default. \\ 
     \hline
-    hugepagesz=2M & Set hugepage size to 2 MB (from default 4 KB) \\
+    \texttt{hugepagesz=2M} & Set hugepage size to 2 MB (from default 4 KB). \\
     \hline
-    hugepages=4096 & Allocate 4096 hugepages for a total of 8192 MB \\ 
+    \texttt{hugepages=4096} & Allocate 4096 hugepages for a total of 8192 MB. \\ 
     \hline
 \end{tabular}
 \end{table}

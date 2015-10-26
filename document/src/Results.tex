@@ -1,7 +1,6 @@
 \chapter{Results}
-\label{cha:results}
 \label{sec:results}
-Network performance of Docker containers and KVM/QEMU virtual machines was analyzed using standard benchmarking tools including \texttt{netperf} and \texttt{pin}.  
+Network performance of Docker containers and KVM/QEMU virtual machines was analyzed using standard benchmarking tools including \texttt{netperf} and \texttt{ping}.  
 The results of the tests are presented as box plots with the median in the center, 25th and 75th percentiles at the bottom and top bounds of the box and minimum and maximum at the ends of the error bars.
 This plot helps to illustrate the one-sided variance that may often be observed in network performance analysis where measurements can only approach the theoretical maxima for each test.  
 
@@ -51,7 +50,7 @@ The differences between the bridged and physical network performance seen in Fig
 \label{sub:udpbandwidth}
 Although a significant fraction of data center traffic has been shown to use TCP \autocite{haTCPCloud2013}, one of the greatest sources of traffic in the Internet is streaming video and audio which are typically UDP flows.
 UDP uses less computation per byte of goodput since flow control and loss correction are not part of the protocol.  
-This would seem to indicate that UDP performance should be equivalent or higher than TCP performance.  
+This seems to indicate that UDP performance should be equivalent or higher than TCP performance.  
 The UDP bandwidth results observed here, however, are contrary to that expectation.
 
 \begin{figure}

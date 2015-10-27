@@ -87,7 +87,7 @@ Since all four systems show similar maxima and variance, it appears that the sys
 Although slightly higher performing than the bridged interfaces, the maximum bandwidth observed here, 4.43 Gbps in the realtime Docker test, is only 1.5\% higher than the maximum bandwidth observed in the bridged interface, 4.37 Gbps for the realtime VM. 
 None of the UDP bandwidth results here approach the theoretical limit of 9.5 Gbps nor do they vary significantly between test conditions.
 Given the lack of variation among any of the test systems observed here, it is difficult to draw any conclusions here other than that the workload did not provide a significant challenge to the systems.
-The potential for improving these conditions is discussed further in Section~\ref{sec:future_work}.
+The potential for improving these conditions is discussed further in Section~\ref{sec:futureudpflows}.
 
 % subsection udpbandwidth (end)
 
@@ -191,7 +191,7 @@ Since \texttt{netperf} is a userspace process, its CPU affinity may be set to an
 ICMP responses, however, come directly from the kernel's network stack so cannot be easily assigned to a CPU, which limits how isolated its performance can be from the rest of the system.
 The results of the \texttt{ping} testing of the bridged connections are shown in Figure~\ref{fig:icmplatencybridge}.
 It is interesting that the container performance improved only slightly with the realtime kernel, whereas the virtual machine variance improved significantly at the cost of higher median latency.  
-The difference is likely due to the CPU affinity of the virtual machine.  
+The difference between the systems can be explained with an understanding of the CPU affinity of the virtual machine.  
 When using the standard kernel, the virtual machine sees very high peak latency due to the additional abstraction layers that must be traversed for each packet and the nondeterministic floating CPU cores that might respond.
 When the VM is pinned to specific, isolated CPU cores as in the realtime example, the host kernel is not involved in the ICMP response so it does not contribute to the variance.
 The containers, however, do not have this same benefit.

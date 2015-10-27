@@ -1,44 +1,52 @@
 \chapter{Introduction}
 \label{sec:introduction}
-
-Virtualization technologies enable computing paradigms that have become the \emph{de facto} platform for supporting flexible, dynamic, and performant server environments.  
-Their uses are widespread supporting systems from automotive, where each virtual machine (VM) is responsible for a single subsystem, to massive data centers where virtual machines collectively process hundreds off gigabits per second of network data.
+Virtualization has become the \emph{de facto} platform for supporting flexible, dynamic, and performant server environments.  
+Its uses are widespread and support systems from automotive where each virtual machine (VM) may be responsible for a single subsystem, to massive data centers where VMs process network data at tens of gigabits per second.
 Interest in these systems has inspired innovation and development in technologies to improve their performance.
 Recent innovations in operating system process isolation, specifically for Linux, has inspired the growth and rapid development of process containers.
-The very popular Docker container system \autocite{dockerdotcom}, has fueled a resurgence in their uses in the enterprise.
+The very popular Docker container system \autocite{dockerdotcom}, has fueled a renewed interest in their uses in the enterprise.
 
 \section{Use-Cases for Virtualization} % (fold)
 \label{sec:introusecasesvt}
 The use cases for virtualization are numerous and growing. 
-Recently, the ``cloud'' and cloud services have been the subject of significant development and interest.
+Recently, the ``cloud'' and cloud services have been the subject of significant interest and development.
 Growth has been strong in cloud services for good reason \autocite{_younge_1}.
-They describe many of the benefits offered by cloud services such as scalability, controlling quality of service (QoS), customization of user infrastructure, cost effectiveness, and simplified access interfaces, almost all of which are enabled by virtualization.  
-Cloud infrastructure commonly requires large-scale data centers with high speed networking to support large numbers of systems.  
-High Performance Computing (HPC) shares many of the infrastructure requirements and capabilities of these large computing centers so may also benefit from innovations originating in the cloud and virtual systems \autocite{xavier2013performance, _younge_1}.
+In that work, Younge, et al. describe many of the benefits offered by cloud services such as scalability, controlling quality of service (QoS), customization of user infrastructure, cost effectiveness, and simplified access interfaces, almost all of which are enabled by virtualization.  
+Cloud infrastructure commonly requires large-scale data centers with high speed networking to flexibly support large numbers of systems.  
+High Performance Computing (HPC) shares many of the infrastructure requirements and capabilities of these large computing centers so HPC may also benefit from innovations originating in the cloud and virtual systems \autocite{xavier2013performance, _younge_1}.
 
-Virtual machines have been the common case for systems virtualization, with containers taking a secondary role as a process isolation mechanism.
-Network Functions Virtualization (NFV) and cloud computing have also grown recently, driving performance improvements of virtual systems, including both virtual machines and containers.
-In NFV, the functionality that used to be embodied in physical devices such as routers, firewalls, and load balancers can now be realized within a virtual system which increases overall network flexibility and scalability in many cases.
-A number of trade organizations have sprouted up recently to promote its adoption and accelerate development.
-Both the European Telecommunications Standards Institute (ETSI) and Open Platform for Network Functions Virtualization (OPNFV) \autocite{opnfv1} are driving NFV adoption \autocite{cohnopnfv}.
-In their survey of network virtualization, Chowdhury and Boutaba describe some of the older technologies and challenges that define this problem space~\autocite{_chowdhury_1}.
+Virtual machines have been the common case for systems virtualization with containers historically taking a secondary role as a process isolation mechanism.
+Network Functions Virtualization (NFV) has been an agent for growth recently, driving performance improvements in both virtual machines and containers.
+In NFV, the functionality that is often embodied in physical devices such as routers, firewalls, and load balancers may be accomplished with a virtual system which increases flexibility and scalability of the network in many cases.
+In their survey of network virtualization, Chowdhury and Boutaba describe some of the older technologies and challenges that define the NFV problem space~\autocite{_chowdhury_1}.
+Innovations in containers and their supporting systems in Linux should enable new uses cases in NFV and large-scale systems.
+In anticipation of this important transformation of the industry, trade organizations have recently sprouted up to promote NFV adoption and accelerate its development.
+Both the European Telecommunications Standards Institute (ETSI) and Open Platform for Network Functions Virtualization (OPNFV) have been formed for that purpose \autocite{opnfv1, cohnopnfv}.
 
-In addition to growth in virtualization technologies and uses, the need for high-throughput systems with deterministic responses is also expanding.
+Aside from growth in NFV, cloud computing, and HPC, the need for high-throughput systems with deterministic responses is also expanding.
 The Linux Foundation recently announced that they are fully supporting the efforts to promote and advance the development of realtime Linux \autocite{_linux_foundation_1}.
-The Linux Foundation is the body that guides and sponsors the direction of Linux so their interest comes at an important time for realtime Linux due to recent funding difficulties for realtime Linux \autocite{_lwn_1} so their interest in realtime Linux provide a critical boost to its development and adoption.
-Virtual systems also benefit from developments to realtime Linux due to improvements in system determinism and responsiveness.
+The Linux Foundation is the body that guides and sponsors the direction of Linux so their interest comes at an important time due to recent funding difficulties for realtime Linux \autocite{_lwn_1}.
+Section~\ref{sec:results} shows that system determinism and responsiveness of virtual systems can also benefit from developments to realtime Linux.
+
+Although virtualization has been a common technology in the enterprise for years, it has seen continuous improvement since its inception.  
+Many of the important Innovations in virtualization are presented with a discussion of their importance here in order to better understand the motivation for various configuration choices made.  
+
 % section introusecasesvt (end)
 
 \section{Performance Analysis of Virtual Systems} % (fold)
 \label{sec:introperformanceanalysis}
 The use cases for virtualization in network-resident workloads are numerous, but performance of virtual systems is often a concern.
-Architectural details of virtual machines and containers are discussed in Sections~\ref{sec:vmarchitecture} and \ref{sec:containerarchitecture}, respectively.  
-Innovations to virtual machine and container architecture are discussed with an emphasis on their relevance to improving performance.
+Architectural details of virtual machines and containers are presented in Sections~\ref{sec:vmarchitecture} and \ref{sec:containerarchitecture}, respectively.  
+Innovations to virtual machine and container architecture are also discussed there with an emphasis on their relevance to improving performance.
 
-As Section~\ref{sec:performanceanalysis} shows, performance comparisons of containers and virtual machines seldom address the idea that these systems can be adjusted to fit various roles, depending on the level of resources available to them.  
+As Section~\ref{sub:performanceanalysis} demonstrates, performance comparisons of containers and virtual machines seldom address the idea that these systems can be adjusted to fit various roles, depending on the level of resources available to them.  
 Tuning of the kernel and process isolation can improve performance of multiple subsystems, here, network throughput and latency.  
-% section introperformanceanalysis (end)
+The methods of kernel tuning and system optimizations that enable enhanced performance in virtual systems are discussed in \ref{sec:experimental_setup}.
 
+In order to improve the performance of virtual systems, the host system's kernel may be modified and booted with configurations that enhance the determinism of the system as a whole.
+Both virtual machines and containers may benefit from this tuning since it is intended to decrease variance in latency (jitter).  
+In this thesis, preempt-rt patches are applied to a Linux kernel and the kernel configuration is modified in order to improve system determinism and responsiveness. 
+% section introperformanceanalysis (end)
 
 This thesis is divided into two parts.
 Part one, composed of Chapters~\ref{sec:related_work}, and \ref{sec:experimental_design} describes some of the concerns involved in virtual systems and the work that has been done to improve their performance.

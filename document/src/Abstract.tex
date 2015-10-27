@@ -1,4 +1,12 @@
-Network workloads have been increasingly migrating to virtual environments.
-Comparisons among virtual systems has often ignored significant performance gains that can be had with simple modifications to hypervisor and host systems.
-In this study, containers and virtual machines are analyzed for their network performance with a standard modern kernel and a preempt-rt variant of the same kernel with additional tuning and isolation enabled.  
-This shows that some performance gains can be had by utilizing existing systems and minimizing interference from the host system.
+Virtual machines and containers have steadily improved their performance over time as a result of innovations in their architecture and software ecosystems.
+Network functions and workloads are increasingly migrating to virtual environments, supported by developments in software defined networking (SDN) and network functions virtualization (NFV).
+Previous performance analyses of virtual systems in this context often ignore significant performance gains that can be acheived with practical modifications to hypervisor and host systems.
+In this thesis, the network performance of containers and virtual machines are measured with standard network performance tools.
+The performance of these systems utilizing a standard 3.18.20 Linux kernel is compared to that of a realtime-tuned variant of the same kernel.  
+This thesis motivates improving determinism in virtual systems with modifications to host and guest kernels and thoughtful process isolation. 
+With the system modifications described here, the median TCP bandwidth of KVM virtual machines over bridged network interfaces, is increased by 10.8\% with a corresponding reduction in standard deviation of 87.6\%.
+Docker containers see a 8.8\% improvement in median bandwidth and 4.4\% reduction in standard deviation of TCP measurements using similar bridged networking.
+System tuning also reduces the standard deviation of TCP request/response latency (TCP RR) over bridged interfaces by 86.8\% for virtual machines and 97.9\% for containers.
+Hardware devices assigned to virtual systems also see reductions in variance, although not as noteworthy.
+
+

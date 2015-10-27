@@ -1,20 +1,46 @@
 \chapter{Conclusions \& Future Work}
 \label{sec:conclusions}
+Uses of virtualization have consistently grown as the overhead of virtualization has decreased and new technologies have improved its performance.  
+Containers are a recent innovation in virtualization that has been a catalyst for change in the industry as NFV and new computing paradigms are developed.
+The open-source operating system Linux has seen significant improvement in both traditional virtualization and the creation of new mechanisms for process isolation.  
+This innovation has led to new use cases and orchestration mechanisms to manage and control virtual systems.
 
-Virtual systems including virtual machines and containers are commonly chosen for use in the enterprise and greater network due to their flexibility and cost effectiveness.
-
-Bridging was shown to have more variability and lower throughput than the physical network connections.  
+As expected, the Docker containers studied here generally had higher bandwidth and lower latency than guest VMs.
+Virtual machines and containers tended to perform similarly, however, when the physical network interfaces were dedicated to the virtual system.
+Although bridged interfaces saw a greater improvement in most cases than the physical interfaces, it was also shown to have more variability and lower throughput than the physical network connections.  
 This paradigm is concerning for large numbers of guests because any networking paradigm that requires host kernel involvement cannot scale to a large number of guests without a performance impact.
 This is because the work required by the host to monitor and handle bridge traffic and layer 3 decisions for multiple guests can be significant and induces additional latency for each guest added to the bridge.    
+Bridged interfaces are extremely flexible and versatile, but the computation required by the host kernel indicates that a large number of client systems would see significant contention for the bridge, limiting its potential for scale out.
+
+Specific innovations such as the preempt-rt patches for Linux have enabled levels of determinism that were previously only available in embedded systems with dedicated hardware.  
+Application of the \texttt{preempt-rt} patches and targeted tuning of the host and guest systems was shown to enable increases in TCP bandwidth as well as reduction of TCP request/response latency, especially in network interfaces such as bridges which require host kernel involvement.   
+While no work was performed to quantify their contributions, isolating processes from the OS general scheduler seems to yield a significant improvement to their performance.
+This trend of dedicating hardware to individual processes should only increase as the core counts of server systems increase.
+A system running a processor with many CPU cores, such as the 60-core Xeon Phi, could be the server core of the future in this context.
 
 \section{Future Work}
-\label{sec:future_work}
-\subsection{DPDK}
-DPDK can allow ssytems to avoid any interference by the kernel by removing the interfaces from the kernel domain and using poll mode userspace drivers to minimize response latency.  
-Optimizing parameters of the network stack in Linux or implementing benchmarks in DPDK are additional optimizations for improving network performance and may be considered in future work.
+\label{sec:futurework}
 
-\subsection{Virtual Functions}
-\label{sec:virtual_functions}
+\subsection{UDP flows} % (fold)
+\label{sec:futureudpflows}
+Sections~\ref{sec:experimental_design} and \ref{sec:results} described unexpected performance and the workarounds required when UDP performance was measured with \texttt{netperf}. 
+It seemed that the system under test was configured with settings that prevented the UDP flows from transmitting at the expected rate, but the root cause of this behavior is still unknown.  
+Since \texttt{netperf} is one of the most common network performance tools, the solution to the unexpected behavior could be a valuable discovery.
+% subsection futureudpflows (end)
+
+\subsection{Virtual Functions} % (fold)
+\label{sec:futurevirtualfunctions}
 Virtual functions are a mechanism by which physical devices may be multiplexed and share their resources among many virtual devices.  
-A virtual function for a network interface card, for example, is composed of one pair of transmit and receive queues of the 64 available in the physical device.
+While virtual functions may subdivide the resources of the physical device, a virtual function belonging to a peripheral such as a network interface card operates at line rate and experience latency similar to the physical function.  
+Although scaling to tens of containers may not be possible with physical device assignment, a small set of physical devices may be subdivided into virtual functions, enabling near-line-rate performance for all of the containers.  
+The performance of virtual functions should be investigated in the context of process isolation and system tuning to verify that containers can scale out to the levels advertised in the press.  
+% subsection futurevirtualfunctions (end)
+
+\subsection{DPDK} % (fold)
+\label{sec:futuredpdk}
+The isolation of processes from the rest of the system has been shown to improve performance.
+Userspace libraries such as DPDK can allow systems to minimize interference by the kernel by removing the interfaces from the kernel domain and using poll mode user space drivers to minimize response latency \autocite{_dpdk_1}.  
+This paradigm represents the limit of process and hardware isolation because applications written with the DPDK library monopolize the network interfaces and CPU cores, consuming extra hardware resources to maximize performance.
+Optimizing parameters of the network stack in Linux or implementing benchmarks in DPDK are additional optimizations for improving network performance and should be considered in future work.
+% subsection futuredpdk (end)
 

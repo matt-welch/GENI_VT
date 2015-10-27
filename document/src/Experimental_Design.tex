@@ -30,13 +30,13 @@ The computation involved in processing a 1 Gbps flow is not significant enough t
 As discussed in Section~\ref{sub:dockernetworking}, the default networking paradigm of Docker is to create a bridge and pair of virtual Ethernet interfaces \autocite{dockernetworking1}.
 Both interfaces are bound to the bridge, one remains in the host’s namespace and the other is assigned to the container namespace as its primary network interface.
 Figure~\ref{fig:topology_bridged_vm} shows the topology of the network connections to virtual systems as configured for this study.
-Each virtual system has three network interfaces comprising localhost (127.0.0.1, not shown), a physical interface, and a bridged interface.
-The physical interfaces to virtual machines utilize VT-d extensions and the CPU's IOMMU to provide direct access to the hardware, but containers only need the physical interfaces placed in their namespaces.
-The bridge used for both virtual systems is the standard Linux bridge provided by the \texttt{bridge-utils} package in Ubuntu and Debian.
+Each virtual system has three network interfaces including localhost (127.0.0.1, not shown), a physical interface, and a bridged interface.
+Shown in green in the figure, the physical interfaces to virtual machines utilize VT-d extensions and the CPU's IOMMU to provide direct access to the hardware, but containers only need the physical interfaces placed in their namespaces.
+Represented by red in the figure, the bridge used for both virtual systems is the standard Linux bridge provided by the \texttt{bridge-utils} package in Ubuntu and Debian.
 The virtual machine bridge differs slightly from the container in that it also uses the \texttt{virtio} paravirtualized interface provided by QEMU.
 Each network test performed in this study has the server inside the virtual environment and the client running natively on an adjacent, similar test system.
 
-Linux \texttt{iptables} may also have a negative impact on network performance, but it is kept part of the configuration since it represents the \emph{de facto} networking configuration of Docker.
+Linux \texttt{iptables} may also have a negative impact on network performance, but it is kept part of the configuration since it represents the default networking configuration of Docker.
 No effort is made to optimize the performance of the bridge.
 Parameters including whether the bridge participates in the spanning tree protocol (STP) algorithm are optional and can affect performance.
 The focus of this work is not on tuning the network interfaces themselves, however, but rather investigates how a latency-sensitive system can be configured to improve performance.
@@ -45,7 +45,7 @@ The focus of this work is not on tuning the network interfaces themselves, howev
     \centering
     \def\svgwidth{\columnwidth}
     \input{topology_bridged_VM.pdf_tex}
-    \caption{Topology of bridged network}
+    \caption{Topology of experimental network}
     \label{fig:topology_bridged_vm}
 \end{figure}
 

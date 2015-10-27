@@ -1,7 +1,7 @@
 \chapter{Introduction}
 \label{sec:introduction}
 Virtualization has become the \emph{de facto} platform for supporting flexible, dynamic, and performant server environments.  
-Its uses are widespread and support systems from automotive where each virtual machine (VM) may be responsible for a single subsystem, to massive data centers where VMs process network data at tens of gigabits per second.
+Its uses are widespread and present in systems from embedded systems where each virtual machine (VM) may be responsible for a single subsystem, to massive data centers where VMs process network data at tens of gigabits per second.
 Interest in these systems has inspired innovation and development in technologies to improve their performance.
 Recent innovations in operating system process isolation, specifically for Linux, has inspired the growth and rapid development of process containers.
 The very popular Docker container system \autocite{dockerdotcom}, has fueled a renewed interest in their uses in the enterprise.
@@ -28,26 +28,24 @@ The Linux Foundation recently announced that they are fully supporting the effor
 The Linux Foundation is the body that guides and sponsors the direction of Linux so their interest comes at an important time due to recent funding difficulties for realtime Linux \autocite{_lwn_1}.
 Section~\ref{sec:results} shows that system determinism and responsiveness of virtual systems can also benefit from developments to realtime Linux.
 
-Although virtualization has been a common technology in the enterprise for years, it has seen continuous improvement since its inception.  
-Many of the important Innovations in virtualization are presented with a discussion of their importance here in order to better understand the motivation for various configuration choices made.  
+Although virtualization is a mature technology with decades of enterprise use, it is still being improved by constant innovation.  
+Many of the important developments in virtualization are presented here with a discussion of their importance in order to better understand the motivation for various configuration choices made in Section~\ref{sec:experimental_design}.  
 
 % section introusecasesvt (end)
 
 \section{Performance Analysis of Virtual Systems} % (fold)
 \label{sec:introperformanceanalysis}
 The use cases for virtualization in network-resident workloads are numerous, but performance of virtual systems is often a concern.
-Architectural details of virtual machines and containers are presented in Sections~\ref{sec:vmarchitecture} and \ref{sec:containerarchitecture}, respectively.  
-Innovations to virtual machine and container architecture are also discussed there with an emphasis on their relevance to improving performance.
-
-As Section~\ref{sub:performanceanalysis} demonstrates, performance comparisons of containers and virtual machines seldom address the idea that these systems can be adjusted to fit various roles, depending on the level of resources available to them.  
-Tuning of the kernel and process isolation can improve performance of multiple subsystems, here, network throughput and latency.  
-The methods of kernel tuning and system optimizations that enable enhanced performance in virtual systems are discussed in \ref{sec:experimental_setup}.
-
-In order to improve the performance of virtual systems, the host system's kernel may be modified and booted with configurations that enhance the determinism of the system as a whole.
-Both virtual machines and containers may benefit from this tuning since it is intended to decrease variance in latency (jitter).  
+As Section~\ref{sub:performanceanalysis} demonstrates, performance analyses of containers and virtual machines seldom address modifications to host or hypervisor systems to increase their isolation from the rest of the system or make improvements on default settings.  
 In this thesis, preempt-rt patches are applied to a Linux kernel and the kernel configuration is modified in order to improve system determinism and responsiveness. 
+In order to improve the performance of virtual systems, the host system's kernel may be modified and booted with parameters that enhance the determinism of the system as a whole and guest I/O latency and jitter in particular.
+The intent of this tuning is to demonstrate the significant improvements that can be realized in network performance of virtual systems with straightforward modifications to operating system configuration.
+
+Architectural details of virtual machines and containers are presented in Sections~\ref{sec:vmarchitecture} and \ref{sec:containerarchitecture}, respectively to outline opportunities for performance improvement.  
+Innovations to virtual machine and container architecture are also discussed with an emphasis on their relevance to performance.
+The methods of kernel tuning and system optimizations that enable enhanced performance in virtual systems are discussed in \ref{sec:experimental_setup}.
 % section introperformanceanalysis (end)
 
 This thesis is divided into two parts.
-Part one, composed of Chapters~\ref{sec:related_work}, and \ref{sec:experimental_design} describes some of the concerns involved in virtual systems and the work that has been done to improve their performance.
-Part two, comprising Chapters~\ref{sec:results} and \ref{sec:conclusions} describe the performance results of the comparison performed here, conclusions that may be drawn from them, and the potential for further analysis.
+Part I, composed of Chapters~\ref{sec:related_work}, and \ref{sec:experimental_design}, describes some of the concerns involved in virtual systems and the work that has been done to improve their performance.
+Part II, comprising Chapters~\ref{sec:results} and \ref{sec:conclusions}, describes the results of the system tuning and performance comparisons completed here, conclusions that may be drawn from them, and the potential for further analysis.

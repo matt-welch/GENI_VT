@@ -2,7 +2,7 @@
 \label{sec:results}
 Network performance of Docker containers and KVM/QEMU virtual machines was analyzed using standard benchmarking tools including \texttt{netperf} and \texttt{ping}.  
 The results of the tests are presented as box plots with the median in the center, 25th and 75th percentiles at the bottom and top bounds of the box and minimum and maximum at the ends of the error bars.
-This plot helps to illustrate the one-sided variance that may often be observed in network performance analysis where measurements can only approach the theoretical maxima for each test.  
+This plot helps to illustrate the one-sided variance that may often be observed in network performance analysis where measurements often approach the theoretical maxima for each test, but may have long tails in the other direction.  
 
 \section{Network Bandwidth} % (fold)
 \label{sec:networkbandwidth}
@@ -19,7 +19,9 @@ Bandwidth of the various network interfaces and kernels was measured using the T
 The results of the bridged measurements are shown in Figure~\ref{fig:tcp_stream_bridge}. 
 It is evident in this figure that the streaming TCP bandwidth of both environments improves with tuning as well as decreases in variance.  
 It is even fairly impressive that the realtime container reached line rate with only a few points below the median.  
-The performance of both the container and virtual machine are consistent with a realtime kernel in that the performance is essentially deterministic with minimal variance.
+The performance of both the container and virtual machine are consistent with a realtime kernel in that the performance is essentially deterministic with low variance.
+The standard deviation, while not the best statistic for displaying the distribution of these data, is the typical measurement of variance so is referred to here as variance.
+Variance of the virtual machine in this case decreased by 87\% and container variance decreased by 4.4\%.  
 This is the result that is desired when tuning a system for deterministic performance.
 
 \begin{figure}
@@ -31,7 +33,7 @@ This is the result that is desired when tuning a system for deterministic perfor
 \end{figure}
 
 The results of the TCP STREAM test on the physical connection are shown in Figure~\ref{fig:tcp_stream_phys}.
-This figure shows exceptional performance from the virtual environments with all of the variants reaching line rate.
+This figure shows high throughput from the virtual environments with all of the variants reaching line rate.
 While line rate performance was somewhat expected in the physical interfaces, even the standard kernel variants show exceptional performance here.
 The realtime tuned kernel decreases variance in this case, but, since the baseline performance is so high already, little to no gain is observed in the median performance, with all configurations less than 0.01\% separated from each other.  
 
@@ -48,7 +50,7 @@ The differences between the bridged and physical network performance seen in Fig
 
 \subsection{UDP Bandwidth} % (fold)
 \label{sub:udpbandwidth}
-Although a significant fraction of data center traffic has been shown to use TCP \autocite{haTCPCloud2013}, one of the greatest sources of traffic in the Internet is streaming video and audio which are typically UDP flows.
+Although a large fraction of data center traffic has been shown to use TCP \autocite{haTCPCloud2013}, one of the greatest sources of traffic in the Internet is streaming video and audio which are typically UDP flows.
 UDP uses less computation per byte of goodput since flow control and loss correction are not part of the protocol.  
 This seems to indicate that UDP performance should be equivalent or higher than TCP performance.  
 The UDP bandwidth results observed here, however, are contrary to that expectation.
@@ -63,14 +65,13 @@ The UDP bandwidth results observed here, however, are contrary to that expectati
 Figure~\ref{fig:udp_stream_bridge} shows the UDP bandwidth for the bridged network connections.  
 As described in Section~\ref{sec:experimental_procedure}, however, the UDP STREAM test has some important details that should be understood before interpreting its performance.
 Unexpectedly, the most critical of these is that \texttt{netperf} disables IP routing for the UDP STREAM tests by default.
-On inspection of the netperf source code, it was found that this setting was ``grudgingly added'' to prevent accidentally flooding default routes and corporate networks with UDP STREAM packets \autocite{netperfsource}.
 IP routing is enabled in all UDP STREAM tests here to facilitate routing across separate subnets for each interface.
-The maximum UDP bandwidth of the four test systems is much lower than that observed in the TCP STREAM tests, contrary to expectations.
+Contrary to expectations, the maximum UDP bandwidth of the four test systems is much lower than that observed in the TCP STREAM tests.
 Low bandwidth is a direct result of limiting the message size as described in Section~\ref{sec:experimental_procedure}.
 Although peak bandwidth on this test can be much higher with a larger message size, the results of that test variation are difficult to reproduce, which necessitates limiting the message size to obtain consistent results.  
-Containers showed minimal variance in this test for both kernels, but improved performance for the realtime kernel.  
+Containers showed minimal variance in this test for both kernels, but improved throughput for the realtime kernel.  
 This indicates that the computational cost of determining bridge actions in the kernel is not a significant source of latency at this message size and resulting data rate.
-Although the VM here showed an increased bandwidth in the realtime kernel, the range of observed measurements also increases from 722 to 964 Mbps. 
+Although the VM here showed an increased bandwidth in the realtime kernel, the range of observed measurements also increases from 722 to 964 Mbps, which is contrary to the goals of system tuning. 
 This first set of UDP results is indicative of the complications encountered in this thesis during UDP testing.
 
 \begin{figure}
@@ -81,8 +82,8 @@ This first set of UDP results is indicative of the complications encountered in 
     \label{fig:udp_stream_phys}
 \end{figure}
 
-The second UDP bandwidth test performed was over the physical network interface is shown in Figure~\ref{fig:udp_stream_phys} .  
-These results show how significantly bandwidth is limited here by the restriction of the UDP message size.
+UDP bandwidth is also measured over a physical network interface and its results are shown in Figure~\ref{fig:udp_stream_phys} .  
+These results show how significantly bandwidth is limited by the restriction of the UDP message size.
 Since all four systems show similar maxima and variance, it appears that the system load provided with this test variation is minimal.
 Although slightly higher performing than the bridged interfaces, the maximum bandwidth observed here, 4.43 Gbps in the realtime Docker test, is only 1.5\% higher than the maximum bandwidth observed in the bridged interface, 4.37 Gbps for the realtime VM. 
 None of the UDP bandwidth results here approach the theoretical limit of 9.5 Gbps nor do they vary significantly between test conditions.
@@ -96,19 +97,20 @@ The potential for improving these conditions is discussed further in Section~\re
 \section{Network Latency} % (fold)
 \label{sec:networklatency}
 Bandwidth measurements get a lot of attention due to the desire to push more packets through the high-bandwidth connections in data centers and network backbones.
-Latency and jitter however, are often the critical metric when evaluating a network workload because low bandwidth does not prevent streaming services from running effectively whereas high latency can cause dropped calls or prevent connectivity in the first place.
+Latency and jitter however, are often the critical metric when evaluating a network workload because low bandwidth does not prevent streaming services from running effectively whereas high latency can cause dropped calls or prevent connectivity entirely.
 In this section, the results of \texttt{netperf} and \texttt{ping} latency measurements are discussed.  
 
 Variation in the measured latency is partly due to non-determinism normally present in operating systems, but there is also a component of the latency due only to the network delays.
 The 10 Gbps optical cables connecting the two systems are approximately 2 meters long so the propagation delay along these connections should be about 6.7 ns.
 In-network queuing delay can be ignored since the systems are directly connected and queuing is only occurring at their network interfaces.
-The transmission or packetization delay for transmitting or receiving a large byte packet is 1.214 $\mu$s.
+The packetization delay for transmitting or receiving a maximum-size Ethernet frame of 1500 bytes is 1.214 $\mu$s.
 This represents as much as 3\% of the total latency observed here, but this offset should be constant across all tests and have little effect on the observed variance. 
 
 The \texttt{netperf} TCP Request/Response (RR) subtest and UDP RR subtest both measure the number pf transactions that can be completed for a given request and response size during a specified time period \autocite{netperfTraining}.
 Each transaction comprises the exchange of a single request and a single response so the average round trip latency can be determined from the transaction rate.  
 The time required to initiate then tear down a network connection is not included with this test.  
 Only a few packets are sent with this test so congestion is not a concern in this environment, but CPU involvement in the packet processing may comprise a significant portion of the latency.  
+To minimize bias to measured latencies, the request-response test variants are all performed with 1-byte payloads for request and response packets.
 
 \subsection{TCP Latency} % (fold)
 \label{sub:tcplatency}
@@ -127,7 +129,7 @@ The virtual machine, however, showed reductions in latency as well as its varian
 \end{figure}
 
 Measurements of TCP RR latency over a physical interface are shown in Figure~\ref{fig:tcp_rr_phys}.  
-Similar to the bridged TCP RR latency, the physical interface shows improvement moving from the standard to a realtime kernel, but all four modes seem to perform similarly.
+Similar to the bridged TCP RR latency, the physical interface shows little improvement moving from the standard to a realtime kernel, but all four modes seem to perform similarly.
 This appears to be a trend in the physical interfaces where performance is more consistent across interfaces and virtual systems.
 Variance within each environment here is not especially low, but the physical interface is much more consistent between systems than the bridged interface, due to fewer abstraction layers involved in processing packets on this interface. 
 What is surprising, however, is that the median latency of the virtual machine shows an increase for the realtime kernel, but a decrease in its variance.  

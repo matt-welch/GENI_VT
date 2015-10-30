@@ -47,3 +47,11 @@ This paradigm represents the limit of process and hardware isolation because app
 Optimizing parameters of the network stack in Linux or implementing benchmarks in DPDK are additional optimizations for improving network performance and should be considered in future work.
 % subsection futuredpdk (end)
 
+% future work: 
+%Pin interrupts from network interface to cores for user-space processes.
+%i(future work) OVS, if it uses user-space drivers like DPDK, can benefit even more.
+%co-located processed, shared memory communication.
+%interference studies with this tuning should show robust against shared resources.
+%CPU util as a functino of contention - multicore testing with IRQ pinning.
+%Pinning bridge to cores?
+%(future work is to check out application (macro benchmark) performance using these)

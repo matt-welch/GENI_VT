@@ -10,8 +10,8 @@ In this section, virtual machine architecture is discussed to demonstrate resour
 Differences among hypervisors and variations of virtualization are then discussed, followed by an anlysis of innovations in CPU, memory, and I/O virtualization.  
 
 The architectures available in virtual environments are as widely varied as the types of hardware they are capable of emulating.
-Many of the concepts currently in use regarding virtual machines originated in a seminal 1974 paper by Popek and Goldberg \autocite{_popek_1}.
-Although virtual machines had already been implemented on ``third-generation computer systems'' such as the IBM 360/67 by then, Popek and Goldberg sought to establish formal requirements for and prove whether other systems of that era were capable of supporting a virtual machine monitor (VMM)\autocite{_popek_1}.
+Many of the concepts currently in use regarding virtual machines originated in a seminal 1974 paper by Popek and Goldberg \autocite{popek1974formal}.
+Although virtual machines had already been implemented on ``third-generation computer systems'' such as the IBM 360/67 by then, Popek and Goldberg sought to establish formal requirements for and prove whether other systems of that era were capable of supporting a virtual machine monitor (VMM)\autocite{popek1974formal}.
 At the time, their analysis focused on the possibility of a VMM, but the term hypervisor has largely come to replace VMM as the name of a software system that allocates, monitors, and controls virtual machine resources as an intermediary between the hardware and the virtual machine's operating system (OS).
 What follows in this section is an introduction to some important concepts in hypervisor and virtual machine architecture and the work that led to them.
 
@@ -24,9 +24,9 @@ That is, the hypervisor code is not being hosted, translated, or controlled by a
 In contrast, Type 2 hypervisors require a host operating system to provide some system services including memory and file system management.
 
 The difference between these two types of hypervisors is that a Type 1 hypervisor does not require an operating system to run, whereas a Type 2 does.
-Although Type 1 hypervisors do not require an operating system to \emph{run}, they do require an operating system for \emph{control} of the hypervisor and guests \autocite{_liguori_1}.
+Although Type 1 hypervisors do not require an operating system to \emph{run}, they do require an operating system for \emph{control} of the hypervisor and guests \autocite{liguoriMyth}.
 Type 1 systems appear to have an efficiency advantage over Type 2 since they tend to use microkernels instead of the macrokernels that are usually required to host Type 2 hypervisors.
-According to Liguori, however, the difference between them has little to do with performance, robustness, or other qualitative factors, but, rather, relates back to  observations about their differences made by Popek and Goldberg \autocite{_popek_1} and the analyses of these differences by Robin and Irvine \autocite{_robin_1}.
+According to Liguori, however, the difference between them has little to do with performance, robustness, or other qualitative factors, but, rather, relates back to  observations about their differences made by Popek and Goldberg \autocite{popek1974formal} and the analyses of these differences by Robin and Irvine \autocite{_robin_1}.
 Robin and Irvine's analysis related to the potential for the Pentium processor to support a secure VMM \autocite{_robin_1}, so it was important to draw conclusions about the capabilities and suitability of various hypervisors.
 The vendors of hypervisor solutions also have an interest in drawing distinctions between the two types of hypervisors, but the need to differentiate between these products has become less important over time.  
 

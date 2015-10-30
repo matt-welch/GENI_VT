@@ -1,51 +1,85 @@
 \chapter{Introduction}
 \label{sec:introduction}
-Virtualization has become the \emph{de facto} platform for supporting flexible, dynamic, and performant server environments.  
-Its uses are widespread and present in systems from embedded systems where each virtual machine (VM) may be responsible for a single subsystem, to massive data centers where VMs process network data at tens of gigabits per second.
-Interest in these systems has inspired innovation and development in technologies to improve their performance.
-Recent innovations in operating system process isolation, specifically for Linux, has inspired the growth and rapid development of process containers.
-The very popular Docker container system \autocite{dockerdotcom}, has fueled a renewed interest in their uses in the enterprise.
 
-\section{Use-Cases for Virtualization} % (fold)
-\label{sec:introusecasesvt}
-The use cases for virtualization are numerous and growing. 
-Recently, the ``cloud'' and cloud services have been the subject of significant interest and development.
-Growth has been strong in cloud services for good reason \autocite{_younge_1}.
-In that work, Younge, et al. describe many of the benefits offered by cloud services such as scalability, controlling quality of service (QoS), customization of user infrastructure, cost effectiveness, and simplified access interfaces, almost all of which are enabled by virtualization.  
-Cloud infrastructure commonly requires large-scale data centers with high speed networking to flexibly support large numbers of systems.  
-High Performance Computing (HPC) shares many of the infrastructure requirements and capabilities of these large computing centers so HPC may also benefit from innovations originating in the cloud and virtual systems \autocite{xavier2013performance, _younge_1}.
-
-Virtual machines have been the common case for systems virtualization with containers historically taking a secondary role as a process isolation mechanism.
-Network Functions Virtualization (NFV) has been an agent for growth recently, driving performance improvements in both virtual machines and containers.
+\section{Motivation} % (fold)
+\label{sec:motivation}
+% virtualization is an important technology in many industries including cloud, NFV, HPC (upcoming), and realtime (upcoming).
+Containers have recently increased in popularity as a mechanism for deploying applications and increasing hardware utilization.
+Virtual machines are widely used in enterprise and their uses have grown dramatically as the cloud computing paradigm and network function virtualization (NFV) have expanded~\autocite{cohnopnfv, opnfv1}.
+In this context, the term ``virtual system'' can refer to virtualization technologies including both virtual machines and containers.
+Growth has been strong in cloud services for good reason as described by Young et al.~\autocite{_younge_1}.
+In that work, they describe many of the benefits offered by cloud services such as scalability, controlling quality of service (QoS), customization of user infrastructure, cost effectiveness, and simplified access interfaces, almost all of which are enabled by virtualization.  
 In NFV, the functionality that is often embodied in physical devices such as routers, firewalls, and load balancers may be accomplished with a virtual system which increases flexibility and scalability of the network in many cases.
-In their survey of network virtualization, Chowdhury and Boutaba describe some of the older technologies and challenges that define the NFV problem space~\autocite{_chowdhury_1}.
-Innovations in containers and their supporting systems in Linux should enable new uses cases in NFV and large-scale systems.
-In anticipation of this important transformation of the industry, trade organizations have recently sprouted up to promote NFV adoption and accelerate its development.
-Both the European Telecommunications Standards Institute (ETSI) and Open Platform for Network Functions Virtualization (OPNFV) have been formed for that purpose \autocite{opnfv1, cohnopnfv}.
+In anticipation of this industry transformation, trade organizations have recently sprouted up to promote NFV adoption and accelerate its development.
+Both the European Telecommunications Standards Institute (ETSI) and Open Platform for Network Function Virtualization (OPNFV) have been formed for that purpose \autocite{opnfv1, cohnopnfv}.
+Developments in containers have also been enabled by tools for process isolation and application portability, inspiring system designers to reconsider how these technologies fit into the virtualization ecosystem.
 
-Aside from growth in NFV, cloud computing, and HPC, the need for high-throughput systems with deterministic responses is also expanding.
+% VT growing into HPC and workloads with high sensitivity to latency and jitter
+Studies examining the suitability of virtualization for cloud, NFV, and high performance computing (HPC) applications, often cite low input/output (I/O) performance as a factor limiting overall performance~\autocite{xavier2013performance, _younge_1, des2005virtualization}.
+These same I/O constraints also limit application scalability in HPC systems due to the high latency of inter-node communication.
+Latency can be partially mitigated by modifying operating systems to provide more deterministic operation. 
 The Linux Foundation recently announced that they are fully supporting the efforts to promote and advance the development of realtime Linux \autocite{_linux_foundation_1}.
 The Linux Foundation is the body that guides and sponsors the direction of Linux so their interest comes at an important time due to recent funding difficulties for realtime Linux \autocite{_lwn_1}.
-Section~\ref{sec:results} shows that system determinism and responsiveness of virtual systems can also benefit from developments to realtime Linux.
+The developments and interest in realtime will help improve one of the greatest weaknesses of virtual machines, the latency and jitter of their I/O.
+The improved determinism of a system running with realtime performance enables applications that were not previously possible in virtual systems.
+Innovations in realtime Linux and HPC should also improve NFV and cloud performance by making these systems more responsive and predictable.
 
-Although virtualization is a mature technology with decades of enterprise use, it is still being improved by constant innovation.  
-Many of the important developments in virtualization are presented here with a discussion of their importance in order to better understand the motivation for various configuration choices made in Section~\ref{sec:experimental_design}.  
+% what are current limitations on VT and containers?
+An important motivation for virtualization is to increase process density which improves hardware utilization, bringing down costs.
+Density of processes and applications may be increased even further by utilizing containers such as Docker \autocite{dockerdotcom}.
+Although containers have potential to scale to hundreds or thousands of containers per host, these special cases are often not possible without specific homogeneous workloads.
+Memory contention and I/O density are often limiting factors in system performance such that process density can not increase without addressing memory and I/O limitations.
+Containers can very efficiently share and utilize available CPU and memory resources, but scalability is limited for containers that need high bandwidth or low latency network communication.
+% section motivation (end)
 
-% section introusecasesvt (end)
+\section{Contributions} % (fold)
+\label{sec:introcontributiions}
+% performance comparisons have not tried to improve performance
+Many studies have analyzed virtual machines and containers to compare their performance \autocite{soltesz2007container, matthews2007quantifying, gomes2014performance, seo2014performance, morabitohypervisors, xavier2013performance, _felter_1, rathore2013kvm, _scheepers_1, wangAllocation2007, _younge_1, _che_1}.
+These studies have performed valuable analyses of virtual systems and provided significant insight into their performance issues.
+These studies are commonly in the context of cloud computing, NFV, or HPC.
+Network performance is important in these infrastructures due to the cooperative nature of the network in a large-scale system.
+These studies frequently find that I/O is an issue, yet no modification is suggested by their authors to improve its performance.
+The systems analyzed in those studies differ little from their ``factory defaults'', which produces results that ignore real-world deployments and goals such as maximizing performance.
 
-\section{Performance Analysis of Virtual Systems} % (fold)
-\label{sec:introperformanceanalysis}
-The use cases for virtualization in network-resident workloads are numerous, but performance of virtual systems is often a concern.
-As Section~\ref{sub:performanceanalysis} demonstrates, performance analyses of containers and virtual machines seldom address modifications to host or hypervisor systems to increase their isolation from the rest of the system or make improvements on default settings.  
-In this thesis, preempt-rt patches are applied to a Linux kernel and the kernel configuration is modified in order to improve system determinism and responsiveness. 
-In order to improve the performance of virtual systems, the host system's kernel may be modified and booted with parameters that enhance the determinism of the system as a whole and guest I/O latency and jitter in particular.
-The intent of this tuning is to demonstrate the significant improvements that can be realized in network performance of virtual systems with straightforward modifications to operating system configuration.
+Tuning to improve performance can be a challenging task due to poorly-defined endpoints and deeply-connected dependencies between options which complicates assessing the benefit of any particular choice.
+This is further complicated by the nondeterministic nature of operating systems which may hide the effects of some tuning.
+Many system parameters, however, have well-known benefits or penalties such as addressing known bottlenecks in memory and I/O.  
+Improving the performance of I/O is, however, complicated by difficulties that arise from sharing peripherals and scalability problems that accompany bridging and similar networking paradigms.
 
-Architectural details of virtual machines and containers are presented in Sections~\ref{sec:vmarchitecture} and \ref{sec:containerarchitecture}, respectively to outline opportunities for performance improvement.  
-Innovations to virtual machine and container architecture are also discussed with an emphasis on their relevance to performance.
-The methods of kernel tuning and system optimizations that enable enhanced performance in virtual systems are discussed in \ref{sec:experimental_setup}.
-% section introperformanceanalysis (end)
+% I tried to improve performance with standard tools, techniques, process isolation
+The results of previous comparisons are built upon here by demonstrating a straightforward, logical tuning process that addresses CPU, memory, and I/O performance enhancements to improve network performance.
+Performance improvement is accomplished through patching the host and guest kernels with the \texttt{preempt-rt} patch-set~\autocite{preemptrtpatches}.
+The tuning and \texttt{preempt-rt} patching mentioned above are applied to the Linux \texttt{3.18.20} kernel to produce the \texttt{3.18.20-rt18 PREEMPT-RT} kernel which is then built with specific configuration choices to enhance performance. 
+The \texttt{preempt-rt} kernel is further tuned by applying specific boot options to improve its process isolation and virtual memory performance.
+The \texttt{preempt-rt} tuned kernel improves the determinism of both virtual machines and containers.
+The Linux kernel is the main focus of tuning here without modification of hardware parameters to provide benefits that can be realized on the majority of modern hardware.
 
-This thesis is divided into two parts.
-Part I, composed of Chapters~\ref{sec:related_work}, and \ref{sec:experimental_design}, describes some of the concerns involved in virtual systems and the work that has been done to improve their performance.
-Part II, comprising Chapters~\ref{sec:results} and \ref{sec:conclusions}, describes the results of the system tuning and performance comparisons completed here, conclusions that may be drawn from them, and the potential for further analysis.
+This work compares the performance of the two kernels running popular open-source virtual systems including kernel virtual machine (KVM) and Docker \autocite{dockerdotcom}.
+No feedback-driven optimizations are performed in favor of making informed, logical choices to improve performance.
+The network performance of bridged and physical network interfaces is measured using common open-source tools such as \texttt{netperf}.
+Testing completed with \texttt{netperf} includes measurement of TCP and UDP bandwidth, along with TCP, UDP and ICMP latency.
+% section introcontributiions (end)
+
+% describe results.
+This thesis demonstrates that modifications to the kernel can improve network variance significantly.  
+One result of note is variance in TCP bandwidth decreased as much as 97\% for containers using bridged networking.
+In some cases, system tuning and process isolation can increase performance as well, but the primary goal of this work is to reduce variance in bandwidth and latency.
+The results presented here show that realtime tuning of the kernel may offer greater benefits to shared networking paradigms such as virtual bridges then physical network interfaces.
+This is a because the improved determinism of the realtime kernel benefits kernel-dependent processes like bridging whereas physical interfaces often use direct memory access (DMA) and CPU virtualization extensions which already limit operating system involvement to improve performance. 
+
+\section{Organization} % (fold)
+\label{sec:introorganization}
+
+% this thesis is organized like so
+This thesis is divided into five chapters, the remainder of which are organized as follows.
+Important related work that has enabled performant virtual systems is described in Chapter~\ref{sec:related_work} along with some discussion of the previous performance analyses comparing virtual systems.
+Virtual machine and container architecture are also briefly discussed in Chapter~\ref{sec:related_work} to demonstrate areas for improving performance.
+Test platform hardware descriptions and a discussion of the operating system modifications made are presented in Chapter~\ref{sec:experimental_design} with motivations for those choices and their intended effects.
+The experimental procedures and protocols including the measurement process and types of network tests performed are also discussed there.
+Results and discussion of the network performance measurements described in Chapter~\ref{sec:experimental_design} are presented in Chapter~\ref{sec:results} along with their significance and implications.  
+Chapter~\ref{sec:conclusions} discusses the implivations and conclusions from the measurements collected here.
+Potential directions for future work that resulted from the investigation performed here are also presented in Chapter~\ref{sec:conclusions}.
+
+% section introorganization (end)
+\nocite{welchgenivt}

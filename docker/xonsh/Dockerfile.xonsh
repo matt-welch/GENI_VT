@@ -1,0 +1,23 @@
+FROM python:latest
+MAINTAINER "Matt Welch <matt.welch@intel.com>"
+LABEL tool="xonsh"
+LABEL runme="docker run -it --privileged --name=xonshterm tools:xonsh"
+LABEL buildme="docker build -f Dockerfile.xonsh tools:xonsh --tag=tools:xonsh ."
+WORKDIR /root/
+
+# set environment variables
+ENV http_proxy="http://proxy.ch.intel.com:911" \
+    https_proxy="http://proxy.ch.intel.com:911" \
+    ftp_proxy="http://proxy.ch.intel.com:911" \
+    HTTP_PROXY="http://proxy.ch.intel.com:911" \
+    NO_PROXY="localhost,127.0.0.0/8"
+
+RUN echo "Acquire::http::Proxy \"http://proxy.ch.intel.com:911\";" >> /etc/apt/apt.conf && \
+    apt-get update && \
+    apt-get -y install vim git wget build-essential && \
+    rm -rf /var/lib/apt/lists/* 
+
+RUN pip install xonsh 
+
+ENTRYPOINT ["/usr/local/bin/xonsh"]
+

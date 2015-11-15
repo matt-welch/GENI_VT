@@ -1,13 +1,13 @@
 \chapter{Related Work}
 \label{sec:related_work}
 There have been many comparisons between virtual systems, but they often do not use any system optimizations to improve network performance of the virtual systems under test.
-It is possible to improve the performance of virtual systems with fairly simple configuration changes to the kernel and modification of boot parameters.
-This section discusses some of the enabling developments in virtual system architecture as well as some of the comparisons among them.  
+It is possible to improve the network performance of virtual systems with fairly simple configuration changes to the kernel and modification of boot parameters.
+This chapter discusses some of the enabling developments in virtual system architecture as well as some of the comparisons among them.  
 
 \section{Virtual Machine Architecture}
 \label{sec:vmarchitecture}
 In this section, virtual machine architecture is discussed to demonstrate resource needs and potential areas for improvement.
-Differences among hypervisors and variations of virtualization are then discussed, followed by an anlysis of innovations in CPU, memory, and I/O virtualization.  
+Differences among hypervisors and variations of virtualization are then discussed, followed by an analysis of innovations in CPU, memory, and I/O virtualization.  
 
 The architectures available in virtual environments are as widely varied as the types of hardware they are capable of emulating.
 Many of the concepts currently in use regarding virtual machines originated in a seminal 1974 paper by Popek and Goldberg \autocite{popek1974formal}.
@@ -26,7 +26,7 @@ In contrast, Type 2 hypervisors require a host operating system to provide some 
 The difference between these two types of hypervisors is that a Type 1 hypervisor does not require an operating system to run, whereas a Type 2 does.
 Although Type 1 hypervisors do not require an operating system to \emph{run}, they do require an operating system for \emph{control} of the hypervisor and guests \autocite{liguoriMyth}.
 Type 1 systems appear to have an efficiency advantage over Type 2 since they tend to use microkernels instead of the macrokernels that are usually required to host Type 2 hypervisors.
-According to Liguori, however, the difference between them has little to do with performance, robustness, or other qualitative factors, but, rather, relates back to  observations about their differences made by Popek and Goldberg \autocite{popek1974formal} and the analyses of these differences by Robin and Irvine \autocite{_robin_1}.
+According to Liguori~\autocite{liguoriMyth}, however, the difference between them has little to do with performance, robustness, or other qualitative factors, but, rather, relates back to  observations about their differences made by Popek and Goldberg \autocite{popek1974formal} and the analyses of these differences by Robin and Irvine \autocite{_robin_1}.
 Robin and Irvine's analysis related to the potential for the Pentium processor to support a secure VMM \autocite{_robin_1}, so it was important to draw conclusions about the capabilities and suitability of various hypervisors.
 The vendors of hypervisor solutions also have an interest in drawing distinctions between the two types of hypervisors, but the need to differentiate between these products has become less important over time.  
 
@@ -72,11 +72,11 @@ Despite the additional effort required, Xen maintained their lead as a very popu
 Paravirtualization has its fans, however, and much work has been done comparing Xen to containers and other hypervisors such as KVM \autocite{_felter_1, _younge_1, wangAmazon2010, _che_1, _scheepers_1, wangAllocation2007, rathore2013kvm}.
 
 The third popular virtualization method is becoming the \emph{de facto} standard as virtualization matures.
-Hardware assisted virtualization started out as an effort to accelerate instruction translation, but early generations of hardware had difficulty keeping up with the binary translation preferred by VMware \autocite{vmwareVT}.
+Hardware assisted virtualization started out as an effort to accelerate instruction translation, but early generations of hardware had difficulty keeping up with the binary translation method preferred by VMware \autocite{vmwareVT}.
 The silicon vendors, however have been improving their virtualized performance and adding hooks to enable virtualization of their hardware \autocite{_grinberg_1}.
 Since operating systems for x86 were already common when hardware assisted virtualization was introduced, the architecture needed subtle modifications to help enable virtualization without breaking existing software.  
 This was accomplished with the introduction of yet another protection ring that runs below the kernel's ring 0.  
-The hypervisor runs in ring -1, below the operating system kernel, and trap privileged instructions when they are executed by the guest.
+The hypervisor runs in ring -1, below the operating system kernel, and traps privileged instructions when they are executed by the guest.
 For each virtual machine, a new structure is created and maintained in the host kernel memory.  
 Logically similar to a process control block, this structure, is commonly known as a Virtual Machine Control Structure (VMCS) or, alternately as a VM Control Block (VMCB). 
 The VMCS maintains the state of the virtual machine in the host kernel and is updated when the guest needs to perform a ``vm-exit'' to allow the host to execute privileged instructions.
@@ -92,28 +92,28 @@ To that end, both Intel and AMD have independently developed processor extension
 \subsection{Memory Virtualization}
 \label{sec:vt_memory}
 Virtualization of the CPU was the first challenge in the development of secure virtualization, but, in Von Neumann processor architecture, the memory unit is equally important.
-Memory has become an increasingly significant source of latency in processors as the performance of the CPU core has improved faster than memory performance, so improvements in this area are doubly beneficial for virtual machines.
-Virtualization uses memory structures similar to those developed for virtual memory in early computing systems.
+Memory has become an increasingly significant source of system latency as the performance of the CPU core has improved faster than memory performance, so improvements in this area are doubly beneficial for virtual machines.
+Virtualization uses memory structures conceptually similar to those developed for virtual memory in early computing systems.
 Virtual memory was created to allow multiprogramming and process address spaces that are larger than the available physical memory.
 Modern CPUs implement virtual memory with the aid of a memory management unit (MMU) and translation lookaside buffer (TLB) to manage page tables and accelerate page lookups.
 Fairly recent developments in x86 processors have allowed hypervisors to maintain guest memory mappings with shadow page tables, known as Extended Page Tables (EPTs) in Intel processors and Nested Page Tables (NPTs) for AMD.
 A hypervisor may use TLB hardware to map guest memory pages onto the physical memory similar to a native process, reducing the overhead of guest OS memory access.
 
 Another significant improvement to virtual machine memory performance can be realized by utilizing hugepage memory \autocite{_romer_1}.
-Hugepages, referred to as superpages by Romer et al., can be described as a memory page that is a power-of-two multiple of a standard 4096 byte (4k) memory page.
+Hugepages, referred to as superpages by Romer et al., can be described as a memory page that is a power-of-two multiple of a standard 4096 byte (4 kb) memory page.
 Romer et al. demonstrated a significant improvement in performance when using hugepages for memory-hungry applications.
 In systems with relatively small memory sizes, virtual memory and swapping smaller pages was more efficient than larger pages.
 As memory sizes have grown to hundreds of gigabytes per server and applications can consume multiple gigabytes each, however, 4k memory pages no longer seem an obvious fit.
 Hugepages seek to reduce the frequency of TLB lookups and page table walks by using larger pages of memory.
 With respect to performance, they showed that TLB overhead could be reduced by as much as 99\% using \emph{superpage promotion} which is a system of aggregating smaller pages together as they are used by a process.
 In contrast, current implementations of hugepages in Linux offer a set of large memory pages available to the kernel for memory allocation.
-Unlike superpages, hugepages must be allocated at boot, rather than being coalesced dynamically, but the performance of the Linux hugepages are similar aside from increased memory consumption due to unused portions of hugepages.
+Unlike superpages, hugepages must be allocated at boot, rather than being coalesced dynamically, but Linux hugepage performance is similar aside from increased memory consumption due to unused portions of hugepages.
 For virtual machines that are potentially using multiple levels of memory page walk, any reduction in the frequency of lookups is beneficial.
-Hugepages are included here as an important mechanism for improving memory performance.
+Hugepages are included here as an important mechanism for improving host and guest memory performance.
 
 \subsection{I/O Virtualization}
 \label{sec:vt_io}
-A recent development in full system virtualization is the virtualization of devices and I/O (IOV).
+A recent development in full system virtualization is the virtualization of peripheral devices and I/O (IOV).
 Along with compute and storage, processing of I/O is one of the most critical components of a server's workload since I/O can be a large source of latency for remote transactions.
 Efficiently utilizing I/O allows virtual machines to perform tasks that were previously possible only in native systems, particularly the processing of network packets and workloads.
 Similar to the ``virtualization penalty'' that occurs with nested page table lookups and binary translation, latency inherent in the processing of network packets with multiple levels of handoffs should be avoided when possible.
@@ -146,7 +146,7 @@ An illustrative example is the Intel 82599 10 Gigabit network card, used later i
 Each physical network interface (physical function or pf) in these network cards has 64 Rx/Tx queue pairs that are normally used as send and receive buffers to maintain multiple simultaneous flows.
 The individual queue pairs may be ``broken out'' of the main pool to create a virtual function that is, essentially, a new network device sharing the same physical interface as the physical function.
 These new devices are assigned unique MAC addresses and IP addresses to differentiate them on the network so that an outside observer cannot tell them apart from a physical device.
-The advantage with SR-IOV is that one interface can be multiplexed into multiple independent interfaces that can each reach near-native performance levels \autocite{_nasa_1}.
+The advantage with SR-IOV is that one physical interface can be multiplexed into independent interfaces that are each able to reach near-native performance levels \autocite{_nasa_1}.
 
 \section{Containers}
 \label{sec:containers}
@@ -156,7 +156,7 @@ Containers are capable of applying controls to program execution that should be 
 
 \subsection{Container Architecture}
 \label{sec:containerarchitecture}
-Also known as \emph{operating system virtualization}, containers are a construct of the operating system that serves to provide limited context, and resources to a process executing on the host system. 
+Also known as \emph{operating system virtualization}, containers are a construct of the operating system that serves to provide limited context and resources to a process executing on the host system. 
 One of the most important duties of the kernel is to control access to the system's resources including CPU, memory, and I/O.  
 All processes under OS control should have a view of the system that is limited in context and scope -- they should only have access to the resources that they require with some margin for error.  
 The Linux subsystems that enable a containerized process, including \texttt{chroot}, \texttt{cgroups}, and \texttt{namespaces}, have been gradually added to the Linux kernel over time.
@@ -168,42 +168,40 @@ An early implementation of process isolation that led to containers was the rest
 Introduced in Version 7 Unix in 1979, the \texttt{chroot} system call was later expanded into BSD Jails and Solaris Zones \autocite{_zones_1}.
 This tool allows a user to change the root directory of a process and its children to a specified directory such that the process subsequently views that directory as its root directory, \texttt{/}.  
 This mechanism is useful for providing partial file system isolation to a process, thus controlling libraries and binaries that are available to that process.
-Although this works well for a normal process, it does not prevent a malicious process from accessing arbitrary \texttt{inodes}, so it can be easily circumvented.
+Although this works well for a normal process, it does not prevent a malicious process from accessing arbitrary files, so it can be easily circumvented.
 It makes this process more difficult, thereby ``hardening'' the target, but was not intended to fully sandbox a process or restrict its file system system calls.
 
 % cgroups
 The next process isolation tool to become available in Linux was control groups (\texttt{cgroups}).  
-Contributed by Google \autocite{googlecgroups}, \texttt{cgroups} serve to limit the resources available to a process in a hierarchy, enabling child processes to inherit their parent's \texttt{cgroup} assignment \autocite{kernelcgroups}. 
 Cgroups are organized into hierarchies with the root being the default \texttt{cgroup} for all processes. 
+Contributed by Google \autocite{googlecgroups}, \texttt{cgroups} serve to limit the resources available to a process in a hierarchy, enabling child processes to inherit their parent's \texttt{cgroup} assignment \autocite{kernelcgroups}. 
 Each process must belong to one and only one \texttt{cgroup}. 
 Child processes can be organized into sub-trees that subdivide the resources of its parent process.  
 In addition to isolation, \texttt{cgroups} are also capable of partitioning resources so that a process may be allocated a proportion of a CPU's resources and share the remainder with other processes or not.
-The set of \texttt{cgroups} avaialble includes \texttt{devices}, \texttt{hugetlb}, and \texttt{systemd}, among others, the tuning performed here only utilizes the \texttt{cpuset} and \texttt{memory} hierarchies for process isolation.
+The set of \texttt{cgroups} available includes \texttt{devices}, \texttt{hugetlb}, and \texttt{systemd}, among others; the tuning performed here only utilizes the \texttt{cpuset} and \texttt{memory} hierarchies for process isolation.
 
 % namespaces
 \texttt{Namespaces}, also a recent addition to the kernel, are the mechanism by which the scope or resource view of the process may be limited and controlled.
 The \texttt{namespaces} currently available in the Linux kernel are \texttt{pid}, \texttt{mnt}, \texttt{net}, \texttt{user}, \texttt{ipc}, and \texttt{uts}.
 In this work, the only \texttt{namespace} that was explicitly invoked by the user was the \texttt{net} namespace.  
-Docker's typical configuratoin places the container processes inside a namespace that is specific to the container. 
+Docker's typical configuration places the container processes inside a namespace that is specific to the container. 
 Importantly, this sets the scope of various container subsystems including: processes running on the system (\texttt{pid}), the file system mounts (\texttt{mnt}), network interfaces (\texttt{net}), users (\texttt{user}), inter-process communication (\texttt{ipc}), and hostname (\texttt{uts}).
 Although Docker does not currently support assigning physical devices to containers, this study accomplished this task with the \texttt{iproute2} library and its \texttt{ip} user space tool.  
-%TODO: reference to iproute2/ip ?
 
 % Linux capabilities
 Linux ``capabilities'' are the mechanism by which the monolithic permissions granted to the \texttt{root} user for full system administration are broken down into more granular permissions.  
 Rather than assigning full system permissions to each container, the Docker daemon uses capabilities to deliver a more finely grained set of permissions.
 Any capability may be assigned or removed individually at run time, depending on the needs of the container process.
-An important example is the capability required for \texttt{chroot} calls, logically called \texttt{cap\_sys\_chroot}, which is seldom assigned to containers unless they are intended deep system access.
-%TODO: a reference to linux capabilities (http://linux.die.net/man/7/capabilities) would be nice
+An important example is the capability required for \texttt{chroot} calls, logically called \texttt{cap\_sys\_chroot}, which is seldom assigned to containers unless they are intended to have deep system access.
 % subsection resource_scope_control (end)
 
-\subsection{Docker networking} % (fold)
+\subsection{Docker Networking} % (fold)
 \label{sub:dockernetworking}
 Docker networking can be fairly complex with multiple options available to both the \texttt{daemon} and the \texttt{run} tools \autocite{dockernetworking1}.
 There are a few standard varieties of network interfaces that are commonly used in containers.
 Most common among software options, virtual bridges are operated by the host kernel with a non-trivial CPU involvement. 
 Software bridges are also commonly used by virtual machines where they are combined with the \texttt{virtio} library to provide a paravirtualized interface to guest VMs \autocite{_virtio_1}. 
-Bridges are the default layer 2 networking used by Docker which enables the daemon to quickly put together simple network topologies for container cooperation \autocite{dockernetworking1}.  
+Bridges are the default layer 2 networking used by Docker which enables the daemon to quickly configure simple network topologies for container cooperation \autocite{dockernetworking1}.  
 The Docker daemon also uses the common Linux firewall \texttt{iptables} for layer 3 connectivity, routing, and network address translation (NAT) to allow containers to communicate with the outside world.
 Another reason to study the bridged networking paradigm is that bridges are generally important in networking and useful in interesting new system topologies where containers may be linked together or their functions pipelined.
 % subsection dockernetworking (end)
@@ -225,7 +223,7 @@ The development of a common container and runtime for Linux under the OCI should
 As a consequence of the OCI, Linux containers should eventually converge onto a single format, which has evolved from the Docker container specification.   
 
 The Linux subsystems supporting containers have become sophisticated enough that Docker or LXC are no longer strictly necessary to create containers, because administrators can create their containers with native Linux  tools such as \texttt{systemd} or scripts that stitch together the correct \texttt{cgroups}, \texttt{chroot}, and \texttt{namespace} allocations. 
-Based on the amount of media coverage and hype surrounding the young startup, Docker has become The \emph{de facto} standard for containers in Linux.  
+Based on the amount of media coverage and hype surrounding the young startup, Docker has become the \emph{de facto} standard for containers in Linux.  
 Docker is popular for good reason: in addition to providing a robust tool set for isolating processes and container orchestration, the Docker team has been extremely open about their development and responsive to issues submitted by users on their \texttt{github} account \autocite{githubdocker}.  
 It is for the reasons of its ubiquity and ease of use that Docker is the container format selected for comparison in this thesis.
 % subsection container_systems (end)
@@ -237,11 +235,11 @@ Docker aims to enable process isolation in containers with simple, effective too
 \begin{figure}
     \centering
     \includegraphics[width=150mm]{dockerecosystem.png}
-    \caption{Docker ecosystem architecture \autocite{dockerarch1}}
+    \caption{Docker Ecosystem Architecture \autocite{dockerarch1}}
     \label{fig:dockerecosystem}
 \end{figure}
-In Figure~\ref{fig:dockerecosystem}, the overall flow of a container image is shown as it moves from registry to daemon and then is deployed as a live container, all controlled through the client system.  
-In this figure, the DOCKER\_HOST and Client systems are shown as separate entities, but they are all run on the same host system here.
+In Figure~\ref{fig:dockerecosystem}, the overall flow of a container image is shown as it moves from registry to daemon and is then deployed as a live container, all controlled through the client system.  
+In this figure, the ``DOCKER\_HOST'' and ``Client'' systems are shown as separate entities, but they are all run on the same host system.
 A registry in this context is a repository of container images that are posted and curated by their authors.
 This system allows a Docker client to query the daemon for the presence of a particular image, organized by hashes, similar to other version control systems.  
 If the daemon does not have the requested image in its stores, it can query official registries for the image and download a copy if available.  
@@ -252,20 +250,20 @@ This version-controlled sharing of official images enables rapid development and
 
 \section{Comparisons and Performance Analysis} % (fold)
 \label{sec:comparisons_performance_analysis}
-Some of the important details of the architecture of virtual machines and containers are described in Sections~\ref{sec:vmarchitecture} and \ref{sec:containerarchitecture}.
-An interesting summary of the differences between virtual machines and containers comes from \autocite{morabitohypervisors}: ``Hypervisors abstract hardware, containers abstract the operating system''. 
-This concisely summarizes one of the important difference between these two types of virtualization in that virtual machines must emulate hardware devices with software which often has some performance impact.  
+Some of the important architectural details of virtual machines and containers are described in Sections~\ref{sec:vmarchitecture} and \ref{sec:containers}.
+An interesting quote on the differences between virtual machines and containers comes from \autocite{morabitohypervisors}: ``Hypervisors abstract hardware, containers abstract the operating system''. 
+This concisely summarizes one of the important differences between these two types of virtualization in that virtual machines must emulate hardware devices with software which often has some performance impact.  
 Virtualization of the operating system, however, only creates minimal additional overhead with containers, most of which are felt during setup rather than runtime.
 Figure~\ref{fig:vtschematic} provides a simplified comparison of their architecture. 
 In this traditional virtualization schematic, the hypervisor sits on top of the server operating system and hardware.
 It is responsible for mediating access to the host hardware as well as emulating devices for the guest.  
 This additional hardware emulation comes with some performance cost as does the hosting of a complete operating system for each guest.  
-Although the Docker system in Figure~\ref{fig:vtschematic} shows the guest OS running op top of the server OS, containers are not emulating another OS, but utilizing the host's OS with limits imposed by the host and container orchestration system.
+Although the Docker system in Figure~\ref{fig:vtschematic} shows the guest OS running on top of the server OS, containers are not emulating another OS, but utilizing the host's OS with limits imposed by the host and container orchestration system.
 
 \begin{figure}
     \centering
     \includegraphics[width=150mm]{vt_schematic.jpg}
-    \caption{Architecture overview of virtual machines and containers \autocite{whatisdocker}}
+    \caption{Architecture Overview of Virtual Machines and Containers \autocite{whatisdocker}}
     \label{fig:vtschematic}
 \end{figure}
 
@@ -276,7 +274,7 @@ Many studies to date have compared the performance of virtual machines and conta
 Virtual machines have multiple additional libraries and operating system instances, which increases the latency of protected operations.  
 
 Felter et al. made an extensive evaluation of containers and virtual machines including memory, compute, and I/O, but they did not attempt to tune the systems \autocite{_felter_1}.
-They also used the advanced multi layered unification filesystem (\texttt{aufs}) which is deprecated in upstream kernels.
+They also used the advanced multi layered unification filesystem (\texttt{aufs}) as the Docker storage driver, which is deprecated in upstream kernels.
 
 In an excellent comparison between containers and virtual machines, Scheepers analyzes Xen and LXC with macro benchmarks \autocite{_scheepers_1}.  
 He showed that public clouds need virtual machines for their isolation potential, but containers can be used to maximize the \emph{utilization} of the hardware.
@@ -287,16 +285,16 @@ This degradation could be addressed in part with static allocation of network in
 They concluded that decreasing the switching magnitude and frequency of their allocation schedule led to performance improvements.
 At the lower limit of switching frequency is static allocation of resources, with processes pinned to CPUs and dedicated physical resources.
 
-Sherry et al. examined Middleboxes which are the heart of NFV \autocite{sherry2012making}.
+Sherry et al. examined middleboxes which are the heart of NFV \autocite{sherry2012making}.
 They show that, as demand for streaming data increases, the need for additional middleboxes to process and handle the traffic is also increasing.
-These systems are increasingly assigned to virtual machines due to the flexibility and scaling that can be achieved with increased density.
+These network functions are often allocated to virtual machines due to the flexibility and scaling that can be achieved with increased density.
 
 Middleboxes are also examined in a paper by Sekar et al., where they make the case that middlebox innovation, i.e. in the context of NFV, is at least as important as for switches and routers \autocite{sekar2011middlebox}.
 They propose that the role of middleboxes in the network includes the critical usability and security considerations of network design.
 One idea presented in their article that has significant potential with containers is the chaining of middlebox functions and its analogy to processing operations on a packet.  
 This is one of the core ideas of NFV in that the entirety of the network functions need not be accomplished in one system or even one physical box, but can be distributed around the network as processing nodes.  
 By their estimates, there also appears to be a significant amount of common traffic overlap ranging from 64 to 99\% in middlebox processing. 
-While this seems shockingly high, it also presents an interesting alternative use case for containers and virtual machines which may be pipelined and even potentially share resources to decrease the redundancy present in current schemes.
+While this seems high, it also presents an interesting alternative use case for containers and virtual machines which may be pipelined and even potentially share resources to decrease the redundancy present in current schemes.
 
 Xavier et al. examine the suitability of Linux vServer, OpenVZ, and LXC for high performance computing environments \autocite{xavier2013performance}.
 While the high compute-density of containers is an advantage in HPC, it is often the network that has the greatest impact on system performance.
@@ -304,37 +302,37 @@ Containers lack the necessary isolation for co-located workloads, but, since HPC
 One of the shortcomings of their study, however, was not using high-throughput network interfaces that are so critical in HPC, which makes it difficult to properly draw distinctions among the systems.
 That comparison, specifically since it was targeted at HPC, would have benefited from more CPU isolation and tuning.  
 
-The work of Wang and Ng analyzed the impact of virtualization on network performance in the Amazon cloud \autocite{wangAmazon2010}.
+The work of Wang and Ng analyzed the impact of virtualization on network performance in the Amazon public cloud \autocite{wangAmazon2010}.
 Although that work found that Amazon does not have the same emphasis on performance as an HPC cluster, there are instances available in the Amazon cloud that completely isolate their CPUs for guaranteed performance.  
 Although Wang and Ng did not have access into Amazon's orchestration or control systems, it is improbable that the high-performing virtual machines were oversubscribed with other systems sharing their CPUs. 
 These high-performing virtual systems are the subject of this thesis and it is the goal of the performance tuned kernel described in Section~\ref{sub:software_environment}.  
 
-Rathore et al. compared KVM and LXC performance and isolation in hardware-assisted virtual routers, but used dynamic allocation which normally has a negative impact on latency \autocite{rathore2013kvm}.
-Their isolation could have improved with realtime tuning and CPU isolation.  
-Containers alone cannot provide real isolation of processes without explicit CPU control with \texttt{cgroups}, but the organization of processes and CPU assignment can be tricky.
-Orchestration of containers and virtual machines needs to consider process isolation and CPU over-subscription for maximal I/O performance.
-
 There is a significant interest in utilizing virtual systems for HPC.  Another study that investigated this paradigm was performed by Younge et al., where they performed an in-depth analysis of current virtualization technologies in HPC \autocite{_younge_1}.
 They investigated a set of current hypervisors for performance which helps to guide the choice of hypervisors in this thesis. 
 In their article, they examine VMware, KVM, Xen, and VirtualBox hypervisors. 
-VMware has previously required permission prior to publishing which complicates using those systems in academic research.  
+VMware has previously required permission prior to publishing which complicates using their software in academic research.  
 The proprietary nature of their software also limits its utility in work that seeks to better understand their operating system.  
 The popular Xen hypervisor, while open source, requires paravirtualization which creates additional burden.
 VirtualBox, while widely available, is also not open source and has little available performance data.  
 KVM is selected due to its ubiquity and deep library of literature supporting it.
 This choice is also supported by \autocite{_younge_1} who also proclaim it the best performer in internode bandwidth.  
 
+Rathore et al. compared KVM and LXC performance and isolation in hardware-assisted virtual routers, but used dynamic allocation which normally has a negative impact on latency \autocite{rathore2013kvm}.
+Their isolation could have improved with realtime tuning and CPU isolation.  
+Containers alone cannot provide real isolation of processes without explicit CPU control with \texttt{cgroups}, but the organization of processes and CPU assignment can be tricky.
+Orchestration of containers and virtual machines needs to consider process isolation and CPU over-subscription for maximal I/O performance.
+
 One of the considerations when designing the performance analysis of network systems is the composition of the traffic that they handle.  
 Virtual systems often reside in data centers where it has been reported that TCP traffic represents a share of about 90\% if the overall traffic \autocite{haTCPCloud2013}.
 This observation highlights the need for performant network interfaces due to the high overhead required in maintaining TCP flows.
 
-While many of the performance analyses described here are focused on high I/O performance for virtual systems, they all declined to investigate the impact of kernel configuration or static resource allocation to improve the network performance of those systems.  
-In Section~\ref{sec:experimental_design} to follow, the impact of kernel performance tuning and different types of network interfaces are analyzed.  
+While many of the performance analyses described here are focused on high I/O performance for virtual systems, they all neglected to investigate the impact of kernel configuration or static resource allocation to improve the network performance of those systems.  
+In Chapter~\ref{sec:experimental_design} to follow, the impact of kernel performance tuning and different types of network interfaces are analyzed.  
 The analyses performed show significant improvement to TCP latency in most cases and bandwidth in some.
 % subsection performanceanalysis (end)
 
-The next chapter describes the experiments performed here and some of the motivations for design decisions. 
-The platform used for the experimentation is described along with the procedures used to collect measurements of system performance
+The next chapter describes the experiments performed and some of the motivations for design decisions. 
+The platform used for the experimentation is described along with the procedures used to collect measurements of system performance.
 
 % section comparisons_performance_analysis (end)
 

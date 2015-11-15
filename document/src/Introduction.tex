@@ -62,8 +62,8 @@ Testing completed with \texttt{netperf} includes measurement of TCP and UDP band
 % section introcontributiions (end)
 
 % describe results.
-This thesis demonstrates that modifications to the kernel can improve network variance significantly.  
-One result of note is variance in TCP bandwidth decreased as much as 97\% for containers using bridged networking.
+This thesis demonstrates that modifications to the kernel can improve network determinism significantly.  
+One result of note is standard deviation in TCP bandwidth decreased as much as 97\% for containers using bridged networking.
 In some cases, system tuning and process isolation can increase performance as well, but the primary goal of this work is to reduce variance in bandwidth and latency.
 The results presented here show that realtime tuning of the kernel may offer greater benefits to shared networking paradigms such as virtual bridges then physical network interfaces.
 This is a because the improved determinism of the realtime kernel benefits kernel-dependent processes like bridging whereas physical interfaces often use direct memory access (DMA) and CPU virtualization extensions which already limit operating system involvement to improve performance. 
@@ -74,11 +74,11 @@ This is a because the improved determinism of the realtime kernel benefits kerne
 % this thesis is organized like so
 This thesis is divided into five chapters, the remainder of which are organized as follows.
 Important related work that has enabled performant virtual systems is described in Chapter~\ref{sec:related_work} along with some discussion of the previous performance analyses comparing virtual systems.
-Virtual machine and container architecture are also briefly discussed in Chapter~\ref{sec:related_work} to demonstrate areas for improving performance.
+Virtual machine and container architecture are also briefly discussed in Chapter~\ref{sec:related_work} to highlight areas for improving performance.
 Test platform hardware descriptions and a discussion of the operating system modifications made are presented in Chapter~\ref{sec:experimental_design} with motivations for those choices and their intended effects.
 The experimental procedures and protocols including the measurement process and types of network tests performed are also discussed there.
 Results and discussion of the network performance measurements described in Chapter~\ref{sec:experimental_design} are presented in Chapter~\ref{sec:results} along with their significance and implications.  
-Chapter~\ref{sec:conclusions} discusses the implivations and conclusions from the measurements collected here.
+Chapter~\ref{sec:conclusions} discusses the implications and conclusions from the measurements collected here.
 Potential directions for future work that resulted from the investigation performed here are also presented in Chapter~\ref{sec:conclusions}.
 
 % section introorganization (end)

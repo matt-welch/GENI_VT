@@ -9,6 +9,7 @@ As expected, the Docker containers studied generally had higher bandwidth and lo
 In almost all of the streaming TCP tests both systems realized a reduction to variance in their bandwidth and latency.
 Virtual machines and containers tended to perform similarly, however, when the physical network interfaces were dedicated to the virtual system.
 The reduction in variance often comes at the cost of a small decrease in performance, but, as in the case of the TCP STREAM test over a bridged interface, throughput may improve in some cases.
+Measurements of UDP streams showed unusual behavior, caused by unexpected handling of UDP fragmentation and potential limitations to the flow rate of UDP packets.
 
 Although bridged interfaces saw a greater improvement in most cases than the physical interfaces, it was also shown to have more variability and lower throughput than the physical network connections.  
 This paradigm is a concern for large numbers of guests because any networking topology that requires host kernel involvement cannot scale to a large number of guests without a performance impact.
@@ -26,14 +27,23 @@ A system running a processor with many CPU cores, such as the 60-core Xeon Phi, 
 
 \subsection{UDP Flows} % (fold)
 \label{sec:futureudpflows}
-Chapters~\ref{sec:experimental_design} and \ref{sec:results} described unexpected performance and required workarounds when UDP performance was measured with \texttt{netperf}. 
-It seemed that the system under test was configured with settings that prevented the UDP flows from transmitting at the expected rate, but the root cause of this behavior is still unknown.  
-Since \texttt{netperf} is one of the most common network performance tools, the solution to the unexpected behavior could be a valuable discovery.
+Chapters~\ref{sec:experimental_design} and \ref{sec:results} described unexpected UDP performance and required workarounds when UDP flows were measured with \texttt{netperf}. 
+It seemed that \texttt{netperf} was configured with settings that prevented the UDP flows from transmitting at the expected rate, but the root cause of this behavior is still unknown.  
+Since \texttt{netperf} is one of the most common network performance tools, the solution to the unexpected behavior could provide valuable insight into network performance analysis.
+Benchmarking utilities such as iperf3 \autocite{iperf3} have been addressed as alternatives to \texttt{netperf} and are perhaps better suited to UDP measurement.
 % subsection futureudpflows (end)
+
+\subsection{Traffic Analysis} % (fold)
+\label{sub:futuretrafficanalysis}
+Transport protocols such as TCP and UDP comprise a large fraction of the traffic in datacenters and the Internet.
+Although this study examined network performance of TCP and UDP flows in particular, there exist complex relationships between the real-world workflows and the resulting subsystems that are stressed in their hosts.
+Further investigation should be made into the impact of simultaneous network flows that represent a more realistic balance of traffic through network backbones.
+These studies could help to illuminate weaknesses in the network stack and related subsystems and upstream those findings into the \texttt{preempt-rt} patch set and network drivers.
+% subsection futuretrafficanalysis (end)
 
 \subsection{Virtual Functions} % (fold)
 \label{sec:futurevirtualfunctions}
-Virtual functions are a mechanism by which physical devices may be multiplexed and share their resources among many virtual devices.  
+Virtual functions enabled by SR-IOV are a mechanism by which physical devices may be multiplexed and share their resources among many virtual devices.  
 While virtual functions may subdivide the resources of the physical device, a virtual function belonging to a peripheral such as a network interface card operates at line rate and should attain latency similar to the physical function.  
 Although scaling to tens of containers may not be possible with physical device assignment, a small set of physical devices may be subdivided into virtual functions, enabling near-line-rate performance for all of the containers.  
 The performance of virtual functions should be investigated in the context of process isolation and system tuning to verify that containers can scale out to the levels advertised in the press.  
@@ -42,7 +52,7 @@ The performance of virtual functions should be investigated in the context of pr
 \subsection{DPDK} % (fold)
 \label{sec:futuredpdk}
 The isolation of processes from the rest of the system has been shown to improve performance.
-User space libraries such as DPDK can allow systems to minimize interference by the kernel by removing the interfaces from the kernel domain and using poll mode user space drivers to minimize response latency \autocite{_dpdk_1}.  
+User space libraries such as DPDK can allow systems to minimize interference from the kernel by removing the interfaces from the kernel domain and using poll mode user space drivers to minimize response latency \autocite{_dpdk_1}.  
 This paradigm represents the limit of process and hardware isolation because applications written with the DPDK library monopolize the network interfaces and CPU cores, consuming extra hardware resources to maximize performance.
 Optimizing parameters of the network stack in Linux or implementing benchmarks in DPDK are additional optimizations for improving network performance and should be considered in future work.
 % subsection futuredpdk (end)

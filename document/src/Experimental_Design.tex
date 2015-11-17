@@ -202,7 +202,7 @@ For each of the \texttt{netperf} tests, 20 replicate samples of ten seconds each
 In most cases, the STREAM bandwidth tests of \texttt{netperf} rely on the kernel for ARP and routing.  
 When attempting to measure UDP streaming performance over bridged interfaces to the container with default settings, the client system was not able to establish a connection, displaying an error that indicated a routing problem.
 The cause of this error is a setting in the \texttt{netperf} UDP STREAM test that disables IP routing for that test by default \autocite{stackoverflownetperf, netperfsource}.  
-On inspection of the netperf source code, it was found that this setting was ``grudgingly added'' to prevent accidentally flooding default routes and corporate networks with UDP STREAM packets \autocite{netperfsource}.
+On inspection of the \texttt{netperf} source code, it was found that this setting was ``grudgingly added'' to prevent accidentally flooding default routes and corporate networks with UDP STREAM packets \autocite{netperfsource}.
 The consequences of this choice are only apparent when routing to a different subnet is required, and the client process is unable to route its packets to the server.
 For each of the network tests performed, both bridged and physical interfaces are assigned to different subnets in each virtual system to expedite testing.
 Therefore, in order to maintain consistency between interfaces, all UDP STREAM tests enable routing with the \texttt{netperf} flag \texttt{-R 1}.

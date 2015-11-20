@@ -1,0 +1,27 @@
+GOS
+  CPU
+    -enable-kvm -cpu CPUTYPE -smp NUM_CORES
+  MEM
+    -mem NUM_MB [-realtime mlock=on -mem-path /path/to/mem -mem-prealloc]
+  DEVICES
+    -no-hpet
+    NET
+      -net nic -net user
+      -netdev tap,id=tap0 -device virtio-net-pci,netdev=tap0
+      -redit tcp:10022::22 
+      PASS
+        -device pci-assign,host=BB:DD.F
+  KERNEL/OS
+    -name [-hda /path/to/image]
+    -kernel KERNEL_vmlinuz -append "kernel parameters"
+    -boot once=d -cdrom /path/to/cdrom.iso
+CONTROL
+  OUTPUT
+    -no-reboot -usbdevice tablet
+    -nographic -serial stdio
+    -daemonize
+    VNC
+      -vnc :1
+  MON
+    -monitor telnet::${TELNET_PORT},server,nowait
+  

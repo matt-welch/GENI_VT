@@ -69,7 +69,7 @@ ip netns exec $PID ip link set $GUEST_DEV up
 
 # Delete netns link to prevent stale namespaces when the docker
 # container is stopped
-rm /var/run/netns/$PID
+unlink /var/run/netns/$PID
 
 # run docker exec to show the addresses of the container's interfaces
 echo Docker ifconfig: 

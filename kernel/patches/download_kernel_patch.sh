@@ -1,6 +1,6 @@
 #!/bin/bash
 PATCH_BASE_URL="https://www.kernel.org/pub/linux/kernel/projects/rt/"
-KERNL_BASE_URL="https://www.kernel.org/pub/linux/kernel/v3.x/"
+KERNL_BASE_URL="https://www.kernel.org/pub/linux/kernel/"
 
 function fcnSHAcheck() {
     REFFILE="sha256sums.asc"
@@ -60,7 +60,7 @@ function selectMajVersion() {
     OUTPUT_FILE="patch_maj_vers.html"
     echo "${0}::${FUNCNAME[0]}::  getting major version numbers from $PATCH_BASE_URL ..."
     wget $PATCH_BASE_URL -O $OUTPUT_FILE -o patch_vers.log
-    MAJLIST=$(grep href $OUTPUT_FILE | egrep -o '3\.[0-9]+\.*[0-9]*' | uniq)
+    MAJLIST=$(grep href $OUTPUT_FILE | egrep -o '(3\.[0-9]+\.*[0-9]*|4\.[0-9]+\.*[0-9]*)' | uniq)
     pwd
     PS3="Select a preempt-RT version by typing the selection number:  "
     
@@ -78,6 +78,7 @@ if [[ -z $1 ]] ; then
 else
     MAJVERSION=$1
 fi
+echo "Kernel version $MAJVERSION selected"
 
 INDEX_FNAME="patch_index.html"
 mkdir -p ./$MAJVERSION/logs
@@ -85,7 +86,14 @@ cd       ./$MAJVERSION
 rm -rf sha256sums.asc*
 getKernelVersions
 
-BASE_URL=$KERNL_BASE_URL
+if [[ "$MAJVERSION" == "4."* ]] ; then 
+    echo "Version 4 kernel selected"
+    BASE_URL="${KERNL_BASE_URL}v4.x/"
+elif [[ "$MAJVERSION" == "3."* ]] ; then 
+    echo "Version 3 kernel selected"
+    BASE_URL="${KERNL_BASE_URL}v3.x/"
+fi
+
 INDEX_FNAME="kernel_index.html"
 wget $BASE_URL -O $INDEX_FNAME -o logs/${INDEX_FNAME}.log
 FILE_LIST=$(grep ${VERSION} $INDEX_FNAME | cut -d "\"" -f 2 ) 
